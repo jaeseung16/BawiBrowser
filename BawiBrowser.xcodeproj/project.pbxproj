@@ -1,0 +1,611 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617663268A781000871FB2 /* BawiBrowserApp.swift */; };
+		90617666268A781000871FB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617665268A781000871FB2 /* ContentView.swift */; };
+		90617668268A781200871FB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90617667268A781200871FB2 /* Assets.xcassets */; };
+		9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9061766A268A781200871FB2 /* Preview Assets.xcassets */; };
+		9061766D268A781200871FB2 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061766C268A781200871FB2 /* Persistence.swift */; };
+		90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */; };
+		9061767C268A781300871FB2 /* BawiBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061767B268A781300871FB2 /* BawiBrowserTests.swift */; };
+		90617687268A781300871FB2 /* BawiBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617686268A781300871FB2 /* BawiBrowserUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		90617678268A781300871FB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90617658268A781000871FB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9061765F268A781000871FB2;
+			remoteInfo = BawiBrowser;
+		};
+		90617683268A781300871FB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90617658268A781000871FB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9061765F268A781000871FB2;
+			remoteInfo = BawiBrowser;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		90617660268A781000871FB2 /* BawiBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BawiBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90617663268A781000871FB2 /* BawiBrowserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserApp.swift; sourceTree = "<group>"; };
+		90617665268A781000871FB2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		90617667268A781200871FB2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9061766A268A781200871FB2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		9061766C268A781200871FB2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		9061766F268A781200871FB2 /* BawiBrowser.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BawiBrowser.xcdatamodel; sourceTree = "<group>"; };
+		90617671268A781200871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90617672268A781200871FB2 /* BawiBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BawiBrowser.entitlements; sourceTree = "<group>"; };
+		90617677268A781300871FB2 /* BawiBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BawiBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9061767B268A781300871FB2 /* BawiBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserTests.swift; sourceTree = "<group>"; };
+		9061767D268A781300871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90617682268A781300871FB2 /* BawiBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BawiBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		90617686268A781300871FB2 /* BawiBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUITests.swift; sourceTree = "<group>"; };
+		90617688268A781300871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9061765D268A781000871FB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90617674268A781300871FB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9061767F268A781300871FB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		90617657268A781000871FB2 = {
+			isa = PBXGroup;
+			children = (
+				90617662268A781000871FB2 /* BawiBrowser */,
+				9061767A268A781300871FB2 /* BawiBrowserTests */,
+				90617685268A781300871FB2 /* BawiBrowserUITests */,
+				90617661268A781000871FB2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		90617661268A781000871FB2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				90617660268A781000871FB2 /* BawiBrowser.app */,
+				90617677268A781300871FB2 /* BawiBrowserTests.xctest */,
+				90617682268A781300871FB2 /* BawiBrowserUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		90617662268A781000871FB2 /* BawiBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				90617663268A781000871FB2 /* BawiBrowserApp.swift */,
+				90617665268A781000871FB2 /* ContentView.swift */,
+				90617667268A781200871FB2 /* Assets.xcassets */,
+				9061766C268A781200871FB2 /* Persistence.swift */,
+				90617671268A781200871FB2 /* Info.plist */,
+				90617672268A781200871FB2 /* BawiBrowser.entitlements */,
+				9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */,
+				90617669268A781200871FB2 /* Preview Content */,
+			);
+			path = BawiBrowser;
+			sourceTree = "<group>";
+		};
+		90617669268A781200871FB2 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				9061766A268A781200871FB2 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		9061767A268A781300871FB2 /* BawiBrowserTests */ = {
+			isa = PBXGroup;
+			children = (
+				9061767B268A781300871FB2 /* BawiBrowserTests.swift */,
+				9061767D268A781300871FB2 /* Info.plist */,
+			);
+			path = BawiBrowserTests;
+			sourceTree = "<group>";
+		};
+		90617685268A781300871FB2 /* BawiBrowserUITests */ = {
+			isa = PBXGroup;
+			children = (
+				90617686268A781300871FB2 /* BawiBrowserUITests.swift */,
+				90617688268A781300871FB2 /* Info.plist */,
+			);
+			path = BawiBrowserUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9061765F268A781000871FB2 /* BawiBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9061768B268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowser" */;
+			buildPhases = (
+				9061765C268A781000871FB2 /* Sources */,
+				9061765D268A781000871FB2 /* Frameworks */,
+				9061765E268A781000871FB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BawiBrowser;
+			productName = BawiBrowser;
+			productReference = 90617660268A781000871FB2 /* BawiBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+		90617676268A781300871FB2 /* BawiBrowserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9061768E268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowserTests" */;
+			buildPhases = (
+				90617673268A781300871FB2 /* Sources */,
+				90617674268A781300871FB2 /* Frameworks */,
+				90617675268A781300871FB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90617679268A781300871FB2 /* PBXTargetDependency */,
+			);
+			name = BawiBrowserTests;
+			productName = BawiBrowserTests;
+			productReference = 90617677268A781300871FB2 /* BawiBrowserTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		90617681268A781300871FB2 /* BawiBrowserUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90617691268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowserUITests" */;
+			buildPhases = (
+				9061767E268A781300871FB2 /* Sources */,
+				9061767F268A781300871FB2 /* Frameworks */,
+				90617680268A781300871FB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90617684268A781300871FB2 /* PBXTargetDependency */,
+			);
+			name = BawiBrowserUITests;
+			productName = BawiBrowserUITests;
+			productReference = 90617682268A781300871FB2 /* BawiBrowserUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		90617658268A781000871FB2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1250;
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					9061765F268A781000871FB2 = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+					90617676268A781300871FB2 = {
+						CreatedOnToolsVersion = 12.5.1;
+						TestTargetID = 9061765F268A781000871FB2;
+					};
+					90617681268A781300871FB2 = {
+						CreatedOnToolsVersion = 12.5.1;
+						TestTargetID = 9061765F268A781000871FB2;
+					};
+				};
+			};
+			buildConfigurationList = 9061765B268A781000871FB2 /* Build configuration list for PBXProject "BawiBrowser" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 90617657268A781000871FB2;
+			productRefGroup = 90617661268A781000871FB2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9061765F268A781000871FB2 /* BawiBrowser */,
+				90617676268A781300871FB2 /* BawiBrowserTests */,
+				90617681268A781300871FB2 /* BawiBrowserUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9061765E268A781000871FB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */,
+				90617668268A781200871FB2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90617675268A781300871FB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90617680268A781300871FB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9061765C268A781000871FB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9061766D268A781200871FB2 /* Persistence.swift in Sources */,
+				90617666268A781000871FB2 /* ContentView.swift in Sources */,
+				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
+				90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90617673268A781300871FB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9061767C268A781300871FB2 /* BawiBrowserTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9061767E268A781300871FB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90617687268A781300871FB2 /* BawiBrowserUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		90617679268A781300871FB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9061765F268A781000871FB2 /* BawiBrowser */;
+			targetProxy = 90617678268A781300871FB2 /* PBXContainerItemProxy */;
+		};
+		90617684268A781300871FB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9061765F268A781000871FB2 /* BawiBrowser */;
+			targetProxy = 90617683268A781300871FB2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		90617689268A781300871FB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9061768A268A781300871FB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		9061768C268A781300871FB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = BawiBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9061768D268A781300871FB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = BawiBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9061768F268A781300871FB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				INFOPLIST_FILE = BawiBrowserTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BawiBrowser.app/Contents/MacOS/BawiBrowser";
+			};
+			name = Debug;
+		};
+		90617690268A781300871FB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				INFOPLIST_FILE = BawiBrowserTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BawiBrowser.app/Contents/MacOS/BawiBrowser";
+			};
+			name = Release;
+		};
+		90617692268A781300871FB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				INFOPLIST_FILE = BawiBrowserUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BawiBrowser;
+			};
+			name = Debug;
+		};
+		90617693268A781300871FB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				INFOPLIST_FILE = BawiBrowserUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BawiBrowser;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9061765B268A781000871FB2 /* Build configuration list for PBXProject "BawiBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90617689268A781300871FB2 /* Debug */,
+				9061768A268A781300871FB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9061768B268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9061768C268A781300871FB2 /* Debug */,
+				9061768D268A781300871FB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9061768E268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9061768F268A781300871FB2 /* Debug */,
+				90617690268A781300871FB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90617691268A781300871FB2 /* Build configuration list for PBXNativeTarget "BawiBrowserUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90617692268A781300871FB2 /* Debug */,
+				90617693268A781300871FB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				9061766F268A781200871FB2 /* BawiBrowser.xcdatamodel */,
+			);
+			currentVersion = 9061766F268A781200871FB2 /* BawiBrowser.xcdatamodel */;
+			path = BawiBrowser.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 90617658268A781000871FB2 /* Project object */;
+}
