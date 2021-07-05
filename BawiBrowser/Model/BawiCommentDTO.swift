@@ -9,10 +9,12 @@ import Foundation
 
 struct BawiCommentDTO: CustomStringConvertible {
     var articleId: Int
+    var articleTitle: String
     var boardId: Int
+    var boardTitle: String
     var body: String
     
     var description: String {
-        return "articleId: \(articleId), boardId: \(boardId), body: \(String(describing: body.removingPercentEncoding))"
+        return "boardTitle: \(boardTitle), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding))"
     }
 }

@@ -34,6 +34,9 @@ struct WebView: NSViewRepresentable {
     class Coordinator: NSObject, WKUIDelegate, WKNavigationDelegate {
         var parent: WebView
         
+        var boardTitle: String?
+        var articleTitle: String?
+        
         init(_ parent: WebView) {
             self.parent = parent
         }
@@ -83,7 +86,9 @@ struct WebView: NSViewRepresentable {
                             }
                         }
                         
-                        parent.viewModel.commentDTO = BawiCommentDTO(articleId: articleId, boardId: boardId, body: body)
+                        print("\(self.boardTitle), \(self.articleTitle)")
+                        
+                        parent.viewModel.commentDTO = BawiCommentDTO(articleId: articleId, articleTitle: self.articleTitle ?? "", boardId: boardId, boardTitle: self.boardTitle ?? "", body: body)
                     }
                 }
                 
@@ -145,20 +150,31 @@ struct WebView: NSViewRepresentable {
                 
                 //print("parent.viewModel.httpCookies = \(self.parent.viewModel.httpCookies)")
             })
+            */
             
-            webView.evaluateJavaScript("document.body.innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
-
+            webView.evaluateJavaScript("document.getElementsByTagName('h1')[0].innerText", completionHandler: { (value: Any!, error: Error!) -> Void in
                 if error != nil {
-                    //Error logic
+                    print("didFinish: \(String(describing: error))")
                     return
                 }
 
-                let result = value as? String
-                //print("document.body.innerHTML = \(result)")
-                //Main logic
-                self.parent.viewModel.innerHTML = result ?? ""
+                if let result = value as? String {
+                    print("didFinish: \(result)")
+                    self.boardTitle = result
+                }
             })
-            */
+            
+            webView.evaluateJavaScript("document.getElementsByClassName('article')[0].innerText", completionHandler: { (value: Any!, error: Error!) -> Void in
+                if error != nil {
+                    print("didFinish: \(String(describing: error))")
+                    return
+                }
+
+                if let result = value as? String {
+                    print("didFinish: \(result)")
+                    self.articleTitle = result
+                }
+            })
             
         }
         
@@ -177,7 +193,7 @@ struct WebView: NSViewRepresentable {
         func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
             print("runJavaScriptAlertPanelWithMessage: \(message)")
             
-            print("\(frame.request)")
+            print("runJavaScriptAlertPanelWithMessage: \(frame.request)")
             
             let alert = NSAlert()
             alert.messageText = message

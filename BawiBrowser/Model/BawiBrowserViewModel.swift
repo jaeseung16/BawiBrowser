@@ -23,12 +23,14 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var didFinishURLString = String()
     @Published var didFinishTitle = String()
     
-    @Published var commentDTO = BawiCommentDTO(articleId: -1, boardId: -1, body: "") {
+    @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             let comment = Comment(context: PersistenceController.shared.container.viewContext)
             comment.articleId = Int64(commentDTO.articleId)
+            comment.articleTitle = commentDTO.articleTitle
             comment.boardId = Int64(commentDTO.boardId)
-            comment.body = commentDTO.body
+            comment.boardTitle = commentDTO.boardTitle
+            comment.body = commentDTO.body.replacingOccurrences(of: "+", with: "%20")
             comment.created = Date()
             
             do {

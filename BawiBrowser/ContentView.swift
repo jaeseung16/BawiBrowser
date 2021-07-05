@@ -65,6 +65,10 @@ struct ContentView: View {
                                 .padding()
                             Text(comment.body?.removingPercentEncoding ?? "")
                                 .padding()
+                            Text(comment.boardTitle ?? "")
+                                .padding()
+                            Text(comment.articleTitle ?? "")
+                                .padding()
                         }
                     }
                 }
