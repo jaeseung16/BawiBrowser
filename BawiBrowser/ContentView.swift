@@ -12,24 +12,84 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Comment.created, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var comments: FetchedResults<Comment>
 
+    @EnvironmentObject var viewModel: BawiBrowserViewModel
+    
     var body: some View {
-        List {
-            ForEach(items) { item in
-                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+        HStack {
+            WebView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                .environmentObject(viewModel)
+                .frame(width: 1000, height: 1200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                .shadow(color: Color.gray, radius: 1.0)
+                //.border(Color.gray, width: 1.0)
+                .padding()
+            
+            VStack {
+                Text("didStartProvisionalNavigationURL: " + viewModel.didStartProvisionalNavigationURLString)
+                .padding()
+             
+                Text("didStartProvisionalNavigationTitle: " + viewModel.didStartProvisionalNavigationTitle)
+                .padding()
+                
+                Spacer()
+                
+                Text("Comment: " + viewModel.commentDTO.description)
+                .padding()
+                
+                Spacer()
+                
+                Text("didCommitURL: " + viewModel.didCommitURLString)
+                .padding()
+             
+                Text("didCommitTitle" + viewModel.didCommitTitle)
+                .padding()
+                
+                Spacer()
+                
+                Text("didFinishURL: " + viewModel.didFinishURLString)
+                .padding()
+             
+                Text("didFinishTitle: " + viewModel.didFinishTitle)
+                .padding()
+                
             }
-            .onDelete(perform: deleteItems)
+            
+            VStack {
+                List {
+                    ForEach(comments) { comment in
+                        HStack {
+                            Text(dateFormatter.string(from: comment.created!))
+                                .padding()
+                            Text(comment.body?.removingPercentEncoding ?? "")
+                                .padding()
+                        }
+                    }
+                }
+            }
         }
-        .toolbar {
-            Button(action: addItem) {
-                Label("Add Item", systemImage: "plus")
-            }
+        
+    }
+    
+    private func getHttpBody() -> String {
+        if let httpBodyString = String(data: viewModel.httpBody, encoding: .utf8) {
+            return httpBodyString
+        } else {
+            return String()
         }
     }
+    
+    private var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .long
+        dateFormatter.locale = Locale(identifier: "en_US")
+        return dateFormatter
+    }
 
+    /*
     private func addItem() {
         withAnimation {
             let newItem = Item(context: viewContext)
@@ -60,6 +120,7 @@ struct ContentView: View {
             }
         }
     }
+    */
 }
 
 private let itemFormatter: DateFormatter = {

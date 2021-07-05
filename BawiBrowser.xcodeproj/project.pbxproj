@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */; };
+		9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
+		9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */; };
 		90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617663268A781000871FB2 /* BawiBrowserApp.swift */; };
 		90617666268A781000871FB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617665268A781000871FB2 /* ContentView.swift */; };
 		90617668268A781200871FB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90617667268A781200871FB2 /* Assets.xcassets */; };
@@ -15,6 +18,7 @@
 		90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */; };
 		9061767C268A781300871FB2 /* BawiBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061767B268A781300871FB2 /* BawiBrowserTests.swift */; };
 		90617687268A781300871FB2 /* BawiBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617686268A781300871FB2 /* BawiBrowserUITests.swift */; };
+		90617696268A785C00871FB2 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617695268A785C00871FB2 /* WebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +39,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserViewModel.swift; sourceTree = "<group>"; };
+		9024005226928DF800F7FE6A /* BawiCommentDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentDTO.swift; sourceTree = "<group>"; };
+		9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentConstant.swift; sourceTree = "<group>"; };
 		90617660268A781000871FB2 /* BawiBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BawiBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90617663268A781000871FB2 /* BawiBrowserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserApp.swift; sourceTree = "<group>"; };
 		90617665268A781000871FB2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -50,6 +57,7 @@
 		90617682268A781300871FB2 /* BawiBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BawiBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		90617686268A781300871FB2 /* BawiBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUITests.swift; sourceTree = "<group>"; };
 		90617688268A781300871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90617695268A785C00871FB2 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +85,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		900B269E268BD76900C03837 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */,
+				9024005226928DF800F7FE6A /* BawiCommentDTO.swift */,
+				9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		90617657268A781000871FB2 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +118,8 @@
 		90617662268A781000871FB2 /* BawiBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				900B269E268BD76900C03837 /* Model */,
+				90617694268A784800871FB2 /* Views */,
 				90617663268A781000871FB2 /* BawiBrowserApp.swift */,
 				90617665268A781000871FB2 /* ContentView.swift */,
 				90617667268A781200871FB2 /* Assets.xcassets */,
@@ -136,6 +156,14 @@
 				90617688268A781300871FB2 /* Info.plist */,
 			);
 			path = BawiBrowserUITests;
+			sourceTree = "<group>";
+		};
+		90617694268A784800871FB2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				90617695268A785C00871FB2 /* WebView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,8 +296,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9061766D268A781200871FB2 /* Persistence.swift in Sources */,
+				90617696268A785C00871FB2 /* WebView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
+				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
+				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
+				900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */,
 				90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
