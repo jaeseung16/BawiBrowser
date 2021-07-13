@@ -44,6 +44,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
+    @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
+    
     override init() {
         super.init()
     }

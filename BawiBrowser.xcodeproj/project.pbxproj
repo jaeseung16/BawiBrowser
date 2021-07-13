@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */; };
 		9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
 		9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */; };
@@ -19,6 +20,8 @@
 		9061767C268A781300871FB2 /* BawiBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061767B268A781300871FB2 /* BawiBrowserTests.swift */; };
 		90617687268A781300871FB2 /* BawiBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617686268A781300871FB2 /* BawiBrowserUITests.swift */; };
 		90617696268A785C00871FB2 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617695268A785C00871FB2 /* WebView.swift */; };
+		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
+		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		900630FF2697B990006B6340 /* BawiArticleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiArticleDTO.swift; sourceTree = "<group>"; };
 		900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserViewModel.swift; sourceTree = "<group>"; };
 		9024005226928DF800F7FE6A /* BawiCommentDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentDTO.swift; sourceTree = "<group>"; };
 		9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentConstant.swift; sourceTree = "<group>"; };
@@ -58,6 +62,7 @@
 		90617686268A781300871FB2 /* BawiBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUITests.swift; sourceTree = "<group>"; };
 		90617688268A781300871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90617695268A785C00871FB2 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90FC22422698DB730095848C /* MultipartKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +97,8 @@
 				900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */,
 				9024005226928DF800F7FE6A /* BawiCommentDTO.swift */,
 				9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */,
+				900630FF2697B990006B6340 /* BawiArticleDTO.swift */,
+				90FC224326990CEF0095848C /* BawiWriteForm.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -182,6 +190,9 @@
 			dependencies = (
 			);
 			name = BawiBrowser;
+			packageProductDependencies = (
+				90FC22412698DB730095848C /* MultipartKit */,
+			);
 			productName = BawiBrowser;
 			productReference = 90617660268A781000871FB2 /* BawiBrowser.app */;
 			productType = "com.apple.product-type.application";
@@ -253,6 +264,9 @@
 				Base,
 			);
 			mainGroup = 90617657268A781000871FB2;
+			packageReferences = (
+				90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */,
+			);
 			productRefGroup = 90617661268A781000871FB2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -298,8 +312,10 @@
 				9061766D268A781200871FB2 /* Persistence.swift in Sources */,
 				90617696268A785C00871FB2 /* WebView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
+				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
+				90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */,
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
 				900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */,
 				90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */,
@@ -625,6 +641,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/multipart.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.2.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		90FC22412698DB730095848C /* MultipartKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */;
+			productName = MultipartKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */ = {
