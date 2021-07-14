@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WebKit
+import MultipartKit
 
 struct WebView: NSViewRepresentable {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
@@ -37,6 +38,8 @@ struct WebView: NSViewRepresentable {
         var boardTitle: String?
         var articleTitle: String?
         
+        private var url: URL?
+        
         init(_ parent: WebView) {
             self.parent = parent
         }
@@ -50,13 +53,18 @@ struct WebView: NSViewRepresentable {
             
             if (navigationAction.request.httpMethod == "POST") {
                 print("...")
+                print("url = \(navigationAction.request.url?.absoluteString)")
                 print("decidePolicyFor: navigationAction.request = \(navigationAction.request.description)")
                 print("decidePolicyFor: httpMethod = \(navigationAction.request.httpMethod)")
                 print("decidePolicyFor: httpBody = \(navigationAction.request.httpBody)")
-                
+                print("decidePolicyFor: httpBodyStream = \(navigationAction.request.httpBodyStream)")
+                print("decidePolicyFor: allHTTPHeaderFields = \(navigationAction.request.allHTTPHeaderFields)")
                 
                 // Comments?
                 if let url = navigationAction.request.url, let httpBody = navigationAction.request.httpBody {
+                    print("url = \(url)")
+                    print("httpBody = \(httpBody)")
+                    
                     if url.absoluteString.contains("comment.cgi") {
                         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
                         urlComponents?.query = String(data: httpBody, encoding: .utf8)
@@ -89,6 +97,20 @@ struct WebView: NSViewRepresentable {
                         print("\(self.boardTitle), \(self.articleTitle)")
                         
                         parent.viewModel.commentDTO = BawiCommentDTO(articleId: articleId, articleTitle: self.articleTitle ?? "", boardId: boardId, boardTitle: self.boardTitle ?? "", body: body)
+                    }
+                    
+                    print("\(url.absoluteString)")
+                    if url.absoluteString.contains("write.cgi") {
+                        if let boundary = navigationAction.request.allHTTPHeaderFields!["Content-Type"] {
+                            print("\(boundary)")
+                            let prefix = "multipart/form-data; boundary="
+                            if boundary.starts(with: prefix) {
+                                var boundaryCopy = boundary
+                                boundaryCopy.removeSubrange(Range(uncheckedBounds: (prefix.startIndex, prefix.endIndex)))
+                                print("boundary = \(boundaryCopy)")
+                                parent.viewModel.articleDTO = populate(from: httpBody, with: boundaryCopy)
+                            }
+                        }
                     }
                 }
                 
@@ -128,6 +150,62 @@ struct WebView: NSViewRepresentable {
             }
             
             decisionHandler(.allow, preferences)
+        }
+        
+        private func populate(from httpBody: Data, with boundary: String) -> BawiArticleDTO {
+            if let stringToParse = String(data: httpBody, encoding: .utf8) {
+                print("stringToParse = \(stringToParse)")
+                do {
+                    let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
+                    
+                    print("bawiWriteForm = \(bawiWriteForm)")
+                } catch {
+                    print("error: \(error).")
+                }
+                
+                /*
+                let boundaryPattern = "------(.+)--"
+                if let regularExpression = try? NSRegularExpression(pattern: boundaryPattern, options: []) {
+                    print("no of matches = \(regularExpression.numberOfMatches(in: stringToParse, options: [], range: NSRange(stringToParse.startIndex..., in: stringToParse)))")
+                    
+                    let match = regularExpression.firstMatch(in: stringToParse, options: [], range: NSRange(stringToParse.startIndex..., in: stringToParse))
+                    
+                    print("match = \(match)")
+                    
+                    var matches = [String]()
+                    
+                    if match != nil {
+                        let boundary = stringToParse[Range(match!.range(at: 1), in: stringToParse)!]
+                        print("boundary = \(boundary)")
+                        
+                        do {
+                            let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
+                            
+                            print("bawiWriteForm = \(bawiWriteForm)")
+                        } catch {
+                            print("error: \(error).")
+                        }
+                        
+                    }
+                    
+                 
+                }
+               */
+                /*
+                let pattern = ".+Content-Disposition: form-data; name=(.+)\r\n\r\n(.+)"
+                if let regularExpression = try? NSRegularExpression(pattern: pattern) {
+                    print("regularExpression = \(regularExpression)")
+                    let results = regularExpression.matches(in: stringToParse, options: [], range: NSRange(stringToParse.startIndex..., in: stringToParse))
+                    
+                    print("results = \(results)")
+                    results.map {
+                        print(String(stringToParse[Range($0.range, in: stringToParse)!]))
+                    }
+                }
+                */
+            }
+            
+            return BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
         }
         
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -200,7 +278,7 @@ struct WebView: NSViewRepresentable {
             alert.informativeText = "Please confirm"
             alert.alertStyle = .warning
             
-            let deleteButton = alert.addButton(withTitle: "Delete")
+            let deleteButton = alert.addButton(withTitle: "OK")
             let cancelButton = alert.addButton(withTitle: "Cancel")
             
             deleteButton.tag = NSApplication.ModalResponse.OK.rawValue
@@ -221,6 +299,7 @@ struct WebView: NSViewRepresentable {
             openPanel.begin { result in
                 if result == NSApplication.ModalResponse.OK {
                     if let url = openPanel.url {
+                        self.url = url
                         completionHandler([url])
                     }
                 } else if result == NSApplication.ModalResponse.cancel {
