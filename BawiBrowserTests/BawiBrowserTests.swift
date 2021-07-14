@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import BawiBrowser
+@testable import MultipartKit
 
 class BawiBrowserTests: XCTestCase {
 
@@ -18,9 +19,32 @@ class BawiBrowserTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
+    func testMultiPartFormWithImage() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let testBundle = Bundle(for: type(of: self))
+        
+        guard let ressourceURL = testBundle.url(forResource: "multipartFormWithImage", withExtension: nil) else {
+            // file does not exist
+            print("file does not exist")
+            return
+        }
+        
+        var bawiWriteForm: BawiWriteForm?
+        do {
+            let testData = try Data(contentsOf: ressourceURL)
+            let boundary = "----WebKitFormBoundaryYAleMZtX2PlNDTBQ"
+            bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](testData), boundary: boundary)
+        } catch {
+            print("Error while reading a file \(ressourceURL): \(error)")
+        }
+        
+        XCTAssertNotNil(bawiWriteForm)
+        XCTAssertEqual("1765", bawiWriteForm!.bid)
+        XCTAssertEqual("145", bawiWriteForm!.p)
+        XCTAssertEqual("0", bawiWriteForm!.img)
+        XCTAssertEqual("디테일", bawiWriteForm!.title)
+        
     }
 
     func testPerformanceExample() throws {
