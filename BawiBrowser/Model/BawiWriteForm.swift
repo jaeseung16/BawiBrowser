@@ -11,11 +11,12 @@ struct BawiWriteForm: Codable {
     var bid: String
     var p: String
     var aid: String
-    var img: Data
+    var img: String
     var title: String
     var body: String
     var attach_no: String
     var resize: String
     var poll: String
     var duration: String
+    var attach1: Data?
 }

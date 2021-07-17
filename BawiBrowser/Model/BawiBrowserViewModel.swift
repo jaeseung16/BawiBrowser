@@ -39,17 +39,38 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("While saving \(comment) occured an unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
     
-    @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
+    @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
+        didSet {
+            let article = Article(context: PersistenceController.shared.container.viewContext)
+            article.articleId = Int64(articleDTO.articleId)
+            article.articleTitle = articleDTO.articleTitle
+            article.boardId = Int64(articleDTO.boardId)
+            article.boardTitle = articleDTO.boardTitle
+            article.body = articleDTO.body
+            article.created = Date()
+            
+            do {
+                try saveContext()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                print("While saving \(article) occured an unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
     
     override init() {
         super.init()
     }
     
-    
+    private func saveContext() throws -> Void {
+        try PersistenceController.shared.container.viewContext.save()
+    }
     
 }
