@@ -12,21 +12,21 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Comment.created, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Comment.created, ascending: false)],
         animation: .default)
     private var comments: FetchedResults<Comment>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
+        animation: .default)
+    private var articles: FetchedResults<Article>
 
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     var body: some View {
         HStack {
-            WebView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
-                .environmentObject(viewModel)
-                .frame(width: 1000, height: 1200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                .shadow(color: Color.gray, radius: 1.0)
-                //.border(Color.gray, width: 1.0)
-                .padding()
             
+            /*
             VStack {
                 Text("didStartProvisionalNavigationURL: " + viewModel.didStartProvisionalNavigationURLString)
                 .padding()
@@ -56,23 +56,37 @@ struct ContentView: View {
                 .padding()
                 
             }
+            */
             
-            VStack {
-                List {
-                    ForEach(comments) { comment in
-                        HStack {
-                            Text(dateFormatter.string(from: comment.created!))
-                                .padding()
-                            Text(comment.body?.removingPercentEncoding ?? "")
-                                .padding()
-                            Text(comment.boardTitle ?? "")
-                                .padding()
-                            Text(comment.articleTitle ?? "")
-                                .padding()
-                        }
+            TabView {
+                WebView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                    .tabItem {
+                        Text("Bawi")
+                        
                     }
-                }
+                    .environmentObject(viewModel)
+                    .shadow(color: Color.gray, radius: 1.0)
+                    //.border(Color.gray, width: 1.0)
+                    .padding()
+                
+                
+                ArticleListView()
+                    .tabItem {
+                        Text("Articles")
+                    }
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+                
+                CommentListView()
+                    .tabItem {
+                        Text("Comments")
+                    }
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+                
             }
+            .frame(width: 1000, height: 1200, alignment: .center)
+            
         }
         
     }

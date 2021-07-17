@@ -20,6 +20,10 @@
 		9061767C268A781300871FB2 /* BawiBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061767B268A781300871FB2 /* BawiBrowserTests.swift */; };
 		90617687268A781300871FB2 /* BawiBrowserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617686268A781300871FB2 /* BawiBrowserUITests.swift */; };
 		90617696268A785C00871FB2 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617695268A785C00871FB2 /* WebView.swift */; };
+		906D6B5A269E636400967DEB /* multipartFormWithImage in Resources */ = {isa = PBXBuildFile; fileRef = 906D6B59269E636400967DEB /* multipartFormWithImage */; };
+		906F364426A23585002F0915 /* CommentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364326A23585002F0915 /* CommentListView.swift */; };
+		906F364626A2373F002F0915 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364526A2373F002F0915 /* BrowserView.swift */; };
+		906F364826A237E2002F0915 /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364726A237E2002F0915 /* ArticleListView.swift */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -62,6 +66,10 @@
 		90617686268A781300871FB2 /* BawiBrowserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUITests.swift; sourceTree = "<group>"; };
 		90617688268A781300871FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90617695268A785C00871FB2 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		906D6B59269E636400967DEB /* multipartFormWithImage */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = multipartFormWithImage; sourceTree = "<group>"; };
+		906F364326A23585002F0915 /* CommentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentListView.swift; sourceTree = "<group>"; };
+		906F364526A2373F002F0915 /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
+		906F364726A237E2002F0915 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -151,6 +159,7 @@
 		9061767A268A781300871FB2 /* BawiBrowserTests */ = {
 			isa = PBXGroup;
 			children = (
+				906D6B59269E636400967DEB /* multipartFormWithImage */,
 				9061767B268A781300871FB2 /* BawiBrowserTests.swift */,
 				9061767D268A781300871FB2 /* Info.plist */,
 			);
@@ -169,6 +178,9 @@
 		90617694268A784800871FB2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				906F364726A237E2002F0915 /* ArticleListView.swift */,
+				906F364526A2373F002F0915 /* BrowserView.swift */,
+				906F364326A23585002F0915 /* CommentListView.swift */,
 				90617695268A785C00871FB2 /* WebView.swift */,
 			);
 			path = Views;
@@ -292,6 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				906D6B5A269E636400967DEB /* multipartFormWithImage in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +324,7 @@
 			files = (
 				9061766D268A781200871FB2 /* Persistence.swift in Sources */,
 				90617696268A785C00871FB2 /* WebView.swift in Sources */,
+				906F364426A23585002F0915 /* CommentListView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
@@ -319,6 +333,8 @@
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
 				900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */,
 				90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */,
+				906F364826A237E2002F0915 /* ArticleListView.swift in Sources */,
+				906F364626A2373F002F0915 /* BrowserView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
