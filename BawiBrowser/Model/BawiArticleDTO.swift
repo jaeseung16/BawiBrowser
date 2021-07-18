@@ -13,6 +13,7 @@ struct BawiArticleDTO: CustomStringConvertible {
     var boardId: Int
     var boardTitle: String
     var body: String
+    var parentArticleId: Int?
     var attach1: Data?
     
     var description: String {

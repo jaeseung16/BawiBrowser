@@ -7,6 +7,7 @@
         <attribute name="boardTitle" optional="YES" attributeType="String"/>
         <attribute name="body" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="parentArticleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Comment" representedClassName="Comment" syncable="YES" codeGenerationType="class">
         <attribute name="articleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -20,8 +21,8 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <elements>
+        <element name="Article" positionX="-63" positionY="36" width="128" height="134"/>
         <element name="Comment" positionX="-63" positionY="-9" width="128" height="119"/>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
-        <element name="Article" positionX="-63" positionY="36" width="128" height="119"/>
     </elements>
 </model>
