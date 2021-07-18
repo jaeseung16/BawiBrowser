@@ -35,9 +35,15 @@ struct ArticleListView: View {
                 List {
                     ForEach(articles) { article in
                         HStack {
-                            Text(dateFormatter.string(from: article.created!))
-                                .frame(width: geometry.size.width * 0.16)
+                            VStack {
+                                Text(dateFormatter.string(from: article.created!))
                                 
+                                if article.lastupd != nil {
+                                    Text(dateFormatter.string(from: article.lastupd!))
+                                }
+                            }
+                            .frame(width: geometry.size.width * 0.16)
+                            
                             VStack {
                                 Text("\(article.boardId ?? 0)")
                                     .font(.headline)

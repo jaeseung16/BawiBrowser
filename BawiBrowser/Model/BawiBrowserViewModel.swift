@@ -53,6 +53,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 existingArticle.boardId = Int64(articleDTO.boardId)
                 existingArticle.boardTitle = articleDTO.boardTitle
                 existingArticle.body = articleDTO.body
+                existingArticle.lastupd = Date()
             } else {
                 let article = Article(context: PersistenceController.shared.container.viewContext)
                 article.articleId = Int64(articleDTO.articleId)
@@ -61,6 +62,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 article.boardTitle = articleDTO.boardTitle
                 article.body = articleDTO.body
                 article.created = Date()
+                article.lastupd = Date()
             }
             
             do {
