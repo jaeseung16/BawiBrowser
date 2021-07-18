@@ -9,6 +9,13 @@
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastupd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="parentArticleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Attachment" inverseName="article" inverseEntity="Attachment"/>
+    </entity>
+    <entity name="Attachment" representedClassName="Attachment" syncable="YES" codeGenerationType="class">
+        <attribute name="attachNo" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="content" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="attachments" inverseEntity="Article"/>
     </entity>
     <entity name="Comment" representedClassName="Comment" syncable="YES" codeGenerationType="class">
         <attribute name="articleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -22,8 +29,9 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-63" positionY="36" width="128" height="149"/>
+        <element name="Article" positionX="-63" positionY="36" width="128" height="164"/>
         <element name="Comment" positionX="-63" positionY="-9" width="128" height="119"/>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="Attachment" positionX="-63" positionY="72" width="128" height="89"/>
     </elements>
 </model>
