@@ -51,7 +51,9 @@ struct AttachmentListView: View {
                             
                             if let image = NSImage(data: attachment.content!) {
                                 Image(nsImage: image)
-                                .frame(width: geometry.size.width * 0.5)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geometry.size.width * 0.5)
                             }
                             
                                 

@@ -47,7 +47,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             
-            if let existingArticle = getArticle(boardId: articleDTO.boardId, articleId: articleDTO.articleId) {
+            if articleDTO.articleId > 0, let existingArticle = getArticle(boardId: articleDTO.boardId, articleId: articleDTO.articleId) {
                 existingArticle.articleId = Int64(articleDTO.articleId)
                 existingArticle.articleTitle = articleDTO.articleTitle
                 existingArticle.boardId = Int64(articleDTO.boardId)
@@ -63,6 +63,20 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 article.body = articleDTO.body
                 article.created = Date()
                 article.lastupd = Date()
+                
+                if let attachments = articleDTO.attachments, !attachments.isEmpty {
+                    for attachment in attachments {
+                        let attachmentEntity = Attachment(context: PersistenceController.shared.container.viewContext)
+
+                        attachmentEntity.article = article
+                        attachmentEntity.content = attachment
+                        attachmentEntity.created = Date()
+                        
+                    }
+                    print("attachments.count = \(attachments.count)")
+                }
+                
+                print("article = \(article)")
             }
             
             do {

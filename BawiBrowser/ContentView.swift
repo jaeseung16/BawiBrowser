@@ -84,6 +84,12 @@ struct ContentView: View {
                     .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
                 
+                AttachmentListView()
+                    .tabItem {
+                        Text("Attachments")
+                    }
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
             }
             .frame(width: 1000, height: 1200, alignment: .center)
             

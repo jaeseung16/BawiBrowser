@@ -148,121 +148,13 @@ struct WebView: NSViewRepresentable {
                                     }
                                     
                                     print("boardTitle = \(self.boardTitle)")
-                                    
-                                    // Check if it is already saved
-                                    
-                                    
                                 }
                             }
                         }
                     }
                 }
                 
-            /*
-                if let httpBody = navigationAction.request.httpBody {
-                    if let url = navigationAction.request.url, let httpBodyString = String(data: httpBody, encoding: .utf8) {
-                        
-                        print("decidePolicyFor: url = \(url)")
-                        print("decidePolicyFor: url = \(url.absoluteString)")
-                        print("decidePolicyFor: httpBodyString = \(httpBodyString)")
-                        
-                        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-                        urlComponents?.query = httpBodyString
-                        
-                        print("urlComponents: \(urlComponents)")
-                    
-                        if let queryItems = urlComponents?.queryItems {
-                            print("queryItems: \(urlComponents?.queryItems)")
-                            
-                            if let queryItem = queryItems.first(where: {queryItem in queryItem.name == "body" }), let value = queryItem.value {
-                                print(value.removingPercentEncoding)
-                                parent.viewModel.commentPosted = value.removingPercentEncoding ?? ""
-                            }
-                            
-                        }
-                        
-                    }
-                }
- */
-                
                 if let url = navigationAction.request.url, let httpBodyStream = navigationAction.request.httpBodyStream {
-                    /*
-                    print("webView.evaluateJavaScript")
-                    let tagName = "input"
-                    let itemName = "title"
-                    webView.evaluateJavaScript("document.getElementsByTagName('\(tagName)').namedItem('\(itemName)').value") { result, error in
-                        if error != nil {
-                            print("evaluateJavaScript \(itemName): error = \(error)")
-                        }
-                        
-                        if let htmlString = result as? String {
-                            print("evaluateJavaScript \(itemName): htmlString = \(htmlString)")
-                        } else {
-                            print("evaluateJavaScript \(itemName): result = \(result)")
-                        }
-                    }
-                    
-                    webView.evaluateJavaScript("document.getElementsByTagName('textarea').namedItem('body').value") { result, error in
-                        if error != nil {
-                            print("evaluateJavaScript: error = \(error)")
-                        }
-                        
-                        if let htmlString = result as? String {
-                            print("evaluateJavaScript body: htmlString = \(htmlString)")
-                        } else {
-                            print("evaluateJavaScript body: result = \(result)")
-                        }
-                    }
-                    
-                    webView.evaluateJavaScript("document.getElementsByTagName('input').namedItem('attach1').value") { result, error in
-                        if error != nil {
-                            print("evaluateJavaScript attach1: error = \(error)")
-                        }
-                        
-                        if let htmlString = result as? String {
-                            print("evaluateJavaScript attach1: htmlString = \(htmlString)")
-                        } else {
-                            print("evaluateJavaScript attach1: result = \(result)")
-                        }
-                        
-                        if let url = self.url {
-                            do {
-                                let imageData = try Data(contentsOf: url)
-                                let characters = imageData.map { Character(UnicodeScalar($0)) }
-                                print("characters = \(String(Array(characters)))")
-                            } catch {
-                                print("Cannot open a file: \(url)")
-                            }
-                        }
-                    }
-                    */
-                    
-                    httpBodyStream.open()
-
-                    var data = Data()
-                    let bufferSize = 1024
-                    let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
-                    while httpBodyStream.hasBytesAvailable {
-                        let read = httpBodyStream.read(buffer, maxLength: bufferSize)
-                        if (read == 0) {
-                            break
-                        }
-                        data.append(buffer, count: read)
-                    }
-                    buffer.deallocate()
-
-                    httpBodyStream.close()
-                    
-                    /*
-                    let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("multipartFormWithImage")
-                    
-                    do {
-                        print("Saving data to path=\(path)")
-                        try data.write(to: path)
-                    } catch {
-                        print("Failed to save data to path=\(path): \(error)")
-                    }
-                    */
                     
                     if url.absoluteString.contains("write.cgi") {
                         if let boundary = navigationAction.request.allHTTPHeaderFields!["Content-Type"] {
@@ -272,19 +164,7 @@ struct WebView: NSViewRepresentable {
                                 boundaryCopy.removeSubrange(Range(uncheckedBounds: (prefix.startIndex, prefix.endIndex)))
                                 print("boundary = \(boundaryCopy)")
                                 
-                                do {
-                                    let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundaryCopy)
-                                    print("bawiWriteForm = \(bawiWriteForm)")
-                                    
-                                    parent.viewModel.articleDTO = BawiArticleDTO(articleId: Int(bawiWriteForm.aid) ?? -1, articleTitle: bawiWriteForm.title, boardId: Int(bawiWriteForm.bid) ?? -1, boardTitle: self.boardTitle ?? "", body: bawiWriteForm.body, attach1: bawiWriteForm.attach1)
-                                    
-                                    print("boardTitle = \(self.boardTitle)")
-                                        
-                                } catch {
-                                    print("error: \(error).")
-                                }
-                                
-                                //parent.viewModel.articleDTO = populate(from: httpBody, with: boundaryCopy)
+                                self.articleDTO = populate(from: httpBodyStream, with: boundaryCopy)
                             }
                         }
                     }
@@ -334,6 +214,76 @@ struct WebView: NSViewRepresentable {
                 }
                 
                 print("boardTitle = \(self.boardTitle)")
+            }
+            
+            return bawiArticleDTO
+        }
+        
+        private func populate(from httpBodyStream: InputStream, with boundary: String) -> BawiArticleDTO {
+            var bawiArticleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
+            
+            httpBodyStream.open()
+
+            var data = Data()
+            let bufferSize = 1024
+            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+            while httpBodyStream.hasBytesAvailable {
+                let read = httpBodyStream.read(buffer, maxLength: bufferSize)
+                if (read == 0) {
+                    break
+                }
+                data.append(buffer, count: read)
+            }
+            buffer.deallocate()
+
+            httpBodyStream.close()
+            
+            do {
+                let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundary)
+                print("bawiWriteForm = \(bawiWriteForm)")
+                
+                var attachements = [Data]()
+                if bawiWriteForm.attach1 != nil {
+                    attachements.append(bawiWriteForm.attach1!)
+                }
+                if bawiWriteForm.attach2 != nil {
+                    attachements.append(bawiWriteForm.attach2!)
+                }
+                if bawiWriteForm.attach3 != nil {
+                    attachements.append(bawiWriteForm.attach3!)
+                }
+                if bawiWriteForm.attach4 != nil {
+                    attachements.append(bawiWriteForm.attach4!)
+                }
+                if bawiWriteForm.attach5 != nil {
+                    attachements.append(bawiWriteForm.attach5!)
+                }
+                if bawiWriteForm.attach6 != nil {
+                    attachements.append(bawiWriteForm.attach6!)
+                }
+                if bawiWriteForm.attach7 != nil {
+                    attachements.append(bawiWriteForm.attach7!)
+                }
+                if bawiWriteForm.attach8 != nil {
+                    attachements.append(bawiWriteForm.attach8!)
+                }
+                if bawiWriteForm.attach9 != nil {
+                    attachements.append(bawiWriteForm.attach9!)
+                }
+                if bawiWriteForm.attach10 != nil {
+                    attachements.append(bawiWriteForm.attach10!)
+                }
+                
+                bawiArticleDTO = BawiArticleDTO(articleId: -1,
+                                                             articleTitle: bawiWriteForm.title,
+                                                             boardId: Int(bawiWriteForm.bid) ?? -1,
+                                                             boardTitle: self.boardTitle ?? "",
+                                                             body: bawiWriteForm.body,
+                                                             parentArticleId: Int(bawiWriteForm.aid) ?? -1,
+                                                             attachments: attachements)
+                    
+            } catch {
+                print("error: \(error).")
             }
             
             return bawiArticleDTO

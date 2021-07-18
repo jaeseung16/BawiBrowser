@@ -19,4 +19,13 @@ struct BawiWriteForm: Codable {
     var poll: String
     var duration: String
     var attach1: Data?
+    var attach2: Data?
+    var attach3: Data?
+    var attach4: Data?
+    var attach5: Data?
+    var attach6: Data?
+    var attach7: Data?
+    var attach8: Data?
+    var attach9: Data?
+    var attach10: Data?
 }

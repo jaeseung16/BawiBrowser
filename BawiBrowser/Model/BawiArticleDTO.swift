@@ -14,7 +14,7 @@ struct BawiArticleDTO: CustomStringConvertible {
     var boardTitle: String
     var body: String
     var parentArticleId: Int?
-    var attach1: Data?
+    var attachments: [Data]?
     
     var description: String {
         return "boardTitle: \(boardTitle), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding))"
