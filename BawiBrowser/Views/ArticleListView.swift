@@ -39,10 +39,10 @@ struct ArticleListView: View {
                                 .frame(width: geometry.size.width * 0.16)
                                 
                             VStack {
-                                Text(article.boardTitle ?? "")
+                                Text("\(article.boardId ?? 0)")
                                     .font(.headline)
                                 
-                                Text(article.articleTitle ?? "")
+                                Text("\(article.articleId ?? 0)")
                                     .font(.subheadline)
                             }
                             .frame(width: geometry.size.width * 0.3)

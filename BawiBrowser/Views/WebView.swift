@@ -37,6 +37,7 @@ struct WebView: NSViewRepresentable {
         
         var boardTitle: String?
         var articleTitle: String?
+        var articleDTO: BawiArticleDTO?
         
         private var url: URL?
         
@@ -108,7 +109,50 @@ struct WebView: NSViewRepresentable {
                                 var boundaryCopy = boundary
                                 boundaryCopy.removeSubrange(Range(uncheckedBounds: (prefix.startIndex, prefix.endIndex)))
                                 print("boundary = \(boundaryCopy)")
-                                parent.viewModel.articleDTO = populate(from: httpBody, with: boundaryCopy)
+                                self.articleDTO = populate(from: httpBody, with: boundaryCopy)
+                            }
+                        }
+                    }
+                    
+                    if url.absoluteString.contains("edit.cgi") {
+                        if let boundary = navigationAction.request.allHTTPHeaderFields!["Content-Type"] {
+                            print("\(boundary)")
+                            let prefix = "multipart/form-data; boundary="
+                            if boundary.starts(with: prefix) {
+                                var boundaryCopy = boundary
+                                boundaryCopy.removeSubrange(Range(uncheckedBounds: (prefix.startIndex, prefix.endIndex)))
+                                print("boundary = \(boundaryCopy)")
+                                // parent.viewModel.articleDTO = populate(from: httpBody, with: boundaryCopy)
+                                
+                                var bawiArticleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
+                                
+                                if let stringToParse = String(data: httpBody, encoding: .utf8) {
+                                    print("stringToParse = \(stringToParse)")
+                                    var bawiWriteForm: BawiWriteForm?
+                                    do {
+                                        bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: boundaryCopy)
+                                    } catch {
+                                        print("error: \(error).")
+                                    }
+                                    
+                                    print("bawiWriteForm = \(bawiWriteForm)")
+                                    
+                                    if let bawiWriteForm = bawiWriteForm {
+                                        bawiArticleDTO.articleId = Int(bawiWriteForm.aid) ?? -1
+                                        bawiArticleDTO.articleTitle = bawiWriteForm.title
+                                        bawiArticleDTO.boardId = Int(bawiWriteForm.bid) ?? -1
+                                        bawiArticleDTO.boardTitle = self.boardTitle ?? ""
+                                        bawiArticleDTO.body = bawiWriteForm.body
+                                        
+                                        parent.viewModel.articleDTO = bawiArticleDTO
+                                    }
+                                    
+                                    print("boardTitle = \(self.boardTitle)")
+                                    
+                                    // Check if it is already saved
+                                    
+                                    
+                                }
                             }
                         }
                     }
@@ -282,7 +326,7 @@ struct WebView: NSViewRepresentable {
                 print("bawiWriteForm = \(bawiWriteForm)")
                 
                 if let bawiWriteForm = bawiWriteForm {
-                    bawiArticleDTO.articleId = Int(bawiWriteForm.aid) ?? -1
+                    bawiArticleDTO.parentArticleId = Int(bawiWriteForm.aid) ?? -1
                     bawiArticleDTO.articleTitle = bawiWriteForm.title
                     bawiArticleDTO.boardId = Int(bawiWriteForm.bid) ?? -1
                     bawiArticleDTO.boardTitle = self.boardTitle ?? ""
@@ -316,6 +360,31 @@ struct WebView: NSViewRepresentable {
                 //print("parent.viewModel.httpCookies = \(self.parent.viewModel.httpCookies)")
             })
             */
+            print("url = \(webView.url)")
+            
+            if articleDTO != nil {
+                if let url = webView.url {
+                    var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                    print("urlComponents = \(urlComponents)")
+                    
+                    if let queryItems = urlComponents?.queryItems {
+                        print("queryItems = \(queryItems)")
+                        for queryItem in queryItems {
+                            switch queryItem.name {
+                            case BawiCommentConstant.aid.rawValue:
+                                if let value = queryItem.value, let id = Int(value) {
+                                    articleDTO!.articleId = id
+                                }
+                            default:
+                                continue
+                            }
+                        }
+                    }
+                }
+                
+                parent.viewModel.articleDTO = articleDTO!
+                articleDTO = nil
+            }
             
             webView.evaluateJavaScript("document.getElementsByTagName('h1')[0].innerText", completionHandler: { (value: Any!, error: Error!) -> Void in
                 if error != nil {
