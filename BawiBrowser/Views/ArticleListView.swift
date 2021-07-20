@@ -45,10 +45,10 @@ struct ArticleListView: View {
                             .frame(width: geometry.size.width * 0.16)
                             
                             VStack {
-                                Text("\(article.boardId ?? 0)")
+                                Text("\(article.boardTitle ?? "")")
                                     .font(.headline)
                                 
-                                Text("\(article.articleId ?? 0)")
+                                Text("\(article.articleTitle ?? "")")
                                     .font(.subheadline)
                             }
                             .frame(width: geometry.size.width * 0.3)
@@ -56,7 +56,7 @@ struct ArticleListView: View {
                             Text(article.body?.removingPercentEncoding ?? "")
                                 .font(.body)
                                 .multilineTextAlignment(.leading)
-                                .frame(width: geometry.size.width * 0.5)
+                                .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         }
                     }
                 }

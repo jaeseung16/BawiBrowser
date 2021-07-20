@@ -48,7 +48,7 @@ struct CommentListView: View {
                             Text(comment.body?.removingPercentEncoding ?? "")
                                 .font(.body)
                                 .multilineTextAlignment(.leading)
-                                .frame(width: geometry.size.width * 0.5)
+                                .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         }
                     }
                 }
