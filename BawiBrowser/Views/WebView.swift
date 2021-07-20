@@ -466,7 +466,6 @@ struct WebView: NSViewRepresentable {
 
                 if let result = value as? String {
                     print("didFinish: body attach = \(result)")
-                    self.articleTitle = result
                 }
             })
             
