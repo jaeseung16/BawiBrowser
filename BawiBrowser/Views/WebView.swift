@@ -168,7 +168,88 @@ struct WebView: NSViewRepresentable {
                             }
                         }
                     }
-                
+                    
+                    if url.absoluteString.contains("edit.cgi") {
+                        if let boundary = navigationAction.request.allHTTPHeaderFields!["Content-Type"] {
+                            let prefix = "multipart/form-data; boundary="
+                            if boundary.starts(with: prefix) {
+                                var boundaryCopy = boundary
+                                boundaryCopy.removeSubrange(Range(uncheckedBounds: (prefix.startIndex, prefix.endIndex)))
+                                print("boundary = \(boundaryCopy)")
+                                
+                                //self.articleDTO = populate(from: httpBodyStream, with: boundaryCopy)
+                                
+                                var bawiArticleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "")
+                                
+                                httpBodyStream.open()
+
+                                var data = Data()
+                                let bufferSize = 1024
+                                let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+                                while httpBodyStream.hasBytesAvailable {
+                                    let read = httpBodyStream.read(buffer, maxLength: bufferSize)
+                                    if (read == 0) {
+                                        break
+                                    }
+                                    data.append(buffer, count: read)
+                                }
+                                buffer.deallocate()
+
+                                httpBodyStream.close()
+                                
+                                var bawiWriteForm: BawiWriteForm?
+                                do {
+                                    bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundaryCopy)
+                                    print("bawiWriteForm = \(bawiWriteForm)")
+                                } catch {
+                                    print("error: \(error).")
+                                }
+                                
+                                if let bawiWriteForm = bawiWriteForm {
+                                    var attachements = [Data]()
+                                    if bawiWriteForm.attach1 != nil {
+                                        attachements.append(bawiWriteForm.attach1!)
+                                    }
+                                    if bawiWriteForm.attach2 != nil {
+                                        attachements.append(bawiWriteForm.attach2!)
+                                    }
+                                    if bawiWriteForm.attach3 != nil {
+                                        attachements.append(bawiWriteForm.attach3!)
+                                    }
+                                    if bawiWriteForm.attach4 != nil {
+                                        attachements.append(bawiWriteForm.attach4!)
+                                    }
+                                    if bawiWriteForm.attach5 != nil {
+                                        attachements.append(bawiWriteForm.attach5!)
+                                    }
+                                    if bawiWriteForm.attach6 != nil {
+                                        attachements.append(bawiWriteForm.attach6!)
+                                    }
+                                    if bawiWriteForm.attach7 != nil {
+                                        attachements.append(bawiWriteForm.attach7!)
+                                    }
+                                    if bawiWriteForm.attach8 != nil {
+                                        attachements.append(bawiWriteForm.attach8!)
+                                    }
+                                    if bawiWriteForm.attach9 != nil {
+                                        attachements.append(bawiWriteForm.attach9!)
+                                    }
+                                    if bawiWriteForm.attach10 != nil {
+                                        attachements.append(bawiWriteForm.attach10!)
+                                    }
+                                    
+                                    bawiArticleDTO.articleId = Int(bawiWriteForm.aid) ?? -1
+                                    bawiArticleDTO.articleTitle = bawiWriteForm.title
+                                    bawiArticleDTO.boardId = Int(bawiWriteForm.bid) ?? -1
+                                    bawiArticleDTO.boardTitle = self.boardTitle ?? ""
+                                    bawiArticleDTO.body = bawiWriteForm.body
+                                    bawiArticleDTO.attachments = attachements
+                                    
+                                    parent.viewModel.articleDTO = bawiArticleDTO
+                                }
+                            }
+                        }
+                    }
                     
                     //var nsString: NSString?
                     //let usedLossyConversion = UnsafeMutablePointer<ObjCBool>.allocate(capacity: 1)
@@ -360,12 +441,48 @@ struct WebView: NSViewRepresentable {
                 }
             })
             
+            webView.evaluateJavaScript("document.getElementsByClassName('body attach')[0].innerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
+                if error != nil {
+                    print("didFinish: \(String(describing: error))")
+                    return
+                }
+
+                if let result = value as? String {
+                    print("didFinish: body attach = \(result)")
+                    self.articleTitle = result
+                }
+            })
+            
         }
         
         func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
             
             print("createWebViewWith: \(navigationAction.request.url)")
             print("createWebViewWith: \(windowFeatures)")
+            print("self: \(self)")
+            
+            /*
+            let newWebView = WKWebView(frame: CGRect.zero, configuration: configuration)
+            newWebView.load(navigationAction.request)
+            newWebView.uiDelegate = self
+            newWebView.navigationDelegate = self
+            
+            self.webViewList.append(newWebView)
+            
+            return newWebView
+            */
+            webView.load(navigationAction.request)
+            
+            //if let url = navigationAction.request.url {
+            //    print("createWebViewWith: \(url)")
+                            
+                //let request = URLRequest(url: url)
+                //let newWebView = WKWebView(frame: CGRect.zero, configuration: configuration)
+                //newWebView.load(request)
+                //webView.uiDelegate = context.coordinator
+                //webView.navigationDelegate = context.coordinator
+                //return newWebView
+            //}
             
             return nil
         }
@@ -375,9 +492,7 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-            print("runJavaScriptAlertPanelWithMessage: \(message)")
-            
-            print("runJavaScriptAlertPanelWithMessage: \(frame.request)")
+            print("runJavaScriptConfirmPanelWithMessage: \(message)")
             
             let alert = NSAlert()
             alert.messageText = message
@@ -400,6 +515,7 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
+            print("runOpenPanelWith: \(parameters)")
             let openPanel = NSOpenPanel()
             openPanel.canChooseFiles = true
             openPanel.begin { result in
