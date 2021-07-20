@@ -25,7 +25,24 @@ struct WebView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
+        print("updateNSView")
+        print("viewModel.goMain = \(viewModel.goMain)")
         
+        if viewModel.goMain {
+            viewModel.goMain.toggle()
+            let request = URLRequest(url: URL(string: "https://www.bawi.org/main/news.cgi")!)
+            nsView.load(request)
+        }
+        
+        if viewModel.navigateBack {
+            viewModel.navigateBack.toggle()
+            nsView.goBack()
+        }
+        
+        if viewModel.navigateForward {
+            viewModel.navigateForward.toggle()
+            nsView.goForward()
+        }
     }
     
     func makeCoordinator() -> Coordinator {

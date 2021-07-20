@@ -59,7 +59,7 @@ struct ContentView: View {
             */
             
             TabView {
-                WebView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
                     .tabItem {
                         Text("Bawi")
                         

@@ -23,6 +23,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var didFinishURLString = String()
     @Published var didFinishTitle = String()
     
+    @Published var navigateBack = false
+    @Published var navigateForward = false
+    @Published var goMain = false
+    
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             let comment = Comment(context: PersistenceController.shared.container.viewContext)
