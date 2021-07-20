@@ -17,6 +17,6 @@ struct BawiArticleDTO: CustomStringConvertible {
     var attachments: [Data]?
     
     var description: String {
-        return "boardTitle: \(boardTitle), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding))"
+        return "BawiArticleDTO[boardTitle: \(boardTitle), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding))]"
     }
 }
