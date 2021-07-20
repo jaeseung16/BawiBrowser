@@ -27,6 +27,25 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var navigateForward = false
     @Published var goMain = false
     
+    @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
+        didSet {
+            let note = Note(context: PersistenceController.shared.container.viewContext)
+            note.action = noteDTO.action
+            note.to = noteDTO.to
+            note.msg = noteDTO.msg
+            note.created = Date()
+            
+            do {
+                try PersistenceController.shared.container.viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                print("While saving \(note) occured an unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+    
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             let comment = Comment(context: PersistenceController.shared.container.viewContext)

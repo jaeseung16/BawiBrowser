@@ -84,6 +84,13 @@ struct ContentView: View {
                     .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
                 
+                NoteListView()
+                    .tabItem {
+                        Text("Notes")
+                    }
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+                
                 AttachmentListView()
                     .tabItem {
                         Text("Attachments")

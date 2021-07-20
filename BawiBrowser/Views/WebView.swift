@@ -83,6 +83,40 @@ struct WebView: NSViewRepresentable {
                     print("url = \(url)")
                     print("httpBody = \(httpBody)")
                     
+                    if url.absoluteString.contains("note.cgi") {
+                        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                        urlComponents?.query = String(data: httpBody, encoding: .utf8)
+                        
+                        var action: String?
+                        var to: String?
+                        var msg: String?
+                        if let queryItems = urlComponents?.queryItems {
+                            for queryItem in queryItems {
+                                switch queryItem.name {
+                                case BawiNoteConstant.action.rawValue:
+                                    if let value = queryItem.value {
+                                        action = value
+                                    }
+                                case BawiNoteConstant.to.rawValue:
+                                    if let value = queryItem.value {
+                                        to = value
+                                    }
+                                case BawiNoteConstant.msg.rawValue:
+                                    if let value = queryItem.value {
+                                        msg = value
+                                    }
+                                default:
+                                    continue
+                                }
+                            }
+                        }
+                        
+                        let noteDTO = BawiNoteDTO(action: action ?? "", to: to ?? "", msg: msg ?? "")
+                        parent.viewModel.noteDTO = noteDTO
+                        print("noteDTO = \(noteDTO)")
+                     
+                    }
+                    
                     if url.absoluteString.contains("comment.cgi") {
                         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
                         urlComponents?.query = String(data: httpBody, encoding: .utf8)

@@ -25,13 +25,16 @@
         <attribute name="body" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
+        <attribute name="action" optional="YES" attributeType="String"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="msg" optional="YES" attributeType="String"/>
+        <attribute name="to" optional="YES" attributeType="String"/>
     </entity>
     <elements>
         <element name="Article" positionX="-63" positionY="36" width="128" height="164"/>
-        <element name="Comment" positionX="-63" positionY="-9" width="128" height="119"/>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
         <element name="Attachment" positionX="-63" positionY="72" width="128" height="89"/>
+        <element name="Comment" positionX="-63" positionY="-9" width="128" height="119"/>
+        <element name="Note" positionX="-63" positionY="-18" width="128" height="89"/>
     </elements>
 </model>
