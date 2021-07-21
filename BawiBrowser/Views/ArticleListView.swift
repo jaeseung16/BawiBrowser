@@ -21,48 +21,36 @@ struct ArticleListView: View {
         GeometryReader { geometry in
             VStack {
                 HStack {
-                    Text("Date")
+                    Text("Article")
                         .font(.headline)
-                        .frame(width: geometry.size.width * 0.16)
-                    Text("Board / Article")
+                        .frame(width: geometry.size.width * 0.25, alignment: .center)
+                    
+                    Text("Details")
                         .font(.headline)
-                        .frame(width: geometry.size.width * 0.3)
-                    Text("Comment")
-                        .font(.headline)
-                        .frame(width: geometry.size.width * 0.5)
+                        .frame(width: geometry.size.width * 0.75, alignment: .center)
                 }
                 
-                List {
-                    ForEach(articles) { article in
-                        HStack {
-                            VStack {
-                                Text(dateFormatter.string(from: article.created!))
-                                
-                                if article.lastupd != nil {
-                                    Text(dateFormatter.string(from: article.lastupd!))
+                NavigationView {
+                    List {
+                        ForEach(articles) { article in
+                            NavigationLink(destination: ArticleDetailView(article: article)) {
+                                VStack {
+                                    Text("\(article.articleTitle ?? "")")
+                                        .font(.body)
+                                        .frame(alignment: .center)
+                                    
+                                    Text(dateFormatter.string(from: article.created!))
+                                        .font(.caption)
+                                        .frame(alignment: .center)
                                 }
                             }
-                            .frame(width: geometry.size.width * 0.16)
-                            
-                            VStack {
-                                Text("\(article.boardTitle ?? "")")
-                                    .font(.headline)
-                                
-                                Text("\(article.articleTitle ?? "")")
-                                    .font(.subheadline)
-                            }
-                            .frame(width: geometry.size.width * 0.3)
-                            
-                            Text(article.body?.removingPercentEncoding ?? "")
-                                .font(.body)
-                                .multilineTextAlignment(.leading)
-                                .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         }
                     }
+                    .frame(width: geometry.size.width * 0.25)
                 }
+                
             }
         }
-        
     }
     
     private var dateFormatter: DateFormatter {

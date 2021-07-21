@@ -28,6 +28,7 @@
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
+		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -78,6 +79,7 @@
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
+		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -188,6 +190,7 @@
 		90617694268A784800871FB2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
 				906F364726A237E2002F0915 /* ArticleListView.swift */,
 				906F364526A2373F002F0915 /* BrowserView.swift */,
 				906F364326A23585002F0915 /* CommentListView.swift */,
@@ -342,6 +345,7 @@
 				90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
+				90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */,
 				90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
 				90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */,
