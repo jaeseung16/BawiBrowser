@@ -18,5 +18,15 @@ struct BawiBrowserApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(bawiBrowserViewModel)
         }
+        .commands {
+            CommandGroup(after: .pasteboard) {
+                Button(action: {
+                        NSApp.orderFrontCharacterPalette(nil)
+                }, label: {
+                    Text("Emoji & Symbols")
+                })
+                .keyboardShortcut(" ", modifiers: [.command, .control])
+            }
+        }
     }
 }
