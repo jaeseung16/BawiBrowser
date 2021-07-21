@@ -69,7 +69,6 @@ struct ContentView: View {
                     //.border(Color.gray, width: 1.0)
                     .padding()
                 
-                
                 ArticleListView()
                     .tabItem {
                         Text("Articles")
@@ -91,12 +90,6 @@ struct ContentView: View {
                     .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
                 
-                AttachmentListView()
-                    .tabItem {
-                        Text("Attachments")
-                    }
-                    .environment(\.managedObjectContext, viewContext)
-                    .environmentObject(viewModel)
             }
             .frame(width: 1000, height: 1200, alignment: .center)
             
