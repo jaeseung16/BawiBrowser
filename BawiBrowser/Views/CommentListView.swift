@@ -51,6 +51,18 @@ struct CommentListView: View {
                                 .frame(width: geometry.size.width * 0.5, alignment: .leading)
                         }
                     }
+                    .onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            let comment = comments[index]
+                            viewContext.delete(comment)
+                        }
+                        
+                        do {
+                            try viewContext.save()
+                        } catch {
+                            print(error)
+                        }
+                    })
                 }
                 .listStyle(InsetListStyle())
             }

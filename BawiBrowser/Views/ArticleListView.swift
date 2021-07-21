@@ -45,6 +45,18 @@ struct ArticleListView: View {
                                 }
                             }
                         }
+                        .onDelete(perform: { indexSet in
+                            for index in indexSet {
+                                let article = articles[index]
+                                viewContext.delete(article)
+                            }
+                            
+                            do {
+                                try viewContext.save()
+                            } catch {
+                                print(error)
+                            }
+                        })
                     }
                     .frame(width: geometry.size.width * 0.25)
                 }
