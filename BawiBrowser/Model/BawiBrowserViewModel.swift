@@ -77,6 +77,17 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 existingArticle.boardTitle = articleDTO.boardTitle
                 existingArticle.body = articleDTO.body
                 existingArticle.lastupd = Date()
+                
+                if let attachments = articleDTO.attachments, !attachments.isEmpty {
+                    for attachment in attachments {
+                        let attachmentEntity = Attachment(context: PersistenceController.shared.container.viewContext)
+
+                        attachmentEntity.article = existingArticle
+                        attachmentEntity.content = attachment
+                        attachmentEntity.created = Date()
+                    }
+                }
+                
             } else {
                 let article = Article(context: PersistenceController.shared.container.viewContext)
                 article.articleId = Int64(articleDTO.articleId)
