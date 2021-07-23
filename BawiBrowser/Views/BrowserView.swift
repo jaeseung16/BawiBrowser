@@ -17,30 +17,33 @@ struct BrowserView: View {
             HStack {
                 Button(action: {
                     viewModel.navigateBack = true
-                },
-                       label: {
-                    Text("Back")
+                }, label: {
+                    Image(systemName: "chevron.backward")
                 })
+                
+                Spacer()
                 
                 Button(action: {
                     viewModel.goMain = true
                 }, label: {
-                    Text("Main")
+                    Image(systemName: "house")
                 })
+                
+                Spacer()
                 
                 Button(action: {
                     viewModel.navigateForward = true
                 }, label: {
-                    Text("Forward")
+                    Image(systemName: "chevron.forward")
                 })
             }
             
             WebView(url: url)
                 .environmentObject(viewModel)
                 .shadow(color: Color.gray, radius: 1.0)
-                //.border(Color.gray, width: 1.0)
-                .padding()
+                
         }
+        .padding()
     }
 }
 
