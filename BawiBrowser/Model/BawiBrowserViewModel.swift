@@ -23,9 +23,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var didFinishURLString = String()
     @Published var didFinishTitle = String()
     
-    @Published var navigateBack = false
-    @Published var navigateForward = false
-    @Published var goMain = false
+    @Published var navigation = BawiBrowserNavigation.none
     
     @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
         didSet {

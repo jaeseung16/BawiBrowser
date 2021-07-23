@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */; };
+		9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */; };
 		9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
 		9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */; };
 		90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90492BBE26A4A567005F337C /* AttachmentListView.swift */; };
@@ -53,6 +54,7 @@
 /* Begin PBXFileReference section */
 		900630FF2697B990006B6340 /* BawiArticleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiArticleDTO.swift; sourceTree = "<group>"; };
 		900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserViewModel.swift; sourceTree = "<group>"; };
+		9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrwoserNavigation.swift; sourceTree = "<group>"; };
 		9024005226928DF800F7FE6A /* BawiCommentDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentDTO.swift; sourceTree = "<group>"; };
 		9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCommentConstant.swift; sourceTree = "<group>"; };
 		90492BBE26A4A567005F337C /* AttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentListView.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				90FC224326990CEF0095848C /* BawiWriteForm.swift */,
 				90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */,
 				90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */,
+				9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
+				9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */,
 				90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */,
 				90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,

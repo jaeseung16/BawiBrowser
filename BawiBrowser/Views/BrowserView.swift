@@ -16,7 +16,7 @@ struct BrowserView: View {
         VStack {
             HStack {
                 Button(action: {
-                    viewModel.navigateBack = true
+                    viewModel.navigation = .back
                 }, label: {
                     Image(systemName: "chevron.backward")
                 })
@@ -24,7 +24,7 @@ struct BrowserView: View {
                 Spacer()
                 
                 Button(action: {
-                    viewModel.goMain = true
+                    viewModel.navigation = .home
                 }, label: {
                     Image(systemName: "house")
                 })
@@ -32,7 +32,7 @@ struct BrowserView: View {
                 Spacer()
                 
                 Button(action: {
-                    viewModel.navigateForward = true
+                    viewModel.navigation = .forward
                 }, label: {
                     Image(systemName: "chevron.forward")
                 })
