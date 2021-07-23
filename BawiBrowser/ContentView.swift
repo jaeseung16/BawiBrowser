@@ -24,76 +24,36 @@ struct ContentView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     var body: some View {
-        HStack {
+        TabView {
+            BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                .tabItem {
+                    Text("Bawi")
+                }
+                .environmentObject(viewModel)
             
-            /*
-            VStack {
-                Text("didStartProvisionalNavigationURL: " + viewModel.didStartProvisionalNavigationURLString)
-                .padding()
-             
-                Text("didStartProvisionalNavigationTitle: " + viewModel.didStartProvisionalNavigationTitle)
-                .padding()
-                
-                Spacer()
-                
-                Text("Comment: " + viewModel.commentDTO.description)
-                .padding()
-                
-                Spacer()
-                
-                Text("didCommitURL: " + viewModel.didCommitURLString)
-                .padding()
-             
-                Text("didCommitTitle" + viewModel.didCommitTitle)
-                .padding()
-                
-                Spacer()
-                
-                Text("didFinishURL: " + viewModel.didFinishURLString)
-                .padding()
-             
-                Text("didFinishTitle: " + viewModel.didFinishTitle)
-                .padding()
-                
-            }
-            */
+            ArticleListView()
+                .tabItem {
+                    Text("Articles")
+                }
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
             
-            TabView {
-                BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
-                    .tabItem {
-                        Text("Bawi")
-                        
-                    }
-                    .environmentObject(viewModel)
-                    .shadow(color: Color.gray, radius: 1.0)
-                    //.border(Color.gray, width: 1.0)
-                    .padding()
-                
-                ArticleListView()
-                    .tabItem {
-                        Text("Articles")
-                    }
-                    .environment(\.managedObjectContext, viewContext)
-                    .environmentObject(viewModel)
-                
-                CommentListView()
-                    .tabItem {
-                        Text("Comments")
-                    }
-                    .environment(\.managedObjectContext, viewContext)
-                    .environmentObject(viewModel)
-                
-                NoteListView()
-                    .tabItem {
-                        Text("Notes")
-                    }
-                    .environment(\.managedObjectContext, viewContext)
-                    .environmentObject(viewModel)
-                
-            }
-            .frame(width: 1000, height: 1200, alignment: .center)
+            CommentListView()
+                .tabItem {
+                    Text("Comments")
+                }
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+            
+            NoteListView()
+                .tabItem {
+                    Text("Notes")
+                }
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
             
         }
+        .frame(width: 1000, height: 1200, alignment: .center)
         
     }
     
