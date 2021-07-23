@@ -33,7 +33,9 @@ struct ArticleListView: View {
                 NavigationView {
                     List {
                         ForEach(articles) { article in
-                            NavigationLink(destination: ArticleDetailView(article: article)) {
+                            NavigationLink(destination: ArticleDetailView(article: article)
+                                            .environment(\.managedObjectContext, viewContext)
+                            ) {
                                 VStack {
                                     Text("\(article.articleTitle ?? "")")
                                         .font(.body)

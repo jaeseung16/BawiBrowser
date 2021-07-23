@@ -8,18 +8,17 @@
 import SwiftUI
 
 struct ArticleDetailView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    
     @State var article: Article
     
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
                 VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 10.0) {
-                    HStack {
-                        Text("\(article.articleTitle ?? "")")
-                            .font(.title2)
-                            .frame(width: geometry.size.width * 0.5)
-                    }
-                    .frame(alignment: .center)
+                    Text("\(article.articleTitle ?? "")")
+                        .font(.title2)
+                        .frame(width: geometry.size.width * 0.5, alignment: .center)
                     
                     HStack {
                         Text("Board")
@@ -64,11 +63,8 @@ struct ArticleDetailView: View {
                         .multilineTextAlignment(.leading)
                         .frame(alignment: .leading)
                     
-                    ForEach(0..<attachments.count) { index in
-                        attachementView(attachment: attachments[index])
-                    }
-                    .frame(alignment: .center)
-
+                    AttachmentListView(attachments: attachments)
+            
                 }
                 .frame(height: geometry.size.height, alignment: .top)
             }
@@ -92,22 +88,6 @@ struct ArticleDetailView: View {
         return dateFormatter
     }
     
-    private func attachementView(attachment: Attachment) -> some View {
-        GeometryReader { geometry in
-            HStack {
-                Text(dateFormatter.string(from: attachment.created!))
-                    .font(.caption)
-                    .frame(width: geometry.size.width * 0.16)
-                
-                if let image = NSImage(data: attachment.content!) {
-                    Image(nsImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: geometry.size.width * 0.75)
-                }
-            }
-        }
-    }
 }
 
 struct ArticleDetailView_Previews: PreviewProvider {
