@@ -46,6 +46,18 @@ struct NoteListView: View {
                                 .frame(width: geometry.size.width * 0.6, alignment: .leading)
                         }
                     }
+                    .onDelete(perform: { indexSet in
+                        for index in indexSet {
+                            let note = notes[index]
+                            viewContext.delete(note)
+                        }
+                        
+                        do {
+                            try viewContext.save()
+                        } catch {
+                            print(error)
+                        }
+                    })
                 }
                 .listStyle(InsetListStyle())
             }
