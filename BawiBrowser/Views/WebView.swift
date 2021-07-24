@@ -63,95 +63,32 @@ struct WebView: NSViewRepresentable {
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
             if let url = navigationAction.request.url, navigationAction.request.httpMethod == "POST" {
                 if url.absoluteString.contains("note.cgi"), let httpBody = navigationAction.request.httpBody {
-                    processNote(url: url, httpBody: httpBody)
+                    parent.viewModel.processNote(url: url, httpBody: httpBody)
                 }
                 
                 if url.absoluteString.contains("comment.cgi"), let httpBody = navigationAction.request.httpBody {
-                    processComment(url: url, httpBody: httpBody)
+                    parent.viewModel.processComment(url: url, httpBody: httpBody, articleTitle: self.articleTitle, boardTitle: self.boardTitle)
                 }
                 
                 if url.absoluteString.contains("write.cgi"), let boundary = extractBoundary(from: navigationAction) {
-                    processWrite(url: url,
+                    parent.viewModel.preprocessWrite(url: url,
                                  httpBody: navigationAction.request.httpBody,
                                  httpBodyStream: navigationAction.request.httpBodyStream,
-                                 boundary: boundary)
+                                 boundary: boundary,
+                                 boardTitle: self.boardTitle,
+                                 coordinator: self)
                 }
                 
                 if url.absoluteString.contains("edit.cgi"), let boundary = extractBoundary(from: navigationAction) {
-                    processEdit(url: url,
+                    parent.viewModel.processEdit(url: url,
                                  httpBody: navigationAction.request.httpBody,
                                  httpBodyStream: navigationAction.request.httpBodyStream,
-                                 boundary: boundary)
+                                 boundary: boundary,
+                                 boardTitle: self.boardTitle)
                 }
             }
             
             decisionHandler(.allow, preferences)
-        }
-        
-        private func processNote(url: URL, httpBody: Data) -> Void {
-            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            urlComponents?.query = String(data: httpBody, encoding: .utf8)
-            
-            var action: String?
-            var to: String?
-            var msg: String?
-            if let queryItems = urlComponents?.queryItems {
-                for queryItem in queryItems {
-                    switch queryItem.name {
-                    case BawiNoteConstant.action.rawValue:
-                        if let value = queryItem.value {
-                            action = value
-                        }
-                    case BawiNoteConstant.to.rawValue:
-                        if let value = queryItem.value {
-                            to = value
-                        }
-                    case BawiNoteConstant.msg.rawValue:
-                        if let value = queryItem.value {
-                            msg = value
-                        }
-                    default:
-                        continue
-                    }
-                }
-            }
-            
-            parent.viewModel.noteDTO = BawiNoteDTO(action: action ?? "", to: to ?? "", msg: msg ?? "")
-        }
-        
-        private func processComment(url: URL, httpBody: Data) -> Void {
-            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            urlComponents?.query = String(data: httpBody, encoding: .utf8)
-            
-            var articleId = -1
-            var boardId = -1
-            var body = ""
-            if let queryItems = urlComponents?.queryItems {
-                for queryItem in queryItems {
-                    switch queryItem.name {
-                    case BawiCommentConstant.aid.rawValue:
-                        if let value = queryItem.value, let id = Int(value) {
-                            articleId = id
-                        }
-                    case BawiCommentConstant.bid.rawValue:
-                        if let value = queryItem.value, let id = Int(value) {
-                            boardId = id
-                        }
-                    case BawiCommentConstant.body.rawValue:
-                        if let value = queryItem.value {
-                            body = value
-                        }
-                    default:
-                        continue
-                    }
-                }
-            }
-            
-            parent.viewModel.commentDTO = BawiCommentDTO(articleId: articleId,
-                                                         articleTitle: self.articleTitle ?? "",
-                                                         boardId: boardId,
-                                                         boardTitle: self.boardTitle ?? "",
-                                                         body: body)
         }
         
         private func extractBoundary(from navigationAction: WKNavigationAction) -> String? {
@@ -162,165 +99,6 @@ struct WebView: NSViewRepresentable {
                 return boundary
             }
             return nil
-        }
-        
-        private func processWrite(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String) -> Void {
-            if let httpBody = httpBody {
-                populate(from: httpBody, with: boundary) { bawiWriteForm in
-                   var parentArticleId = -1
-                   var articleTitle = ""
-                   var boardId = -1
-                   var boardTitle = ""
-                   var body = ""
-                   if let bawiWriteForm = bawiWriteForm {
-                       parentArticleId = Int(bawiWriteForm.aid) ?? -1
-                       articleTitle = bawiWriteForm.title
-                       boardId = Int(bawiWriteForm.bid) ?? -1
-                       boardTitle = self.boardTitle ?? ""
-                       body = bawiWriteForm.body
-                   }
-                   
-                   self.articleDTO = BawiArticleDTO(articleId: -1, articleTitle: articleTitle, boardId: boardId, boardTitle: boardTitle, body: body, parentArticleId: parentArticleId)
-               }
-            } else if let httpBodyStream = httpBodyStream {
-                populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                    var parentArticleId = -1
-                    var articleTitle = ""
-                    var boardId = -1
-                    var boardTitle = ""
-                    var body = ""
-                    if let bawiWriteForm = bawiWriteForm {
-                        parentArticleId = Int(bawiWriteForm.aid) ?? -1
-                        articleTitle = bawiWriteForm.title
-                        boardId = Int(bawiWriteForm.bid) ?? -1
-                        boardTitle = self.boardTitle ?? ""
-                        body = bawiWriteForm.body
-                    }
-                    
-                    self.articleDTO = BawiArticleDTO(articleId: -1,
-                                                     articleTitle: articleTitle,
-                                                     boardId: boardId,
-                                                     boardTitle: boardTitle,
-                                                     body: body,
-                                                     parentArticleId: parentArticleId,
-                                                     attachments: attachments)
-                }
-            }
-        }
-        
-        private func processEdit(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String) -> Void {
-            if let httpBody = httpBody {
-                 populate(from: httpBody, with: boundary) { bawiWriteForm in
-                    var articleId = -1
-                    var articleTitle = ""
-                    var boardId = -1
-                    var boardTitle = ""
-                    var body = ""
-                    if let bawiWriteForm = bawiWriteForm {
-                        articleId = Int(bawiWriteForm.aid) ?? -1
-                        articleTitle = bawiWriteForm.title
-                        boardId = Int(bawiWriteForm.bid) ?? -1
-                        boardTitle = self.boardTitle ?? ""
-                        body = bawiWriteForm.body
-                    }
-                    
-                    parent.viewModel.articleDTO = BawiArticleDTO(articleId: articleId, articleTitle: articleTitle, boardId: boardId, boardTitle: boardTitle, body: body)
-                }
-            } else if let httpBodyStream = httpBodyStream {
-                populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                    var articleId = -1
-                    var articleTitle = ""
-                    var boardId = -1
-                    var boardTitle = ""
-                    var body = ""
-                    if let bawiWriteForm = bawiWriteForm {
-                        articleId = Int(bawiWriteForm.aid) ?? -1
-                        articleTitle = bawiWriteForm.title
-                        boardId = Int(bawiWriteForm.bid) ?? -1
-                        boardTitle = self.boardTitle ?? ""
-                        body = bawiWriteForm.body
-                    }
-                    
-                    parent.viewModel.articleDTO = BawiArticleDTO(articleId: articleId,
-                                                     articleTitle: articleTitle,
-                                                     boardId: boardId,
-                                                     boardTitle: boardTitle,
-                                                     body: body,
-                                                     attachments: attachments)
-                }
-            }
-        }
-        
-        private func populate(from httpBody: Data, with boundary: String, completionHandler: (BawiWriteForm?) -> Void) -> Void {
-            if let stringToParse = String(data: httpBody, encoding: .utf8) {
-                var bawiWriteForm: BawiWriteForm?
-                do {
-                    bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
-                } catch {
-                    print("error: \(error).")
-                }
-                
-                completionHandler(bawiWriteForm)
-            }
-        }
-        
-        private func populate(from httpBodyStream: InputStream, with boundary: String, completionHandler: (BawiWriteForm?, [Data]) -> Void) -> Void {
-            httpBodyStream.open()
-
-            var data = Data()
-            let bufferSize = 1024
-            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
-            while httpBodyStream.hasBytesAvailable {
-                let read = httpBodyStream.read(buffer, maxLength: bufferSize)
-                if (read == 0) {
-                    break
-                }
-                data.append(buffer, count: read)
-            }
-            buffer.deallocate()
-
-            httpBodyStream.close()
-            
-            do {
-                let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundary)
-                print("bawiWriteForm = \(bawiWriteForm)")
-                
-                var attachements = [Data]()
-                if bawiWriteForm.attach1 != nil {
-                    attachements.append(bawiWriteForm.attach1!)
-                }
-                if bawiWriteForm.attach2 != nil {
-                    attachements.append(bawiWriteForm.attach2!)
-                }
-                if bawiWriteForm.attach3 != nil {
-                    attachements.append(bawiWriteForm.attach3!)
-                }
-                if bawiWriteForm.attach4 != nil {
-                    attachements.append(bawiWriteForm.attach4!)
-                }
-                if bawiWriteForm.attach5 != nil {
-                    attachements.append(bawiWriteForm.attach5!)
-                }
-                if bawiWriteForm.attach6 != nil {
-                    attachements.append(bawiWriteForm.attach6!)
-                }
-                if bawiWriteForm.attach7 != nil {
-                    attachements.append(bawiWriteForm.attach7!)
-                }
-                if bawiWriteForm.attach8 != nil {
-                    attachements.append(bawiWriteForm.attach8!)
-                }
-                if bawiWriteForm.attach9 != nil {
-                    attachements.append(bawiWriteForm.attach9!)
-                }
-                if bawiWriteForm.attach10 != nil {
-                    attachements.append(bawiWriteForm.attach10!)
-                }
-                
-                completionHandler(bawiWriteForm, attachements)
-            } catch {
-                print("error: \(error).")
-            }
         }
         
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
@@ -339,7 +117,7 @@ struct WebView: NSViewRepresentable {
             
             if articleDTO != nil {
                 if let url = webView.url {
-                    var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                    let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
                     
                     if let queryItems = urlComponents?.queryItems {
                         for queryItem in queryItems {
