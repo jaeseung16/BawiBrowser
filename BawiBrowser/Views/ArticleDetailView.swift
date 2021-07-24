@@ -40,7 +40,7 @@ struct ArticleDetailView: View {
                             .font(.body)
                             .frame(width: geometry.size.width * 0.3)
                     }
-                    .frame(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    .frame(alignment: .center)
                     
                     if article.lastupd != nil {
                         HStack {
@@ -53,7 +53,7 @@ struct ArticleDetailView: View {
                                 .frame(width: geometry.size.width * 0.3)
 
                         }
-                        .frame(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .frame(alignment: .center)
                     }
                     
                     Divider()
@@ -61,12 +61,13 @@ struct ArticleDetailView: View {
                     Text(article.body?.removingPercentEncoding ?? "")
                         .font(.body)
                         .multilineTextAlignment(.leading)
-                        .frame(alignment: .leading)
-                    
+                        .frame(alignment: .center)
+
                     AttachmentListView(attachments: attachments)
             
                 }
                 .frame(height: geometry.size.height, alignment: .top)
+                .padding(.horizontal, 10)
             }
             
         }
