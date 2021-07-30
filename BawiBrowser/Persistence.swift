@@ -34,6 +34,17 @@ struct PersistenceController {
         container = NSPersistentContainer(name: "BawiBrowser")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        } else {
+            guard let fileContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.resonance.jlee.BawiBrowser") else {
+                       fatalError("Shared file container could not be created.")
+            }
+            
+            let storeURL = fileContainer.appendingPathComponent("BawiBrowser.sqlite")
+            let storeDescription = NSPersistentStoreDescription(url: storeURL)
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
+            container.persistentStoreDescriptions = [storeDescription]
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {

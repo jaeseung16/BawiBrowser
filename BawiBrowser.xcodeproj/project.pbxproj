@@ -36,6 +36,8 @@
 		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
+		90D0A98326B48CEC00581D33 /* BawiBrowser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */; };
+		90D0A98426B48FE400581D33 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061766C268A781200871FB2 /* Persistence.swift */; };
 		90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
@@ -494,7 +496,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */,
+				90D0A98426B48FE400581D33 /* Persistence.swift in Sources */,
 				90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */,
+				90D0A98326B48CEC00581D33 /* BawiBrowser.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
