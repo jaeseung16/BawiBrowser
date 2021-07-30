@@ -28,8 +28,15 @@
 		906F364826A237E2002F0915 /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364726A237E2002F0915 /* ArticleListView.swift */; };
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
+		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
+		90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */; };
+		90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */; };
+		90A2778226AE3C26000A3080 /* script.js in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778126AE3C26000A3080 /* script.js */; };
+		90A2778526AE3C26000A3080 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778326AE3C26000A3080 /* SafariExtensionViewController.xib */; };
+		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
+		90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -49,7 +56,28 @@
 			remoteGlobalIDString = 9061765F268A781000871FB2;
 			remoteInfo = BawiBrowser;
 		};
+		90A2778826AE3C26000A3080 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90617658268A781000871FB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90A2777626AE3C26000A3080;
+			remoteInfo = BawiBrowserSafariExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		90A2778B26AE3C26000A3080 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		900630FF2697B990006B6340 /* BawiArticleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiArticleDTO.swift; sourceTree = "<group>"; };
@@ -80,8 +108,17 @@
 		906F364726A237E2002F0915 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
+		90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BawiBrowserSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		90A2777926AE3C26000A3080 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
+		90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionViewController.swift; sourceTree = "<group>"; };
+		90A2778126AE3C26000A3080 /* script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = script.js; sourceTree = "<group>"; };
+		90A2778426AE3C26000A3080 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SafariExtensionViewController.xib; sourceTree = "<group>"; };
+		90A2778626AE3C26000A3080 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90A2778726AE3C26000A3080 /* BawiBrowserSafariExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BawiBrowserSafariExtension.entitlements; sourceTree = "<group>"; };
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
+		90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Toolbar.pdf; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +142,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90A2777426AE3C26000A3080 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +177,8 @@
 				90617662268A781000871FB2 /* BawiBrowser */,
 				9061767A268A781300871FB2 /* BawiBrowserTests */,
 				90617685268A781300871FB2 /* BawiBrowserUITests */,
+				90A2777B26AE3C26000A3080 /* BawiBrowserSafariExtension */,
+				90A2777826AE3C26000A3080 /* Frameworks */,
 				90617661268A781000871FB2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -142,6 +189,7 @@
 				90617660268A781000871FB2 /* BawiBrowser.app */,
 				90617677268A781300871FB2 /* BawiBrowserTests.xctest */,
 				90617682268A781300871FB2 /* BawiBrowserUITests.xctest */,
+				90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,6 +252,36 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		90A2777826AE3C26000A3080 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				90A2777926AE3C26000A3080 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90A2777B26AE3C26000A3080 /* BawiBrowserSafariExtension */ = {
+			isa = PBXGroup;
+			children = (
+				90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */,
+				90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */,
+				90A2778326AE3C26000A3080 /* SafariExtensionViewController.xib */,
+				90A2778626AE3C26000A3080 /* Info.plist */,
+				90A2778726AE3C26000A3080 /* BawiBrowserSafariExtension.entitlements */,
+				90A2778026AE3C26000A3080 /* Resources */,
+			);
+			path = BawiBrowserSafariExtension;
+			sourceTree = "<group>";
+		};
+		90A2778026AE3C26000A3080 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */,
+				90A2778126AE3C26000A3080 /* script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -214,10 +292,12 @@
 				9061765C268A781000871FB2 /* Sources */,
 				9061765D268A781000871FB2 /* Frameworks */,
 				9061765E268A781000871FB2 /* Resources */,
+				90A2778B26AE3C26000A3080 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				90A2778926AE3C26000A3080 /* PBXTargetDependency */,
 			);
 			name = BawiBrowser;
 			packageProductDependencies = (
@@ -263,6 +343,23 @@
 			productReference = 90617682268A781300871FB2 /* BawiBrowserUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		90A2777626AE3C26000A3080 /* BawiBrowserSafariExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90A2778E26AE3C26000A3080 /* Build configuration list for PBXNativeTarget "BawiBrowserSafariExtension" */;
+			buildPhases = (
+				90A2777326AE3C26000A3080 /* Sources */,
+				90A2777426AE3C26000A3080 /* Frameworks */,
+				90A2777526AE3C26000A3080 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BawiBrowserSafariExtension;
+			productName = BawiBrowserSafariExtension;
+			productReference = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -282,6 +379,9 @@
 					90617681268A781300871FB2 = {
 						CreatedOnToolsVersion = 12.5.1;
 						TestTargetID = 9061765F268A781000871FB2;
+					};
+					90A2777626AE3C26000A3080 = {
+						CreatedOnToolsVersion = 12.5.1;
 					};
 				};
 			};
@@ -304,6 +404,7 @@
 				9061765F268A781000871FB2 /* BawiBrowser */,
 				90617676268A781300871FB2 /* BawiBrowserTests */,
 				90617681268A781300871FB2 /* BawiBrowserUITests */,
+				90A2777626AE3C26000A3080 /* BawiBrowserSafariExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -330,6 +431,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90A2777526AE3C26000A3080 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */,
+				90A2778526AE3C26000A3080 /* SafariExtensionViewController.xib in Resources */,
+				90A2778226AE3C26000A3080 /* script.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +489,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90A2777326AE3C26000A3080 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */,
+				90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -391,7 +511,23 @@
 			target = 9061765F268A781000871FB2 /* BawiBrowser */;
 			targetProxy = 90617683268A781300871FB2 /* PBXContainerItemProxy */;
 		};
+		90A2778926AE3C26000A3080 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90A2777626AE3C26000A3080 /* BawiBrowserSafariExtension */;
+			targetProxy = 90A2778826AE3C26000A3080 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		90A2778326AE3C26000A3080 /* SafariExtensionViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				90A2778426AE3C26000A3080 /* Base */,
+			);
+			name = SafariExtensionViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		90617689268A781300871FB2 /* Debug */ = {
@@ -512,6 +648,7 @@
 		9061768C268A781300871FB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
@@ -538,6 +675,7 @@
 		9061768D268A781300871FB2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
@@ -645,6 +783,46 @@
 			};
 			name = Release;
 		};
+		90A2778C26AE3C26000A3080 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		90A2778D26AE3C26000A3080 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -680,6 +858,15 @@
 			buildConfigurations = (
 				90617692268A781300871FB2 /* Debug */,
 				90617693268A781300871FB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90A2778E26AE3C26000A3080 /* Build configuration list for PBXNativeTarget "BawiBrowserSafariExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90A2778C26AE3C26000A3080 /* Debug */,
+				90A2778D26AE3C26000A3080 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
