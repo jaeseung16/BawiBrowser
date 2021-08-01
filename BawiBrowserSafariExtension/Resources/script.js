@@ -36,11 +36,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
     }
     
-    
-    
     var commentForm = document.forms['addcomment'];
     if (commentForm != null) {
         console.log('A commentForm exists');
+        
+        let boardTitle = document.getElementsByTagName('h1')[0].innerText;
+        let articleTitle = document.getElementsByClassName('article')[0].innerText;
+        
         commentForm.addEventListener('submit', function(commentEvent) {
             console.log('submit');
             safari.extension.dispatchMessage("A comment submitted");
@@ -54,7 +56,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     message[key] = elements[key].value;
                 }
             }
-            safari.extension.dispatchMessage("A comment submitted", message);
+            
+            message.boardTitle = boardTitle.toString();
+            message.articleTitle = articleTitle.toString();
+            
+            safari.extension.dispatchMessage("commentForm", message);
             
             
             const { action, aid, bid, p, img, lastcno, body, submit } = this.elements;
