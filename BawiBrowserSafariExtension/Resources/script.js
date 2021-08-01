@@ -11,6 +11,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log("attach" + attachNumber + " :: sent");
     }
     
+    function prepopulateMessage(elements) {
+        var message = new Object();
+        for (let key in elements) {
+            if (key != null) {
+                message[key] = elements[key].value;
+            }
+        }
+        return message
+    }
+    
     console.log('ready');
     
     if (document.URL.includes("note.cgi")) {
@@ -23,14 +33,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 noteForms[index].addEventListener('submit', function (noteEvent) {
                     const elements = this.elements;
                     console.log(elements);
-                    
-                    var message = new Object();
-                    for (let key in elements) {
-                        if (key != null) {
-                            message[key] = elements[key].value;
-                        }
-                    }
-                    safari.extension.dispatchMessage("A note submitted", message);
+                    var message = prepopulateMessage(elements)
+                    safari.extension.dispatchMessage("noteForm", message);
                 });
             }
         }
@@ -50,13 +54,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             const elements = this.elements;
             console.log(elements);
             
-            var message = new Object();
-            for (let key in elements) {
-                if (key != null) {
-                    message[key] = elements[key].value;
-                }
-            }
-            
+            var message = prepopulateMessage(elements)
             message.boardTitle = boardTitle.toString();
             message.articleTitle = articleTitle.toString();
             

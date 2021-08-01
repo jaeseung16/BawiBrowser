@@ -12,6 +12,7 @@
 		9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */; };
 		9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
 		9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */; };
+		9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90492BBE26A4A567005F337C /* AttachmentListView.swift */; };
 		90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617663268A781000871FB2 /* BawiBrowserApp.swift */; };
 		90617666268A781000871FB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617665268A781000871FB2 /* ContentView.swift */; };
@@ -496,6 +497,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */,
 				90D0A98526B4A0F900581D33 /* BawiCommentDTO.swift in Sources */,
 				90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */,
 				90D0A98426B48FE400581D33 /* Persistence.swift in Sources */,

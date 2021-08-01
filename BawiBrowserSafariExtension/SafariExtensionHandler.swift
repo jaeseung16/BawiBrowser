@@ -53,7 +53,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                 comment.created = Date()
                 
                 do {
-                    try self.viewContext.save()
+                    try self.saveContext()
                 } catch {
                     // Replace this implementation with code to handle the error appropriately.
                     // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -61,7 +61,40 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                     NSLog("While saving \(commentDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
                 }
             }
+            
+            if messageName == "noteForm", let userInfo = userInfo {
+                let action = userInfo["action"] as? String
+                let to = userInfo["to"] as? String
+                let msg = userInfo["msg"] as? String
+                
+                if msg != nil && !msg!.isEmpty {
+                    let noteDTO = BawiNoteDTO(action: action ?? "",
+                                              to: to ?? "",
+                                              msg: msg ?? "")
+                    
+                    NSLog("noteDTO = \(noteDTO)")
+                    
+                    let note = Note(context: self.viewContext)
+                    note.action = noteDTO.action
+                    note.to = noteDTO.to
+                    note.msg = noteDTO.msg
+                    note.created = Date()
+                    
+                    do {
+                        try self.saveContext()
+                    } catch {
+                        // Replace this implementation with code to handle the error appropriately.
+                        // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                        let nsError = error as NSError
+                        NSLog("While saving \(noteDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
+                    }
+                }
+            }
         }
+    }
+    
+    private func saveContext() throws -> Void {
+        try viewContext.save()
     }
 
     override func toolbarItemClicked(in window: SFSafariWindow) {
