@@ -13,6 +13,10 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
     
     private let viewContext = PersistenceController.shared.container.viewContext
     
+    private static var articleDTO: BawiArticleDTO?
+    private static var attachedData: [Data]?
+    private static var downloading: Bool = false
+    
     override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String : Any]?) {
         // This method will be called when a content script provided by your extension calls safari.extension.dispatchMessage("message").
         page.getPropertiesWithCompletionHandler { properties in
@@ -22,10 +26,82 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                 NSLog("\(messageName): userInfo = \(userInfo)")
                 if let userInfo = userInfo, userInfo["data"] != nil {
                     let data = userInfo["data"] as? [UInt8]
-                    NSLog("\(messageName): type of data = \(type(of: data))")
-                    NSLog("\(messageName): data.count = \(data?.count)")
-                    NSLog("\(messageName): data = \(String(describing: data))")
+                    
+                    if SafariExtensionHandler.articleDTO != nil {
+                        if let data = data {
+                            let attachment = Data(data)
+                            
+                            if SafariExtensionHandler.attachedData == nil {
+                                SafariExtensionHandler.attachedData = [Data]()
+                            }
+                            SafariExtensionHandler.attachedData!.append(attachment)
+                        }
+                    }
                 }
+            }
+            
+            if SafariExtensionHandler.articleDTO != nil, let properties = properties {
+                if let url = properties.url, url.absoluteString.contains("read.cgi") {
+                    let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                    
+                    if let queryItems = urlComponents?.queryItems {
+                        for queryItem in queryItems {
+                            if queryItem.name == "aid", let aid = queryItem.value as? String {
+                                NSLog("aid = \(aid)")
+                                SafariExtensionHandler.articleDTO!.articleId = Int(aid)!
+                                NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
+                            }
+                        }
+                    }
+                    
+                    NSLog("SafariExtensionHandler.attachedData = \(SafariExtensionHandler.attachedData)")
+                    if SafariExtensionHandler.attachedData != nil && SafariExtensionHandler.articleDTO!.attachCount != SafariExtensionHandler.attachedData!.count {
+                        NSLog("WARNING: \(SafariExtensionHandler.articleDTO!.attachCount) files are expected. But \(SafariExtensionHandler.attachedData!.count) files have been downloaded")
+                    }
+                    
+                    SafariExtensionHandler.articleDTO!.attachments = SafariExtensionHandler.attachedData
+                    
+                    NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
+                    
+                    self.populateArticle(from: SafariExtensionHandler.articleDTO!)
+                    
+                    SafariExtensionHandler.articleDTO = nil
+                    SafariExtensionHandler.attachedData = nil
+                }
+            }
+            
+            if messageName == "writeForm", let userInfo = userInfo {
+                
+                var articleId = -1
+                if let properties = properties, let url = properties.url, url.absoluteString.contains("edit.cgi") {
+                    NSLog("edit.cgi: url.query = \(url.query)")
+                    if let query = url.query {
+                        let queries = query.split(separator: ";")
+                        for q in queries {
+                            let keyValue = q.split(separator: "=")
+                            NSLog("keyValue = \(keyValue[0]) \(keyValue[1])")
+                            if keyValue[0] == "aid" {
+                                articleId = Int(keyValue[1]) ?? -1
+                            }
+                        }
+                    } 
+                }
+                
+                let action = userInfo["action"] as? String
+                let bid = userInfo["bid"] as? String
+                let body = userInfo["body"] as? String
+                let articleTitle = userInfo["title"] as? String
+                let boardTitle = userInfo["boardTitle"] as? String
+                let attachCount = userInfo["attach-count"] as? String
+                
+                SafariExtensionHandler.articleDTO = BawiArticleDTO(articleId: articleId,
+                                            articleTitle: articleTitle ?? "",
+                                            boardId: bid != nil ? Int(bid!)! : -1,
+                                            boardTitle: boardTitle ?? "",
+                                            body: body ?? "",
+                                            attachCount: attachCount != nil ? Int(attachCount!)! : 0)
+                
+                NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
             }
             
             if messageName == "commentForm", let userInfo = userInfo {
@@ -97,6 +173,80 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         try viewContext.save()
     }
 
+    private func populateArticle(from articleDTO: BawiArticleDTO) -> Void {
+        if articleDTO.articleId > 0, let existingArticle = getArticle(boardId: articleDTO.boardId, articleId: articleDTO.articleId) {
+            existingArticle.articleId = Int64(articleDTO.articleId)
+            existingArticle.articleTitle = articleDTO.articleTitle
+            existingArticle.boardId = Int64(articleDTO.boardId)
+            existingArticle.boardTitle = articleDTO.boardTitle
+            existingArticle.body = articleDTO.body
+            existingArticle.lastupd = Date()
+            
+            if let attachments = articleDTO.attachments, !attachments.isEmpty {
+                for attachment in attachments {
+                    let attachmentEntity = Attachment(context: viewContext)
+
+                    attachmentEntity.article = existingArticle
+                    attachmentEntity.content = attachment
+                    attachmentEntity.created = Date()
+                }
+            }
+            
+        } else {
+            let article = Article(context: viewContext)
+            article.articleId = Int64(articleDTO.articleId)
+            article.articleTitle = articleDTO.articleTitle
+            article.boardId = Int64(articleDTO.boardId)
+            article.boardTitle = articleDTO.boardTitle
+            article.body = articleDTO.body
+            article.created = Date()
+            article.lastupd = Date()
+            
+            if let attachments = articleDTO.attachments, !attachments.isEmpty {
+                for attachment in attachments {
+                    let attachmentEntity = Attachment(context: viewContext)
+
+                    attachmentEntity.article = article
+                    attachmentEntity.content = attachment
+                    attachmentEntity.created = Date()
+                    
+                }
+                NSLog("attachments.count = \(attachments.count)")
+            }
+            
+            NSLog("article = \(article)")
+        }
+        
+        do {
+            try saveContext()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            NSLog("While saving \(articleDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
+    private func getArticle(boardId: Int, articleId: Int) -> Article? {
+        print("boardId = \(boardId), articleId = \(articleId)")
+        let predicate = NSPredicate(format: "boardId == %@ AND articleId == %@", argumentArray: [boardId, articleId])
+        
+        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+        fetchRequest.predicate = predicate
+        
+        var fetchedArticles = [Article]()
+        do {
+            fetchedArticles = try viewContext.fetch(fetchRequest)
+            
+            print("fetchedArticle = \(fetchedArticles)")
+        } catch {
+            let nsError = error as NSError
+            NSLog("Failed to fetch article with boardId = \(boardId) and articleId = \(articleId): \(nsError)")
+        }
+        
+        return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
+    }
+    
     override func toolbarItemClicked(in window: SFSafariWindow) {
         // This method will be called when your toolbar item is clicked.
         NSLog("The extension's toolbar item was clicked")

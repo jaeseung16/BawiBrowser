@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
     
     console.log('ready');
+    safari.extension.dispatchMessage("document loaded");
     
     if (document.URL.includes("note.cgi")) {
         var noteForms = document.forms;
@@ -68,6 +69,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var writeForm = document.forms['writeform'];
     if (writeForm != null) {
         console.log('A writeForm exists');
+        
+        let boardTitle = document.getElementsByTagName('h1')[0].innerText;
         
         let attachments = ["attach1", "attach2", "attach3", "attach4", "attach5", "attach6", "attach7", "attach8", "attach9", "attach10"]
         
@@ -213,7 +216,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 }
             }
             
-            safari.extension.dispatchMessage("A writeform submitted", message);
+            console.log("attach-count = " + message["attach-count"])
+            
+            message.boardTitle = boardTitle.toString();
+            safari.extension.dispatchMessage("writeForm", message);
             
         });
     }
