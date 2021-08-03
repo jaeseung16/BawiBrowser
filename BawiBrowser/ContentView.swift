@@ -53,7 +53,7 @@ struct ContentView: View {
                 .environmentObject(viewModel)
             
         }
-        .frame(width: 1000, height: 1200, alignment: .center)
+        .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         
     }
     
