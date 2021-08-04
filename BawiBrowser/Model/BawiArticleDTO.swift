@@ -18,6 +18,6 @@ struct BawiArticleDTO: CustomStringConvertible {
     var attachCount: Int?
     
     var description: String {
-        return "BawiArticleDTO[boardId: \(boardId), boardTitle: \(boardTitle), articleId: \(articleId), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding)), attachCount: \(attachCount)]"
+        return "BawiArticleDTO[boardId: \(boardId), boardTitle: \(boardTitle), articleId: \(articleId), articleTitle: \(articleTitle), body: \(String(describing: body.removingPercentEncoding)), attachCount: \(String(describing: attachCount))]"
     }
 }

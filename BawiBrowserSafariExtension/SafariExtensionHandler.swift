@@ -23,7 +23,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
             NSLog("The extension received a message (\(messageName)) from a script injected into (\(String(describing: properties?.url))) with userInfo (\(userInfo ?? [:]))")
             
             if self.attachments.contains(messageName) {
-                NSLog("\(messageName): userInfo = \(userInfo)")
+                NSLog("\(messageName): userInfo = \(String(describing: userInfo))")
                 if let userInfo = userInfo, userInfo["data"] != nil {
                     let data = userInfo["data"] as? [UInt8]
                     
@@ -46,22 +46,22 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                     
                     if let queryItems = urlComponents?.queryItems {
                         for queryItem in queryItems {
-                            if queryItem.name == "aid", let aid = queryItem.value as? String {
+                            if queryItem.name == "aid", let aid = queryItem.value {
                                 NSLog("aid = \(aid)")
                                 SafariExtensionHandler.articleDTO!.articleId = Int(aid)!
-                                NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
+                                NSLog("articleDTO = \(String(describing: SafariExtensionHandler.articleDTO))")
                             }
                         }
                     }
                     
-                    NSLog("SafariExtensionHandler.attachedData = \(SafariExtensionHandler.attachedData)")
+                    NSLog("SafariExtensionHandler.attachedData = \(String(describing: SafariExtensionHandler.attachedData))")
                     if SafariExtensionHandler.attachedData != nil && SafariExtensionHandler.articleDTO!.attachCount != SafariExtensionHandler.attachedData!.count {
-                        NSLog("WARNING: \(SafariExtensionHandler.articleDTO!.attachCount) files are expected. But \(SafariExtensionHandler.attachedData!.count) files have been downloaded")
+                        NSLog("WARNING: \(String(describing: SafariExtensionHandler.articleDTO!.attachCount)) files are expected. But \(SafariExtensionHandler.attachedData!.count) files have been downloaded")
                     }
                     
                     SafariExtensionHandler.articleDTO!.attachments = SafariExtensionHandler.attachedData
                     
-                    NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
+                    NSLog("articleDTO = \(String(describing: SafariExtensionHandler.articleDTO))")
                     
                     self.populateArticle(from: SafariExtensionHandler.articleDTO!)
                     
@@ -74,7 +74,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                 
                 var articleId = -1
                 if let properties = properties, let url = properties.url, url.absoluteString.contains("edit.cgi") {
-                    NSLog("edit.cgi: url.query = \(url.query)")
+                    NSLog("edit.cgi: url.query = \(String(describing: url.query))")
                     if let query = url.query {
                         let queries = query.split(separator: ";")
                         for q in queries {
@@ -87,7 +87,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                     } 
                 }
                 
-                let action = userInfo["action"] as? String
+                _ = userInfo["action"] as? String
                 let bid = userInfo["bid"] as? String
                 let body = userInfo["body"] as? String
                 let articleTitle = userInfo["title"] as? String
@@ -101,12 +101,12 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                                             body: body ?? "",
                                             attachCount: attachCount != nil ? Int(attachCount!)! : 0)
                 
-                NSLog("articleDTO = \(SafariExtensionHandler.articleDTO)")
+                NSLog("articleDTO = \(String(describing: SafariExtensionHandler.articleDTO))")
             }
             
             if messageName == "commentForm", let userInfo = userInfo {
                 let aid = userInfo["aid"] as? Int
-                let action = userInfo["action"] as? String
+                _ = userInfo["action"] as? String
                 let bid = userInfo["bid"] as? Int
                 let body = userInfo["body"] as? String
                 let articleTitle = userInfo["articleTitle"] as? String
