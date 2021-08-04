@@ -57,6 +57,16 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             comment.body = commentDTO.body.replacingOccurrences(of: "+", with: "%20")
             comment.created = Date()
             
+            print("persistentStores = \(PersistenceController.shared.container.persistentStoreCoordinator.persistentStores)")
+            /*
+             persistentStores = [<NSSQLCore: 0x7fa81b507f60> (URL: file:///Users/jaeseunglee/Library/Group%20Containers/group.com.resonance.jlee.BawiBrowser/BawiBrowser.sqlite), <NSSQLCore: 0x7fa81b704190> (URL: file:///Users/jaeseunglee/Library/Containers/com.resonance.jlee.BawiBrowser/Data/Library/Application%20Support/BawiBrowser/BawiBrowser.sqlite)]
+             */
+            /*
+            if let applicationSupportPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last {
+                PersistenceController.shared.container.viewContext.assign(comment, to: PersistenceController.shared.container.persistentStoreCoordinator.persistentStore(for: applicationSupportPath.appendingPathComponent("BawiBrowser/BawiBrowser.sqlite"))!)
+            }
+            */
+            
             do {
                 try PersistenceController.shared.container.viewContext.save()
             } catch {

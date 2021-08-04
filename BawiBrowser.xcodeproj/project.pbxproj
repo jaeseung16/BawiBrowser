@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900215CC26B9FB8800A82706 /* CloudKit.framework */; };
+		900215CF26BA1D7200A82706 /* PersistenceHistoryProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */; };
+		900215D026BA1F2400A82706 /* PersistenceHistoryProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */; };
 		900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */; };
 		9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */; };
@@ -85,6 +88,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		900215CC26B9FB8800A82706 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceHistoryProcessor.swift; sourceTree = "<group>"; };
 		900630FF2697B990006B6340 /* BawiArticleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiArticleDTO.swift; sourceTree = "<group>"; };
 		900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserViewModel.swift; sourceTree = "<group>"; };
 		9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrwoserNavigation.swift; sourceTree = "<group>"; };
@@ -133,6 +138,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90FC22422698DB730095848C /* MultipartKit in Frameworks */,
+				900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +214,7 @@
 				90617665268A781000871FB2 /* ContentView.swift */,
 				90617667268A781200871FB2 /* Assets.xcassets */,
 				9061766C268A781200871FB2 /* Persistence.swift */,
+				900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */,
 				90617671268A781200871FB2 /* Info.plist */,
 				90617672268A781200871FB2 /* BawiBrowser.entitlements */,
 				9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */,
@@ -260,6 +267,7 @@
 		90A2777826AE3C26000A3080 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				900215CC26B9FB8800A82706 /* CloudKit.framework */,
 				90A2777926AE3C26000A3080 /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -465,6 +473,7 @@
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
 				9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */,
+				900215CF26BA1D7200A82706 /* PersistenceHistoryProcessor.swift in Sources */,
 				90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */,
 				90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
@@ -499,6 +508,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */,
+				900215D026BA1F2400A82706 /* PersistenceHistoryProcessor.swift in Sources */,
 				90D0A98526B4A0F900581D33 /* BawiCommentDTO.swift in Sources */,
 				90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */,
 				90D0A98426B48FE400581D33 /* Persistence.swift in Sources */,
@@ -664,7 +674,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -691,7 +701,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowser/BawiBrowser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -798,6 +808,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;
@@ -806,6 +817,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -818,6 +830,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;
@@ -826,6 +839,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
+				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
