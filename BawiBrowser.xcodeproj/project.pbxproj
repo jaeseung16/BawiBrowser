@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9000362526BC9A88007F4AF5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900215CC26B9FB8800A82706 /* CloudKit.framework */; };
 		900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900215CC26B9FB8800A82706 /* CloudKit.framework */; };
 		900215CF26BA1D7200A82706 /* PersistenceHistoryProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */; };
 		900215D026BA1F2400A82706 /* PersistenceHistoryProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900215CE26BA1D7200A82706 /* PersistenceHistoryProcessor.swift */; };
@@ -161,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */,
+				9000362526BC9A88007F4AF5 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -105,16 +105,16 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
             }
             
             if messageName == "commentForm", let userInfo = userInfo {
-                let aid = userInfo["aid"] as? Int
+                let aid = userInfo["aid"] as? String ?? ""
                 _ = userInfo["action"] as? String
-                let bid = userInfo["bid"] as? Int
+                let bid = userInfo["bid"] as? String ?? ""
                 let body = userInfo["body"] as? String
                 let articleTitle = userInfo["articleTitle"] as? String
                 let boardTitle = userInfo["boardTitle"] as? String
                 
-                let commentDTO = BawiCommentDTO(articleId: aid ?? -1,
+                let commentDTO = BawiCommentDTO(articleId: Int(aid) ?? -1,
                                                 articleTitle: articleTitle ?? "",
-                                                boardId: bid ?? -1,
+                                                boardId: Int(bid) ?? -1,
                                                 boardTitle: boardTitle ?? "",
                                                 body: body ?? "")
                 
@@ -170,7 +170,10 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
     }
     
     private func saveContext() throws -> Void {
+        viewContext.transactionAuthor = "Safari Extension"
+        NSLog("saveContext")
         try viewContext.save()
+        viewContext.transactionAuthor = nil
     }
 
     private func populateArticle(from articleDTO: BawiArticleDTO) -> Void {

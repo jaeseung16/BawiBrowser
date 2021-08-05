@@ -14,6 +14,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     static let shared = BawiBrowserViewModel()
     
     private let multipartPrefix = "multipart/form-data; boundary="
+    private var subscriptions: Set<AnyCancellable> = []
     
     @Published var httpCookies = [HTTPCookie]()
     @Published var innerHTML = String()
@@ -137,10 +138,91 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     override init() {
         super.init()
+        
+        NotificationCenter.default
+          .publisher(for: .NSPersistentStoreRemoteChange)
+          .sink { self.fetchUpdates($0) }
+          .store(in: &subscriptions)
     }
     
+    private lazy var historyRequestQueue = DispatchQueue(label: "history")
+    private func fetchUpdates(_ notification: Notification) -> Void {
+        historyRequestQueue.async {
+            print("subscriptions.count = \(self.subscriptions.count)")
+            let backgroundContext = PersistenceController.shared.container.newBackgroundContext()
+            backgroundContext.performAndWait {
+                do {
+                    let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
+                    
+                    if let historyResult = try backgroundContext.execute(fetchHistoryRequest) as? NSPersistentHistoryResult,
+                       let history = historyResult.result as? [NSPersistentHistoryTransaction] {
+                        for transaction in history.reversed() {
+                            //print("transaction: author = \(transaction.author), contextName = \(transaction.contextName), storeId = \(transaction.storeID), timeStamp = \(transaction.timestamp), \(transaction.objectIDNotification())")
+                            PersistenceController.shared.container.viewContext.perform {
+                                if let userInfo = transaction.objectIDNotification().userInfo {
+                                    //print("transaction.objectIDNotification().userInfo = \(userInfo)")
+                                    if let insertedObjectIds = userInfo["inserted_objectsIDs"] {
+                                        if let idSet = insertedObjectIds as? NSSet {
+                                            for id in idSet {
+                                                print("inserted_objectsIDs: \(id) - \(PersistenceController.shared.container.viewContext.object(with: id as! NSManagedObjectID))")
+                                            }
+                                        }
+                                    } else if let updatedObjectIds = userInfo["updated_objectIDs"] {
+                                        if let idSet = updatedObjectIds as? NSSet {
+                                            for id in idSet {
+                                                print("updated_objectID: \(id) - \(PersistenceController.shared.container.viewContext.object(with: id as! NSManagedObjectID))")
+                                            }
+                                        }
+                                    }
+                                    
+                                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: userInfo,
+                                                                        into: [PersistenceController.shared.container.viewContext])
+                                }
+                            }
+                        }
+                    }
+                } catch {
+                    print("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error)")
+                }
+            }
+        }
+    }
+    
+    private var lastToken: NSPersistentHistoryToken? = nil {
+        didSet {
+            guard let token = lastToken,
+                  let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) else {
+                return
+            }
+            
+            do {
+                try data.write(to: tokenFile)
+            } catch {
+                let message = "Could not write token data"
+                print("###\(#function): \(message): \(error)")
+            }
+        }
+    }
+    
+    lazy var tokenFile: URL = {
+        let url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("BawiBrowser",isDirectory: true)
+        if !FileManager.default.fileExists(atPath: url.path) {
+            do {
+                try FileManager.default.createDirectory(at: url,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+            } catch {
+                let message = "Could not create persistent container URL"
+                print("###\(#function): \(message): \(error)")
+            }
+        }
+        return url.appendingPathComponent("token.data", isDirectory: false)
+    }()
+    
     private func saveContext() throws -> Void {
+        PersistenceController.shared.container.viewContext.transactionAuthor = "App"
         try PersistenceController.shared.container.viewContext.save()
+        PersistenceController.shared.container.viewContext.transactionAuthor = nil
     }
     
     func getArticle(boardId: Int, articleId: Int) -> Article? {

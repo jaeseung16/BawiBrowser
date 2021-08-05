@@ -59,7 +59,7 @@ struct PersistenceController {
             cloudStoreDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
             cloudStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.resonance.jlee.BawiBrowser")
             
-            container.persistentStoreDescriptions = [storeDescription, cloudStoreDescription]
+            container.persistentStoreDescriptions = [cloudStoreDescription]
             
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -82,12 +82,13 @@ struct PersistenceController {
         container.viewContext.name = "BawiBrowser"
         backgroundContext = container.newBackgroundContext()
         purgeHistory()
-        addObserver()
+        //addObserver()
     }
     
     private func purgeHistory() {
-        let sevenDaysAgo = Date(timeIntervalSinceNow: TimeInterval(exactly: -604_800)!)
-        let purgeHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: sevenDaysAgo)
+        //let sevenDaysAgo = Date(timeIntervalSinceNow: TimeInterval(exactly: -604_800)!)
+        let oneDayAgo = Date(timeIntervalSinceNow: TimeInterval(exactly: -86_400)!)
+        let purgeHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: oneDayAgo)
 
         do {
             try backgroundContext!.execute(purgeHistoryRequest)
