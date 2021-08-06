@@ -171,6 +171,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                                 }
                             }
                         }
+                        
+                        self.lastToken = history.last?.token
                     }
                 } catch {
                     print("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error)")
