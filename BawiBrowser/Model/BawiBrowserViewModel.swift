@@ -14,6 +14,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     static let shared = BawiBrowserViewModel()
     
     private let multipartPrefix = "multipart/form-data; boundary="
+    private let persistenteContainer = PersistenceController.shared.container
     private var subscriptions: Set<AnyCancellable> = []
     
     @Published var httpCookies = [HTTPCookie]()
@@ -31,14 +32,14 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
         didSet {
-            let note = Note(context: PersistenceController.shared.container.viewContext)
+            let note = Note(context: persistenteContainer.viewContext)
             note.action = noteDTO.action
             note.to = noteDTO.to
             note.msg = noteDTO.msg
             note.created = Date()
             
             do {
-                try PersistenceController.shared.container.viewContext.save()
+                try saveContext()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -50,7 +51,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
-            let comment = Comment(context: PersistenceController.shared.container.viewContext)
+            let comment = Comment(context: persistenteContainer.viewContext)
             comment.articleId = Int64(commentDTO.articleId)
             comment.articleTitle = commentDTO.articleTitle
             comment.boardId = Int64(commentDTO.boardId)
@@ -58,18 +59,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             comment.body = commentDTO.body.replacingOccurrences(of: "+", with: "%20")
             comment.created = Date()
             
-            print("persistentStores = \(PersistenceController.shared.container.persistentStoreCoordinator.persistentStores)")
-            /*
-             persistentStores = [<NSSQLCore: 0x7fa81b507f60> (URL: file:///Users/jaeseunglee/Library/Group%20Containers/group.com.resonance.jlee.BawiBrowser/BawiBrowser.sqlite), <NSSQLCore: 0x7fa81b704190> (URL: file:///Users/jaeseunglee/Library/Containers/com.resonance.jlee.BawiBrowser/Data/Library/Application%20Support/BawiBrowser/BawiBrowser.sqlite)]
-             */
-            /*
-            if let applicationSupportPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last {
-                PersistenceController.shared.container.viewContext.assign(comment, to: PersistenceController.shared.container.persistentStoreCoordinator.persistentStore(for: applicationSupportPath.appendingPathComponent("BawiBrowser/BawiBrowser.sqlite"))!)
-            }
-            */
-            
             do {
-                try PersistenceController.shared.container.viewContext.save()
+                try saveContext()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -92,7 +83,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 
                 if let attachments = articleDTO.attachments, !attachments.isEmpty {
                     for attachment in attachments {
-                        let attachmentEntity = Attachment(context: PersistenceController.shared.container.viewContext)
+                        let attachmentEntity = Attachment(context: persistenteContainer.viewContext)
 
                         attachmentEntity.article = existingArticle
                         attachmentEntity.content = attachment
@@ -101,7 +92,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 }
                 
             } else {
-                let article = Article(context: PersistenceController.shared.container.viewContext)
+                let article = Article(context: persistenteContainer.viewContext)
                 article.articleId = Int64(articleDTO.articleId)
                 article.articleTitle = articleDTO.articleTitle
                 article.boardId = Int64(articleDTO.boardId)
@@ -112,7 +103,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 
                 if let attachments = articleDTO.attachments, !attachments.isEmpty {
                     for attachment in attachments {
-                        let attachmentEntity = Attachment(context: PersistenceController.shared.container.viewContext)
+                        let attachmentEntity = Attachment(context: persistenteContainer.viewContext)
 
                         attachmentEntity.article = article
                         attachmentEntity.content = attachment
@@ -149,7 +140,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private func fetchUpdates(_ notification: Notification) -> Void {
         historyRequestQueue.async {
             print("subscriptions.count = \(self.subscriptions.count)")
-            let backgroundContext = PersistenceController.shared.container.newBackgroundContext()
+            let backgroundContext = self.persistenteContainer.newBackgroundContext()
             backgroundContext.performAndWait {
                 do {
                     let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
@@ -158,25 +149,25 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                        let history = historyResult.result as? [NSPersistentHistoryTransaction] {
                         for transaction in history.reversed() {
                             //print("transaction: author = \(transaction.author), contextName = \(transaction.contextName), storeId = \(transaction.storeID), timeStamp = \(transaction.timestamp), \(transaction.objectIDNotification())")
-                            PersistenceController.shared.container.viewContext.perform {
+                            self.persistenteContainer.viewContext.perform {
                                 if let userInfo = transaction.objectIDNotification().userInfo {
                                     //print("transaction.objectIDNotification().userInfo = \(userInfo)")
                                     if let insertedObjectIds = userInfo["inserted_objectsIDs"] {
                                         if let idSet = insertedObjectIds as? NSSet {
                                             for id in idSet {
-                                                print("inserted_objectsIDs: \(id) - \(PersistenceController.shared.container.viewContext.object(with: id as! NSManagedObjectID))")
+                                                print("inserted_objectsIDs: \(id) - \(self.persistenteContainer.viewContext.object(with: id as! NSManagedObjectID))")
                                             }
                                         }
                                     } else if let updatedObjectIds = userInfo["updated_objectIDs"] {
                                         if let idSet = updatedObjectIds as? NSSet {
                                             for id in idSet {
-                                                print("updated_objectID: \(id) - \(PersistenceController.shared.container.viewContext.object(with: id as! NSManagedObjectID))")
+                                                print("updated_objectID: \(id) - \(self.persistenteContainer.viewContext.object(with: id as! NSManagedObjectID))")
                                             }
                                         }
                                     }
                                     
                                     NSManagedObjectContext.mergeChanges(fromRemoteContextSave: userInfo,
-                                                                        into: [PersistenceController.shared.container.viewContext])
+                                                                        into: [self.persistenteContainer.viewContext])
                                 }
                             }
                         }
@@ -220,9 +211,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }()
     
     private func saveContext() throws -> Void {
-        PersistenceController.shared.container.viewContext.transactionAuthor = "App"
-        try PersistenceController.shared.container.viewContext.save()
-        PersistenceController.shared.container.viewContext.transactionAuthor = nil
+        persistenteContainer.viewContext.transactionAuthor = "App"
+        try persistenteContainer.viewContext.save()
+        persistenteContainer.viewContext.transactionAuthor = nil
     }
     
     func getArticle(boardId: Int, articleId: Int) -> Article? {
@@ -234,7 +225,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         var fetchedArticles = [Article]()
         do {
-            fetchedArticles = try PersistenceController.shared.container.viewContext.fetch(fetchRequest)
+            fetchedArticles = try persistenteContainer.viewContext.fetch(fetchRequest)
             
             print("fetchedArticle = \(fetchedArticles)")
         } catch {

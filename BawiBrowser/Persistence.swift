@@ -29,8 +29,7 @@ struct PersistenceController {
     }()
 
     var container: NSPersistentCloudKitContainer
-    var backgroundContext: NSManagedObjectContext?
-
+    
     init(inMemory: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "BawiBrowser")
         
@@ -38,20 +37,13 @@ struct PersistenceController {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         } else {
             
-            guard let fileContainer = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.resonance.jlee.BawiBrowser"),
-                  let applicationSupportPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last else {
+            guard let applicationSupportPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last else {
                        fatalError("Shared file container could not be created.")
             }
             
             //let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
             print("applicationSupportPath = \(applicationSupportPath)")
             
-            let storeURL = fileContainer.appendingPathComponent("BawiBrowser.sqlite")
-            let storeDescription = NSPersistentStoreDescription(url: storeURL)
-            storeDescription.configuration = "Default"
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            storeDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-
             let cloudStoreURL = applicationSupportPath.appendingPathComponent("BawiBrowser/BawiBrowser.sqlite")
             let cloudStoreDescription = NSPersistentStoreDescription(url: cloudStoreURL)
             cloudStoreDescription.configuration = "Cloud"
@@ -80,9 +72,9 @@ struct PersistenceController {
         })
         
         container.viewContext.name = "BawiBrowser"
-        backgroundContext = container.newBackgroundContext()
+
         purgeHistory()
-        //addObserver()
+        
     }
     
     private func purgeHistory() {
@@ -91,14 +83,10 @@ struct PersistenceController {
         let purgeHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: oneDayAgo)
 
         do {
-            try backgroundContext!.execute(purgeHistoryRequest)
+            try container.newBackgroundContext().execute(purgeHistoryRequest)
         } catch {
             print("Could not purge history: \(error)")
         }
-    }
-    
-    private func addObserver() {
-        let _ = PersistenceHistoryProcess(persistentContainer: container, backgroundContext: backgroundContext!)
     }
     
 }
