@@ -22,20 +22,16 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         page.getPropertiesWithCompletionHandler { properties in
             NSLog("The extension received a message (\(messageName)) from a script injected into (\(String(describing: properties?.url))) with userInfo (\(userInfo ?? [:]))")
             
+            // Assume that attachments do not come before article
             if self.attachments.contains(messageName) {
-                NSLog("\(messageName): userInfo = \(String(describing: userInfo))")
-                if let userInfo = userInfo, userInfo["data"] != nil {
-                    let data = userInfo["data"] as? [UInt8]
-                    
-                    if SafariExtensionHandler.articleDTO != nil {
-                        if let data = data {
-                            let attachment = Data(data)
-                            
-                            if SafariExtensionHandler.attachedData == nil {
-                                SafariExtensionHandler.attachedData = [Data]()
-                            }
-                            SafariExtensionHandler.attachedData!.append(attachment)
+                if SafariExtensionHandler.articleDTO != nil {
+                    if let userInfo = userInfo, userInfo["data"] != nil, let data = userInfo["data"] as? [UInt8] {
+                        let attachment = Data(data)
+                        
+                        if SafariExtensionHandler.attachedData == nil {
+                            SafariExtensionHandler.attachedData = [Data]()
                         }
+                        SafariExtensionHandler.attachedData!.append(attachment)
                     }
                 }
             }
