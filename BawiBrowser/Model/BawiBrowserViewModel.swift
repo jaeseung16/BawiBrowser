@@ -28,6 +28,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var didFinishURLString = String()
     @Published var didFinishTitle = String()
     
+    @Published var showAlert = false
+    var message = ""
+    
     @Published var navigation = BawiBrowserNavigation.none
     
     @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
@@ -41,10 +44,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             do {
                 try saveContext()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 print("While saving \(note) occured an unresolved error \(nsError), \(nsError.userInfo)")
+                message = "Cannot save a note to \(noteDTO.to) with msg = \(noteDTO.msg)"
+                showAlert.toggle()
             }
         }
     }
@@ -62,10 +65,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             do {
                 try saveContext()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 print("While saving \(comment) occured an unresolved error \(nsError), \(nsError.userInfo)")
+                message = "Cannot save a comment: \"\(commentDTO.body)\""
+                showAlert.toggle()
             }
         }
     }
@@ -119,10 +122,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             do {
                 try saveContext()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 print("While saving \(articleDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
+                message = "Cannot save an article with title = \(articleDTO.articleTitle)"
+                showAlert.toggle()
             }
         }
     }

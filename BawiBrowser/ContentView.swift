@@ -54,6 +54,11 @@ struct ContentView: View {
             
         }
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
+        .alert(isPresented: $viewModel.showAlert, content: {
+            Alert(title: Text("Unable to Save Data"),
+                  message: Text(viewModel.message),
+                  dismissButton: .default(Text("Dismiss")))
+        })
         
     }
     
