@@ -45,12 +45,10 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                             if queryItem.name == "aid", let aid = queryItem.value {
                                 NSLog("aid = \(aid)")
                                 SafariExtensionHandler.articleDTO!.articleId = Int(aid)!
-                                NSLog("articleDTO = \(String(describing: SafariExtensionHandler.articleDTO))")
                             }
                         }
                     }
                     
-                    NSLog("SafariExtensionHandler.attachedData = \(String(describing: SafariExtensionHandler.attachedData))")
                     if SafariExtensionHandler.attachedData != nil && SafariExtensionHandler.articleDTO!.attachCount != SafariExtensionHandler.attachedData!.count {
                         NSLog("WARNING: \(String(describing: SafariExtensionHandler.articleDTO!.attachCount)) files are expected. But \(SafariExtensionHandler.attachedData!.count) files have been downloaded")
                     }
@@ -67,7 +65,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
             }
             
             if messageName == "writeForm", let userInfo = userInfo {
-                
                 var articleId = -1
                 if let properties = properties, let url = properties.url, url.absoluteString.contains("edit.cgi") {
                     NSLog("edit.cgi: url.query = \(String(describing: url.query))")
@@ -101,8 +98,8 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
             }
             
             if messageName == "commentForm", let userInfo = userInfo {
-                let aid = userInfo["aid"] as? String ?? ""
                 _ = userInfo["action"] as? String
+                let aid = userInfo["aid"] as? String ?? ""
                 let bid = userInfo["bid"] as? String ?? ""
                 let body = userInfo["body"] as? String
                 let articleTitle = userInfo["articleTitle"] as? String
@@ -127,8 +124,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                 do {
                     try self.saveContext()
                 } catch {
-                    // Replace this implementation with code to handle the error appropriately.
-                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                     let nsError = error as NSError
                     NSLog("While saving \(commentDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
                 }
@@ -139,10 +134,10 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                 let to = userInfo["to"] as? String
                 let msg = userInfo["msg"] as? String
                 
-                if msg != nil && !msg!.isEmpty {
+                if msg != nil && !(msg!.isEmpty) {
                     let noteDTO = BawiNoteDTO(action: action ?? "",
                                               to: to ?? "",
-                                              msg: msg ?? "")
+                                              msg: msg!)
                     
                     NSLog("noteDTO = \(noteDTO)")
                     
@@ -155,8 +150,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                     do {
                         try self.saveContext()
                     } catch {
-                        // Replace this implementation with code to handle the error appropriately.
-                        // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                         let nsError = error as NSError
                         NSLog("While saving \(noteDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
                     }
@@ -167,7 +160,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
     
     private func saveContext() throws -> Void {
         viewContext.transactionAuthor = "Safari Extension"
-        NSLog("saveContext")
         try viewContext.save()
         viewContext.transactionAuthor = nil
     }
@@ -219,15 +211,12 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         do {
             try saveContext()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
             NSLog("While saving \(articleDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
     
     private func getArticle(boardId: Int, articleId: Int) -> Article? {
-        print("boardId = \(boardId), articleId = \(articleId)")
         let predicate = NSPredicate(format: "boardId == %@ AND articleId == %@", argumentArray: [boardId, articleId])
         
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
@@ -236,8 +225,6 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         var fetchedArticles = [Article]()
         do {
             fetchedArticles = try viewContext.fetch(fetchRequest)
-            
-            print("fetchedArticle = \(fetchedArticles)")
         } catch {
             let nsError = error as NSError
             NSLog("Failed to fetch article with boardId = \(boardId) and articleId = \(articleId): \(nsError)")
