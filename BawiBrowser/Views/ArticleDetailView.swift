@@ -14,62 +14,63 @@ struct ArticleDetailView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ScrollView {
-                VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 10.0) {
-                    Text("\(article.articleTitle ?? "")")
-                        .font(.title2)
-                        .frame(width: geometry.size.width * 0.5, alignment: .center)
+            VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 10.0) {
+                Text("\(article.articleTitle ?? "")")
+                    .font(.title2)
+                    .frame(width: geometry.size.width * 0.5, alignment: .center)
+                
+                HStack {
+                    Text("Board")
+                        .font(.headline)
+                        .frame(width: geometry.size.width * 0.16)
                     
+                    Text("\(article.boardTitle ?? "")")
+                        .font(.body)
+                        .frame(width: geometry.size.width * 0.3)
+                }
+                .frame(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                
+                HStack {
+                    Text("Created")
+                        .font(.headline)
+                        .frame(width: geometry.size.width * 0.16)
+                    
+                    Text(dateFormatter.string(from: article.created!))
+                        .font(.body)
+                        .frame(width: geometry.size.width * 0.3)
+                }
+                .frame(alignment: .center)
+                
+                if article.lastupd != nil {
                     HStack {
-                        Text("Board")
+                        Text("Last Update")
                             .font(.headline)
                             .frame(width: geometry.size.width * 0.16)
                         
-                        Text("\(article.boardTitle ?? "")")
+                        Text(dateFormatter.string(from: article.lastupd!))
                             .font(.body)
                             .frame(width: geometry.size.width * 0.3)
-                    }
-                    .frame(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                    
-                    HStack {
-                        Text("Created")
-                            .font(.headline)
-                            .frame(width: geometry.size.width * 0.16)
                         
-                        Text(dateFormatter.string(from: article.created!))
-                            .font(.body)
-                            .frame(width: geometry.size.width * 0.3)
                     }
                     .frame(alignment: .center)
-                    
-                    if article.lastupd != nil {
-                        HStack {
-                            Text("Last Update")
-                                .font(.headline)
-                                .frame(width: geometry.size.width * 0.16)
-         
-                            Text(dateFormatter.string(from: article.lastupd!))
-                                .font(.body)
-                                .frame(width: geometry.size.width * 0.3)
-
-                        }
-                        .frame(alignment: .center)
-                    }
-                    
-                    Divider()
-                    
+                }
+                
+                Divider()
+                
+                ScrollView {
                     Text(article.body?.removingPercentEncoding ?? "")
                         .font(.body)
                         .multilineTextAlignment(.leading)
                         .frame(alignment: .center)
-
-                    AttachmentListView(attachments: attachments)
-            
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .frame(height: geometry.size.height, alignment: .top)
-                .padding(.horizontal, 10)
+                
+                if !attachments.isEmpty {
+                    AttachmentListView(attachments: attachments)
+                }
             }
-            
+            .frame(height: geometry.size.height, alignment: .top)
+            .padding(.horizontal, 10)
         }
     }
     
