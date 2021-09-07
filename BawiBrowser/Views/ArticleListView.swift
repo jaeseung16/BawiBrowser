@@ -11,7 +11,7 @@ struct ArticleListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)],
         animation: .default)
     private var articles: FetchedResults<Article>
 
