@@ -17,6 +17,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let persistenteContainer = PersistenceController.shared.container
     private var subscriptions: Set<AnyCancellable> = []
     
+    @Published var changedPeristentContext = NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)
+    
     @Published var httpCookies = [HTTPCookie]()
     @Published var innerHTML = String()
     @Published var httpBody = Data()
@@ -176,6 +178,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                         }
                         
                         self.lastToken = history.last?.token
+                        
                     }
                 } catch {
                     print("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error)")
