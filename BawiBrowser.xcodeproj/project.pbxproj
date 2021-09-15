@@ -30,6 +30,8 @@
 		906F364426A23585002F0915 /* CommentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364326A23585002F0915 /* CommentListView.swift */; };
 		906F364626A2373F002F0915 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364526A2373F002F0915 /* BrowserView.swift */; };
 		906F364826A237E2002F0915 /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364726A237E2002F0915 /* ArticleListView.swift */; };
+		908EE55E26F2704E00BD4B90 /* BoardFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */; };
+		908EE56026F2705B00BD4B90 /* NoteFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */; };
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
 		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
@@ -114,6 +116,8 @@
 		906F364326A23585002F0915 /* CommentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentListView.swift; sourceTree = "<group>"; };
 		906F364526A2373F002F0915 /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		906F364726A237E2002F0915 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
+		908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardFilterView.swift; sourceTree = "<group>"; };
+		908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterView.swift; sourceTree = "<group>"; };
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
 		90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BawiBrowserSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -253,6 +257,8 @@
 			children = (
 				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
 				906F364726A237E2002F0915 /* ArticleListView.swift */,
+				908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */,
+				908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */,
 				906F364526A2373F002F0915 /* BrowserView.swift */,
 				906F364326A23585002F0915 /* CommentListView.swift */,
 				90617695268A785C00871FB2 /* WebView.swift */,
@@ -478,9 +484,11 @@
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
 				90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */,
 				900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */,
+				908EE56026F2705B00BD4B90 /* NoteFilterView.swift in Sources */,
 				90617670268A781200871FB2 /* BawiBrowser.xcdatamodeld in Sources */,
 				906F364826A237E2002F0915 /* ArticleListView.swift in Sources */,
 				906F364626A2373F002F0915 /* BrowserView.swift in Sources */,
+				908EE55E26F2704E00BD4B90 /* BoardFilterView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

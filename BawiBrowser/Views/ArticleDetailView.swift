@@ -70,7 +70,7 @@ struct ArticleDetailView: View {
                 }
             }
             .frame(height: geometry.size.height, alignment: .top)
-            .padding(.horizontal, 10)
+            .padding()
         }
     }
     
