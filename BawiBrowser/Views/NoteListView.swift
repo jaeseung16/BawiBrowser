@@ -9,46 +9,54 @@ import SwiftUI
 
 struct NoteListView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    @Environment(\.presentationMode) private var presentationMode
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Note.created, ascending: false)],
         animation: .default)
     private var notes: FetchedResults<Note>
     
+    @EnvironmentObject var viewModel: BawiBrowserViewModel
+    
+    @State private var presentFilterNoteView = false
+    
+    @State private var recipient: String?
+    
+    private var recipients: Array<String> {
+        var toSet = Set<String>()
+        
+        notes.compactMap { note in
+            note.to
+        }
+        .forEach { to in
+            toSet.insert(to)
+        }
+        
+        return Array(toSet)
+    }
+    
+    private var filteredNotes: Array<Note> {
+        notes.filter { note in
+            if recipient == nil {
+                return true
+            } else {
+                return note.to != nil && note.to! == recipient!
+            }
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                HStack {
-                    Text("Date")
-                        .font(.headline)
-                        .frame(width: geometry.size.width * 0.16)
-                    Text("To")
-                        .font(.headline)
-                        .frame(width: geometry.size.width * 0.2)
-                    Text("Message")
-                        .font(.headline)
-                        .frame(width: geometry.size.width * 0.6)
-                }
+                header(geometry: geometry)
             
                 List {
-                    ForEach(notes) { note in
-                        HStack {
-                            Text(dateFormatter.string(from: note.created!))
-                                .frame(width: geometry.size.width * 0.16)
-                         
-                            Text(note.to ?? "")
-                                .font(.headline)
-                                .frame(width: geometry.size.width * 0.2)
-                            
-                            Text(note.msg ?? "")
-                                .font(.body)
-                                .multilineTextAlignment(.leading)
-                                .frame(width: geometry.size.width * 0.6, alignment: .leading)
-                        }
+                    ForEach(filteredNotes) { note in
+                        label(note: note, in: geometry)
                     }
                     .onDelete(perform: { indexSet in
                         for index in indexSet {
-                            let note = notes[index]
+                            let note = filteredNotes[index]
                             viewContext.delete(note)
                         }
                         
@@ -58,9 +66,54 @@ struct NoteListView: View {
                             print(error)
                         }
                     })
+                    .onReceive(viewModel.$changedPeristentContext) { _ in
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }
                 .listStyle(InsetListStyle())
             }
+            .padding()
+            .sheet(isPresented: $presentFilterNoteView) {
+                NoteFilterView(to: $recipient, toList: recipients)
+            }
+        }
+    }
+    
+    private func label(note: Note, in geometry: GeometryProxy) -> some View {
+        HStack {
+            VStack {
+                Text(note.to ?? "")
+                    
+                HStack {
+                    Spacer()
+                    
+                    Text(dateFormatter.string(from: note.created ?? Date()))
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(.trailing)
+            .frame(width: geometry.size.width * 0.2)
+         
+            Divider()
+            
+            Text(note.msg ?? "")
+                .font(.body)
+                .multilineTextAlignment(.leading)
+                .padding(.leading)
+                .frame(alignment: .leading)
+        }
+    }
+    
+    private func header(geometry: GeometryProxy) -> some View {
+        HStack {
+            Button(action: {
+                presentFilterNoteView = true
+            }) {
+                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
+            }
+            
+            Spacer()
         }
     }
     
