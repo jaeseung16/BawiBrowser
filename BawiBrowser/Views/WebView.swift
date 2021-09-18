@@ -170,9 +170,6 @@ struct WebView: NSViewRepresentable {
                     self.articleTitle = result
                 }
             })
-            
-            
-            
         }
         
         func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
