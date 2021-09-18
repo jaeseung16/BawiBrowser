@@ -11,10 +11,13 @@ import MultipartKit
 
 struct WebView: NSViewRepresentable {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
+    @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
     
     let url: URL
     
     func makeNSView(context: NSViewRepresentableContext<WebView>) -> WKWebView {
+        viewModel.isDarkMode = darkMode
+        
         let configuration = WKWebViewConfiguration()
         let request = URLRequest(url: url)
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
@@ -36,6 +39,9 @@ struct WebView: NSViewRepresentable {
         case .forward:
             viewModel.navigation = .none
             nsView.goForward()
+        case .reload:
+            viewModel.navigation = .none
+            nsView.reload()
         case .none:
             return
         }
@@ -109,6 +115,10 @@ struct WebView: NSViewRepresentable {
         func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
             parent.viewModel.didCommitURLString = webView.url?.description ?? ""
             parent.viewModel.didCommitTitle = webView.title ?? ""
+            
+            if parent.viewModel.isDarkMode {
+                insertContentsOfCSSFile(into: webView)
+            }
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -160,6 +170,9 @@ struct WebView: NSViewRepresentable {
                     self.articleTitle = result
                 }
             })
+            
+            
+            
         }
         
         func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
@@ -205,6 +218,17 @@ struct WebView: NSViewRepresentable {
                     completionHandler(nil)
                 }
             }
+        }
+        
+        func insertContentsOfCSSFile(into webView: WKWebView) {
+            guard let path = Bundle.main.path(forResource: "dark_bawi", ofType: "css") else {
+                return
+            }
+            
+            let cssString = try! String(contentsOfFile: path).components(separatedBy: .newlines).joined()
+            let jsString = "var style = document.createElement('style'); style.innerHTML = '<style type=\"text/css\">\(cssString)</style>'; document.head.appendChild(style);"
+            
+            webView.evaluateJavaScript(jsString, completionHandler: nil)
         }
     }
 }

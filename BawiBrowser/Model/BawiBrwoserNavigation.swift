@@ -8,5 +8,5 @@
 import Foundation
 
 enum BawiBrowserNavigation {
-    case home, back, forward, none
+    case home, back, forward, reload, none
 }

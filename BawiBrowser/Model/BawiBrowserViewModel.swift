@@ -132,6 +132,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
+    @Published var isDarkMode = false
+    
     override init() {
         super.init()
         

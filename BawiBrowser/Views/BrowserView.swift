@@ -11,6 +11,7 @@ struct BrowserView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     var url: URL
+    @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
     
     var body: some View {
         VStack {
@@ -31,6 +32,15 @@ struct BrowserView: View {
                 
                 Spacer()
                 
+                Toggle("dark mode", isOn: $darkMode)
+                    .toggleStyle(SwitchToggleStyle())
+                    .onChange(of: darkMode) { _ in
+                        viewModel.isDarkMode = darkMode
+                        viewModel.navigation = .reload
+                    }
+                
+                Spacer()
+                
                 Button(action: {
                     viewModel.navigation = .forward
                 }, label: {
@@ -41,7 +51,6 @@ struct BrowserView: View {
             WebView(url: url)
                 .environmentObject(viewModel)
                 .shadow(color: Color.gray, radius: 1.0)
-                
         }
         .padding()
     }

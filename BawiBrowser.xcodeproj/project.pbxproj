@@ -46,6 +46,8 @@
 		90D0A98426B48FE400581D33 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061766C268A781200871FB2 /* Persistence.swift */; };
 		90D0A98526B4A0F900581D33 /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
 		90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */; };
+		90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */ = {isa = PBXBuildFile; fileRef = 90E857A426F5413200D15ED7 /* dark_bawi.css */; };
+		90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -131,6 +133,8 @@
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Toolbar.pdf; sourceTree = "<group>"; };
+		90E857A426F5413200D15ED7 /* dark_bawi.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dark_bawi.css; sourceTree = "<group>"; };
+		90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserAppearance.swift; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -211,6 +215,7 @@
 		90617662268A781000871FB2 /* BawiBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				90E857A326F5411E00D15ED7 /* Resources */,
 				900B269E268BD76900C03837 /* Model */,
 				90617694268A784800871FB2 /* Views */,
 				90617663268A781000871FB2 /* BawiBrowserApp.swift */,
@@ -264,6 +269,7 @@
 				90617695268A785C00871FB2 /* WebView.swift */,
 				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
 				90CDB73D26A7800900568700 /* NoteListView.swift */,
+				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -295,6 +301,14 @@
 			children = (
 				90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */,
 				90A2778126AE3C26000A3080 /* script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		90E857A326F5411E00D15ED7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				90E857A426F5413200D15ED7 /* dark_bawi.css */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -431,6 +445,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */,
 				9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */,
 				90617668268A781200871FB2 /* Assets.xcassets in Resources */,
 			);
@@ -474,6 +489,7 @@
 				906F364426A23585002F0915 /* CommentListView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
 				90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */,
+				90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
 				9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */,
 				9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */,

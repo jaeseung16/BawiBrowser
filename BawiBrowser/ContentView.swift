@@ -23,6 +23,9 @@ struct ContentView: View {
 
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
+    @AppStorage("BawiBrowser.appearance")
+    var appearance: BawiBrowserAppearance = .light
+    
     var body: some View {
         TabView {
             BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
