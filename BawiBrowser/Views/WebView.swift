@@ -115,10 +115,6 @@ struct WebView: NSViewRepresentable {
         func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
             parent.viewModel.didCommitURLString = webView.url?.description ?? ""
             parent.viewModel.didCommitTitle = webView.title ?? ""
-            
-            if parent.viewModel.isDarkMode {
-                insertContentsOfCSSFile(into: webView)
-            }
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -215,17 +211,6 @@ struct WebView: NSViewRepresentable {
                     completionHandler(nil)
                 }
             }
-        }
-        
-        func insertContentsOfCSSFile(into webView: WKWebView) {
-            guard let path = Bundle.main.path(forResource: "dark_bawi", ofType: "css") else {
-                return
-            }
-            
-            let cssString = try! String(contentsOfFile: path).components(separatedBy: .newlines).joined()
-            let jsString = "var style = document.createElement('style'); style.innerHTML = '<style type=\"text/css\">\(cssString)</style>'; document.head.appendChild(style);"
-            
-            webView.evaluateJavaScript(jsString, completionHandler: nil)
         }
     }
 }

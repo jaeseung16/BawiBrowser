@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BrowserView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
+    @Environment(\.colorScheme) var colorScheme
     
     var url: URL
     @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
@@ -32,7 +33,7 @@ struct BrowserView: View {
                 
                 Spacer()
                 
-                Toggle("dark mode", isOn: $darkMode)
+                Toggle(viewModel.isDarkMode ? "dark" : "light", isOn: $darkMode)
                     .toggleStyle(SwitchToggleStyle())
                     .onChange(of: darkMode) { _ in
                         viewModel.isDarkMode = darkMode
@@ -51,6 +52,7 @@ struct BrowserView: View {
             WebView(url: url)
                 .environmentObject(viewModel)
                 .shadow(color: Color.gray, radius: 1.0)
+                .colorScheme(viewModel.isDarkMode ? .dark : .light)
         }
         .padding()
     }
