@@ -23,6 +23,8 @@ struct ArticleListView: View {
     
     @State private var selectedBoard: String?
     
+    @State private var searchString = ""
+    
     private var boards: [String] {
         var boardSet = Set<String>()
         
@@ -47,6 +49,13 @@ struct ArticleListView: View {
                 return boardTitle == selectedBoard!
             }
         }
+        .filter { article in
+            if searchString.isEmpty {
+                return true
+            } else {
+                return article.body?.contains(searchString) ?? false
+            }
+        }
     }
     
     var body: some View {
@@ -54,6 +63,8 @@ struct ArticleListView: View {
             NavigationView {
                 VStack {
                     header()
+                    
+                    SearchView(searchString: $searchString)
                     
                     Divider()
                     

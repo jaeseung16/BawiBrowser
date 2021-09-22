@@ -23,6 +23,8 @@ struct CommentListView: View {
     
     @State private var selectedBoard: String?
     
+    @State private var searchString = ""
+    
     private var boards: [String] {
         var boardSet = Set<String>()
         
@@ -47,6 +49,13 @@ struct CommentListView: View {
                 return boardTitle == selectedBoard!
             }
         }
+        .filter { comment in
+            if searchString.isEmpty {
+                return true
+            } else {
+                return comment.body?.contains(searchString) ?? false
+            }
+        }
     }
     
     var body: some View {
@@ -54,6 +63,8 @@ struct CommentListView: View {
             VStack {
                 header(geometry: geometry)
             
+                SearchView(searchString: $searchString)
+                
                 List {
                     ForEach(filteredComments) { comment in
                         label(comment: comment, in: geometry)
