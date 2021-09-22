@@ -1,0 +1,114 @@
+/* palette
+#222 background
+#bbb text
+#ddd brighter text
+#666 border
+#555 header
+#444 darker items
+*/
+#globalWrapper {
+  background-color: #222
+}
+body {
+  color: #bbb;
+  background-color: #222
+}
+a {
+  color: #bbb !important;
+}
+a.auto {
+  background-color: transparent;
+}
+input.text {
+  background-color: #ccc;
+  border: none;
+}
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  color: #ddd;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #ddd;
+}
+/* top menu and front page */
+#top-menu {
+  background: #222;
+}
+#top-menu ul.contents-menu
+{
+  background: #444;
+}
+body.news #wp #s1 {
+  background:transparent;
+}
+body.news #wp #s2 {
+  background:transparent;
+}
+body.news #wp #s3 {
+  background: transparent;
+}
+div.recent-articles {
+  border: 1px dotted #666;
+  background: #555;
+}
+.spotlight.orange {
+  background: #000;
+  border: 1px
+  dotted #773;
+}
+.spotlight.cyan {
+  background: #000;
+  border: 1px
+  dotted #38b;
+}
+ul.focus {
+  background: #331;
+}
+
+/* list items for
+article, comment, bookmark */
+ul.article-list.head {
+  background: #444;
+}
+ul.article > li.button {
+  color: #bbb;
+  background: #555;
+}
+ul.article > li.button a {
+  color: #bbb;
+  background: #555;
+}
+ul.article-list li {
+  border-top: 1px dotted #666;
+}
+ul.comment li {
+  border-top: 0.5px dotted #666;
+  border-bottom: 0.5px dotted #666;
+}
+ul.bookmark li.item.head ul li {
+   background: #555;
+   color: #bbb;
+}
+ul.bookmark li ul {
+  border-top: 0.5px dotted #666;
+  border-bottom: 0.5px dotted #666;
+}
+ul.image-list li {
+  background: #333
+}
+
+/* profile */
+td.iteml {
+    border-bottom: #666 1px dotted;
+    color: #999;
+}
+
+/* note */
+body.note h1 {
+    background-color: #222;
+}
+form.note label {
+    color: #bbb;
+}
+body.note div.msg {
+  color: #bbb;
+}
