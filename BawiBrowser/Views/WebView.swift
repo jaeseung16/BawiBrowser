@@ -174,7 +174,17 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-            print("runJavaScriptAlertPanelWithMessage: \(message)")
+            let alert = NSAlert()
+            alert.messageText = message
+            alert.informativeText = "Please confirm"
+            alert.alertStyle = .warning
+            
+            let deleteButton = alert.addButton(withTitle: "OK")
+            deleteButton.tag = NSApplication.ModalResponse.OK.rawValue
+            
+            _ = alert.runModal()
+            
+            completionHandler()
         }
         
         func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
