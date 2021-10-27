@@ -159,6 +159,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                             self.persistenteContainer.viewContext.perform {
                                 if let userInfo = transaction.objectIDNotification().userInfo {
                                     //print("transaction.objectIDNotification().userInfo = \(userInfo)")
+                                    /*
                                     if let insertedObjectIds = userInfo["inserted_objectsIDs"] {
                                         if let idSet = insertedObjectIds as? NSSet {
                                             for id in idSet {
@@ -172,7 +173,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                                             }
                                         }
                                     }
-                                    
+                                    */
                                     NSManagedObjectContext.mergeChanges(fromRemoteContextSave: userInfo,
                                                                         into: [self.persistenteContainer.viewContext])
                                 }
