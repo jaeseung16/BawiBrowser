@@ -71,7 +71,6 @@ struct ArticleListView: View {
                     List {
                         ForEach(filteredArticles) { article in
                             NavigationLink(destination: ArticleDetailView(article: article)
-                                            .environment(\.managedObjectContext, viewContext)
                             ) {
                                 label(article: article)
                             }

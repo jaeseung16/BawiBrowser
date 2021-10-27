@@ -264,15 +264,15 @@
 			children = (
 				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
 				906F364726A237E2002F0915 /* ArticleListView.swift */,
+				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
+				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
+				906F364526A2373F002F0915 /* BrowserView.swift */,
 				908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */,
 				908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */,
-				906F364526A2373F002F0915 /* BrowserView.swift */,
 				906F364326A23585002F0915 /* CommentListView.swift */,
-				90617695268A785C00871FB2 /* WebView.swift */,
-				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
 				90CDB73D26A7800900568700 /* NoteListView.swift */,
-				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
 				9089733726FBB86C005A03A8 /* SearchView.swift */,
+				90617695268A785C00871FB2 /* WebView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
