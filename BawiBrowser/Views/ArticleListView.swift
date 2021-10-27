@@ -88,9 +88,6 @@ struct ArticleListView: View {
                                 print(error)
                             }
                         })
-                        .onReceive(viewModel.$changedPeristentContext) { _ in
-                            presentationMode.wrappedValue.dismiss()
-                        }
                     }
                     .frame(width: geometry.size.width * 0.25)
                 }

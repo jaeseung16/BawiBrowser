@@ -17,8 +17,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let persistenteContainer = PersistenceController.shared.container
     private var subscriptions: Set<AnyCancellable> = []
     
-    @Published var changedPeristentContext = NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)
-    
     @Published var httpCookies = [HTTPCookie]()
     @Published var innerHTML = String()
     @Published var httpBody = Data()

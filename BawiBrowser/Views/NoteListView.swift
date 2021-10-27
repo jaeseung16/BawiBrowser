@@ -66,9 +66,6 @@ struct NoteListView: View {
                             print(error)
                         }
                     })
-                    .onReceive(viewModel.$changedPeristentContext) { _ in
-                        presentationMode.wrappedValue.dismiss()
-                    }
                 }
                 .listStyle(InsetListStyle())
             }
