@@ -92,6 +92,10 @@ struct WebView: NSViewRepresentable {
                                  boundary: boundary,
                                  boardTitle: self.boardTitle)
                 }
+            } else if let url = navigationAction.request.url, navigationAction.navigationType == .linkActivated {
+                if let host = url.host, !host.hasPrefix("www.bawi.org"), NSWorkspace.shared.open(url) {
+                    decisionHandler(.cancel, preferences)
+                }
             }
             
             decisionHandler(.allow, preferences)
