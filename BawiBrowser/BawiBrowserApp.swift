@@ -21,6 +21,13 @@ struct BawiBrowserApp: App {
         .commands {
             CommandGroup(after: .pasteboard) {
                 Button(action: {
+                    bawiBrowserViewModel.enableSearch = true
+                }, label: {
+                    Text("Find")
+                })
+                .keyboardShortcut("f", modifiers: [.command])
+                
+                Button(action: {
                         NSApp.orderFrontCharacterPalette(nil)
                 }, label: {
                     Text("Emoji & Symbols")
