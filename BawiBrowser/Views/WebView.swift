@@ -8,6 +8,7 @@
 import SwiftUI
 import WebKit
 import MultipartKit
+import Combine
 
 struct WebView: NSViewRepresentable {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
@@ -19,11 +20,63 @@ struct WebView: NSViewRepresentable {
         viewModel.isDarkMode = darkMode
         
         let configuration = WKWebViewConfiguration()
+        if let path = Bundle.main.path(forResource: "UIWebViewSearch", ofType: "js"), let jsString = try? String(contentsOfFile: path, encoding: .utf8) {
+            let userContentController = WKUserContentController()
+            let userScript = WKUserScript(source: jsString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            userContentController.addUserScript(userScript)
+            configuration.userContentController = userContentController
+        }
+        
         let request = URLRequest(url: url)
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
         webView.load(request)
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
+        
+        viewModel.$searchString
+            .sink {
+                if !$0.isEmpty {
+                    let startSearch = "uiWebview_HighlightAllOccurencesOfString('\($0)')"
+                    
+                    webView.find($0) { result in
+                        if result.matchFound {
+                            webView.evaluateJavaScript(startSearch) { result, error in
+                                if error != nil {
+                                    print("uiWebview_HighlightAllOccurencesOfString: \(String(describing: error))")
+                                    return
+                                }
+                                
+                                webView.evaluateJavaScript("uiWebview_SearchResultTotalCount") { result, error in
+                                    if error != nil {
+                                        print("uiWebview_SearchResultTotalCount: \(String(describing: error))")
+                                        return
+                                    }
+                                    
+                                    if let result = result as? Int {
+                                        viewModel.searchResultTotalCount = result
+                                        viewModel.searchResultCounter = 1
+                                        webView.evaluateJavaScript("uiWebview_ScrollTo(\(result))")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    viewModel.searchResultTotalCount = 0
+                    viewModel.searchResultCounter = 0
+                    webView.evaluateJavaScript("uiWebview_RemoveAllHighlights()")
+                }
+            }
+            .store(in: &viewModel.subscriptions)
+        
+        viewModel.$searchResultCounter
+            .sink {
+                let idx = viewModel.searchResultTotalCount - $0 + 1
+                print("idx=\(idx)")
+                webView.evaluateJavaScript("uiWebview_ScrollTo(\(idx))")
+            }
+            .store(in: &viewModel.subscriptions)
+        
         return webView
     }
 

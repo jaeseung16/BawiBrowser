@@ -9,13 +9,14 @@ import Foundation
 import WebKit
 import Combine
 import MultipartKit
+import SwiftUI
 
 class BawiBrowserViewModel: NSObject, ObservableObject {
     static let shared = BawiBrowserViewModel()
     
     private let multipartPrefix = "multipart/form-data; boundary="
     private let persistenteContainer = PersistenceController.shared.container
-    private var subscriptions: Set<AnyCancellable> = []
+    var subscriptions: Set<AnyCancellable> = []
     
     @Published var httpCookies = [HTTPCookie]()
     @Published var innerHTML = String()
@@ -131,6 +132,11 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     @Published var isDarkMode = false
+    
+    @Published var enableSearch = false
+    @Published var searchString = ""
+    @Published var searchResultTotalCount = 0
+    @Published var searchResultCounter = 0
     
     override init() {
         super.init()

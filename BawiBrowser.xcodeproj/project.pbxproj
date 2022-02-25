@@ -49,6 +49,7 @@
 		90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */; };
 		90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */ = {isa = PBXBuildFile; fileRef = 90E857A426F5413200D15ED7 /* dark_bawi.css */; };
 		90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */; };
+		90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */ = {isa = PBXBuildFile; fileRef = 90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -137,6 +138,7 @@
 		90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Toolbar.pdf; sourceTree = "<group>"; };
 		90E857A426F5413200D15ED7 /* dark_bawi.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dark_bawi.css; sourceTree = "<group>"; };
 		90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserAppearance.swift; sourceTree = "<group>"; };
+		90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = UIWebViewSearch.js; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -228,6 +230,7 @@
 				90617672268A781200871FB2 /* BawiBrowser.entitlements */,
 				9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */,
 				90617669268A781200871FB2 /* Preview Content */,
+				90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */,
 			);
 			path = BawiBrowser;
 			sourceTree = "<group>";
@@ -450,6 +453,7 @@
 			files = (
 				90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */,
 				9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */,
+				90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */,
 				90617668268A781200871FB2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
