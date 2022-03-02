@@ -94,12 +94,16 @@ struct NoteListView: View {
          
             Divider()
             
-            Text(note.msg ?? "")
+            Text(makeReadable(note.msg))
                 .font(.body)
                 .multilineTextAlignment(.leading)
                 .padding(.leading)
                 .frame(alignment: .leading)
         }
+    }
+    
+    private func makeReadable(_ msg: String?) -> String {
+        return msg?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? ""
     }
     
     private func header(geometry: GeometryProxy) -> some View {
