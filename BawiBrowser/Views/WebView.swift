@@ -146,7 +146,7 @@ struct WebView: NSViewRepresentable {
                                  boardTitle: self.boardTitle)
                 }
             } else if let url = navigationAction.request.url, navigationAction.navigationType == .linkActivated {
-                if let host = url.host, !host.hasPrefix("www.bawi.org"), NSWorkspace.shared.open(url) {
+                if let host = url.host, !host.contains("bawi.org"), NSWorkspace.shared.open(url) {
                     decisionHandler(.cancel, preferences)
                 }
             }
