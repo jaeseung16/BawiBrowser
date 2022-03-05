@@ -50,12 +50,14 @@ struct BrowserView: View {
                         Stepper {
                             Text("\(viewModel.searchResultCounter) of \(viewModel.searchResultTotalCount)")
                         } onIncrement: {
-                            if viewModel.searchResultCounter < viewModel.searchResultTotalCount {
-                                viewModel.searchResultCounter += 1
+                            viewModel.searchResultCounter += 1
+                            if viewModel.searchResultCounter >= viewModel.searchResultTotalCount {
+                                viewModel.searchResultCounter = viewModel.searchResultTotalCount
                             }
                         } onDecrement: {
-                            if viewModel.searchResultCounter > 1 {
-                                viewModel.searchResultCounter -= 1
+                            viewModel.searchResultCounter -= 1
+                            if viewModel.searchResultCounter <= 1 {
+                                viewModel.searchResultCounter = 1
                             }
                         }
                     }
