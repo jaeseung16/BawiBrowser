@@ -50,24 +50,15 @@ struct NoteListView: View {
             VStack {
                 header(geometry: geometry)
             
-                List {
-                    ForEach(filteredNotes) { note in
-                        label(note: note, in: geometry)
+                ScrollView {
+                    LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
+                        ForEach(filteredNotes) { note in
+                            label(note: note, in: geometry)
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
+                        }
                     }
-                    .onDelete(perform: { indexSet in
-                        for index in indexSet {
-                            let note = filteredNotes[index]
-                            viewContext.delete(note)
-                        }
-                        
-                        do {
-                            try viewContext.save()
-                        } catch {
-                            print(error)
-                        }
-                    })
                 }
-                .listStyle(InsetListStyle())
             }
             .padding()
             .sheet(isPresented: $presentFilterNoteView) {
@@ -99,6 +90,20 @@ struct NoteListView: View {
                 .multilineTextAlignment(.leading)
                 .padding(.leading)
                 .frame(alignment: .leading)
+            
+            Spacer()
+            
+            Button {
+                viewContext.delete(note)
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    print(error)
+                }
+            } label: {
+                Image(systemName: "trash")
+            }
         }
     }
     

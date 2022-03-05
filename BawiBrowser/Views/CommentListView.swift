@@ -65,25 +65,15 @@ struct CommentListView: View {
             
                 SearchView(searchString: $searchString)
                 
-                List {
-                    ForEach(filteredComments) { comment in
-                        label(comment: comment, in: geometry)
+                ScrollView {
+                    LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
+                        ForEach(filteredComments) { comment in
+                            label(comment: comment, in: geometry)
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
+                        }
                     }
-                    .onDelete(perform: { indexSet in
-                        for index in indexSet {
-                            let comment = filteredComments[index]
-                            viewContext.delete(comment)
-                        }
-                        
-                        do {
-                            try viewContext.save()
-                        } catch {
-                            print(error)
-                        }
-                    })
                 }
-                .listStyle(InsetListStyle())
-                
             }
             .padding()
             .sheet(isPresented: $presentFilterItemsView) {
@@ -123,6 +113,20 @@ struct CommentListView: View {
                 .multilineTextAlignment(.leading)
                 .padding(.leading)
                 .frame(alignment: .leading)
+            
+            Spacer()
+            
+            Button {
+                viewContext.delete(comment)
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    print(error)
+                }
+            } label: {
+                Image(systemName: "trash")
+            }
         }
     }
     
