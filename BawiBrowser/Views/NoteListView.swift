@@ -50,27 +50,15 @@ struct NoteListView: View {
             VStack {
                 header(geometry: geometry)
             
-                List {
-                    ForEach(filteredNotes) { note in
-                        label(note: note, in: geometry)
-                    }
-                    .onDelete(perform: { indexSet in
-                        for index in indexSet {
-                            let note = filteredNotes[index]
-                            viewContext.delete(note)
+                ScrollView {
+                    LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
+                        ForEach(filteredNotes) { note in
+                            label(note: note, in: geometry)
+                                .padding()
+                                .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
                         }
-                        
-                        do {
-                            try viewContext.save()
-                        } catch {
-                            print(error)
-                        }
-                    })
-                    .onReceive(viewModel.$changedPeristentContext) { _ in
-                        presentationMode.wrappedValue.dismiss()
                     }
                 }
-                .listStyle(InsetListStyle())
             }
             .padding()
             .sheet(isPresented: $presentFilterNoteView) {
@@ -97,12 +85,30 @@ struct NoteListView: View {
          
             Divider()
             
-            Text(note.msg ?? "")
+            Text(makeReadable(note.msg))
                 .font(.body)
                 .multilineTextAlignment(.leading)
                 .padding(.leading)
                 .frame(alignment: .leading)
+            
+            Spacer()
+            
+            Button {
+                viewContext.delete(note)
+                
+                do {
+                    try viewContext.save()
+                } catch {
+                    print(error)
+                }
+            } label: {
+                Image(systemName: "trash")
+            }
         }
+    }
+    
+    private func makeReadable(_ msg: String?) -> String {
+        return msg?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? ""
     }
     
     private func header(geometry: GeometryProxy) -> some View {

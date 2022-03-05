@@ -49,6 +49,7 @@
 		90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */; };
 		90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */ = {isa = PBXBuildFile; fileRef = 90E857A426F5413200D15ED7 /* dark_bawi.css */; };
 		90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */; };
+		90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */ = {isa = PBXBuildFile; fileRef = 90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
 /* End PBXBuildFile section */
@@ -137,6 +138,7 @@
 		90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Toolbar.pdf; sourceTree = "<group>"; };
 		90E857A426F5413200D15ED7 /* dark_bawi.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dark_bawi.css; sourceTree = "<group>"; };
 		90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserAppearance.swift; sourceTree = "<group>"; };
+		90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = UIWebViewSearch.js; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -228,6 +230,7 @@
 				90617672268A781200871FB2 /* BawiBrowser.entitlements */,
 				9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */,
 				90617669268A781200871FB2 /* Preview Content */,
+				90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */,
 			);
 			path = BawiBrowser;
 			sourceTree = "<group>";
@@ -264,15 +267,15 @@
 			children = (
 				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
 				906F364726A237E2002F0915 /* ArticleListView.swift */,
+				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
+				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
+				906F364526A2373F002F0915 /* BrowserView.swift */,
 				908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */,
 				908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */,
-				906F364526A2373F002F0915 /* BrowserView.swift */,
 				906F364326A23585002F0915 /* CommentListView.swift */,
-				90617695268A785C00871FB2 /* WebView.swift */,
-				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
 				90CDB73D26A7800900568700 /* NoteListView.swift */,
-				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
 				9089733726FBB86C005A03A8 /* SearchView.swift */,
+				90617695268A785C00871FB2 /* WebView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -450,6 +453,7 @@
 			files = (
 				90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */,
 				9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */,
+				90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */,
 				90617668268A781200871FB2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -699,7 +703,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -710,7 +714,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -727,7 +731,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -738,7 +742,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

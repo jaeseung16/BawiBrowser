@@ -32,29 +32,21 @@ struct ContentView: View {
                 .tabItem {
                     Text("Bawi")
                 }
-                .environmentObject(viewModel)
             
             ArticleListView()
                 .tabItem {
                     Text("Articles")
                 }
-                .environment(\.managedObjectContext, viewContext)
-                .environmentObject(viewModel)
             
             CommentListView()
                 .tabItem {
                     Text("Comments")
                 }
-                .environment(\.managedObjectContext, viewContext)
-                .environmentObject(viewModel)
             
             NoteListView()
                 .tabItem {
                     Text("Notes")
                 }
-                .environment(\.managedObjectContext, viewContext)
-                .environmentObject(viewModel)
-            
         }
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         .alert(isPresented: $viewModel.showAlert, content: {

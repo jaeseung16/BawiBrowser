@@ -14,6 +14,8 @@ struct BrowserView: View {
     var url: URL
     @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
     
+    @State private var searchCounter = 0
+    
     var body: some View {
         VStack {
             HStack {
@@ -30,6 +32,7 @@ struct BrowserView: View {
                 }, label: {
                     Image(systemName: "house")
                 })
+                .keyboardShortcut("h", modifiers: [.command])
                 
                 Spacer()
                 
@@ -40,7 +43,26 @@ struct BrowserView: View {
                         viewModel.navigation = .reload
                     }
                 
-                Spacer()
+                HStack {
+                    SearchView(searchString: $viewModel.searchString)
+                    
+                    if viewModel.searchResultTotalCount > 0 {
+                        Stepper {
+                            Text("\(viewModel.searchResultCounter) of \(viewModel.searchResultTotalCount)")
+                        } onIncrement: {
+                            viewModel.searchResultCounter += 1
+                            if viewModel.searchResultCounter >= viewModel.searchResultTotalCount {
+                                viewModel.searchResultCounter = viewModel.searchResultTotalCount
+                            }
+                        } onDecrement: {
+                            viewModel.searchResultCounter -= 1
+                            if viewModel.searchResultCounter <= 1 {
+                                viewModel.searchResultCounter = 1
+                            }
+                        }
+                    }
+                }
+                .frame(width: 250)
                 
                 Button(action: {
                     viewModel.navigation = .forward

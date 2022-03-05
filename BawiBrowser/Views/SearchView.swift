@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct SearchView: NSViewRepresentable {
+    @EnvironmentObject var viewModel: BawiBrowserViewModel
     @Binding var searchString: String
     
     func makeNSView(context: NSViewRepresentableContext<SearchView>) -> NSSearchField {
@@ -18,7 +19,10 @@ struct SearchView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSSearchField, context: Context) {
-        
+        if viewModel.enableSearch {
+            nsView.window?.makeFirstResponder(nsView)
+            viewModel.enableSearch = false
+        }
     }
     
     func makeCoordinator() -> Coordinator {

@@ -71,7 +71,6 @@ struct ArticleListView: View {
                     List {
                         ForEach(filteredArticles) { article in
                             NavigationLink(destination: ArticleDetailView(article: article)
-                                            .environment(\.managedObjectContext, viewContext)
                             ) {
                                 label(article: article)
                             }
@@ -88,9 +87,6 @@ struct ArticleListView: View {
                                 print(error)
                             }
                         })
-                        .onReceive(viewModel.$changedPeristentContext) { _ in
-                            presentationMode.wrappedValue.dismiss()
-                        }
                     }
                     .frame(width: geometry.size.width * 0.25)
                 }
