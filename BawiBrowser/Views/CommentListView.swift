@@ -158,11 +158,3 @@ struct CommentListView: View {
         return dateFormatter
     }
 }
-
-struct CommentListView_Previews: PreviewProvider {
-    static var previews: some View {
-        CommentListView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(BawiBrowserViewModel())
-    }
-}

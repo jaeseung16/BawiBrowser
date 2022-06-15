@@ -10,12 +10,13 @@ import WebKit
 import Combine
 import MultipartKit
 import SwiftUI
+import Persistence
+import os
 
 class BawiBrowserViewModel: NSObject, ObservableObject {
-    static let shared = BawiBrowserViewModel()
+    private let logger = Logger()
     
     private let multipartPrefix = "multipart/form-data; boundary="
-    private let persistenteContainer = PersistenceController.shared.container
     var subscriptions: Set<AnyCancellable> = []
     
     @Published var httpCookies = [HTTPCookie]()
@@ -29,6 +30,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var didFinishURLString = String()
     @Published var didFinishTitle = String()
     
+    @Published var toggle = false
     @Published var showAlert = false
     var message = ""
     
@@ -36,26 +38,23 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
         didSet {
-            let note = Note(context: persistenteContainer.viewContext)
+            let note = Note(context: persistenceContainer.viewContext)
             note.action = noteDTO.action
             note.to = noteDTO.to
             note.msg = noteDTO.msg
             note.created = Date()
             
-            do {
-                try saveContext()
-            } catch {
-                let nsError = error as NSError
-                print("While saving \(note) occured an unresolved error \(nsError), \(nsError.userInfo)")
-                message = "Cannot save a note to \(noteDTO.to) with msg = \(noteDTO.msg)"
-                showAlert.toggle()
+            saveContext { error in
+                self.message = "Cannot save a note to \(self.noteDTO.to) with msg = \(self.noteDTO.msg)"
+                self.logger.log("While saving \(self.noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                self.showAlert.toggle()
             }
         }
     }
     
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
-            let comment = Comment(context: persistenteContainer.viewContext)
+            let comment = Comment(context: persistenceContainer.viewContext)
             comment.articleId = Int64(commentDTO.articleId)
             comment.articleTitle = commentDTO.articleTitle
             comment.boardId = Int64(commentDTO.boardId)
@@ -63,13 +62,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             comment.body = commentDTO.body.replacingOccurrences(of: "+", with: "%20")
             comment.created = Date()
             
-            do {
-                try saveContext()
-            } catch {
-                let nsError = error as NSError
-                print("While saving \(comment) occured an unresolved error \(nsError), \(nsError.userInfo)")
-                message = "Cannot save a comment: \"\(commentDTO.body)\""
-                showAlert.toggle()
+            saveContext { error in
+                self.message = "Cannot save a comment: \"\(self.commentDTO.body)\""
+                self.logger.log("While saving \(comment, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                self.showAlert.toggle()
             }
         }
     }
@@ -87,7 +83,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 
                 if let attachments = articleDTO.attachments, !attachments.isEmpty {
                     for attachment in attachments {
-                        let attachmentEntity = Attachment(context: persistenteContainer.viewContext)
+                        let attachmentEntity = Attachment(context: persistenceContainer.viewContext)
 
                         attachmentEntity.article = existingArticle
                         attachmentEntity.content = attachment
@@ -96,7 +92,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 }
                 
             } else {
-                let article = Article(context: persistenteContainer.viewContext)
+                let article = Article(context: persistenceContainer.viewContext)
                 article.articleId = Int64(articleDTO.articleId)
                 article.articleTitle = articleDTO.articleTitle
                 article.boardId = Int64(articleDTO.boardId)
@@ -107,7 +103,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 
                 if let attachments = articleDTO.attachments, !attachments.isEmpty {
                     for attachment in attachments {
-                        let attachmentEntity = Attachment(context: persistenteContainer.viewContext)
+                        let attachmentEntity = Attachment(context: persistenceContainer.viewContext)
 
                         attachmentEntity.article = article
                         attachmentEntity.content = attachment
@@ -120,13 +116,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 print("article = \(article)")
             }
             
-            do {
-                try saveContext()
-            } catch {
-                let nsError = error as NSError
-                print("While saving \(articleDTO) occured an unresolved error \(nsError), \(nsError.userInfo)")
-                message = "Cannot save an article with title = \(articleDTO.articleTitle)"
-                showAlert.toggle()
+            saveContext() { error in
+                self.message = "Cannot save an article with title = \(self.articleDTO.articleTitle)"
+                self.logger.log("Cannot save articleDTO=\(self.articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
+                self.showAlert.toggle()
             }
         }
     }
@@ -138,97 +131,54 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var searchResultTotalCount = 0
     @Published var searchResultCounter = 0
     
-    override init() {
+    @Published var searchArticleTitle = ""
+    
+    private let persistence: Persistence
+    private var persistenceContainer: NSPersistentCloudKitContainer {
+        persistence.container
+    }
+    
+    init(persistence: Persistence) {
+        self.persistence = persistence
+        
         super.init()
         
         NotificationCenter.default
           .publisher(for: .NSPersistentStoreRemoteChange)
           .sink { self.fetchUpdates($0) }
           .store(in: &subscriptions)
+        
+        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
     
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
-        historyRequestQueue.async {
-            print("subscriptions.count = \(self.subscriptions.count)")
-            let backgroundContext = self.persistenteContainer.newBackgroundContext()
-            backgroundContext.performAndWait {
-                do {
-                    let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
-                    
-                    if let historyResult = try backgroundContext.execute(fetchHistoryRequest) as? NSPersistentHistoryResult,
-                       let history = historyResult.result as? [NSPersistentHistoryTransaction] {
-                        for transaction in history.reversed() {
-                            //print("transaction: author = \(transaction.author), contextName = \(transaction.contextName), storeId = \(transaction.storeID), timeStamp = \(transaction.timestamp), \(transaction.objectIDNotification())")
-                            self.persistenteContainer.viewContext.perform {
-                                if let userInfo = transaction.objectIDNotification().userInfo {
-                                    //print("transaction.objectIDNotification().userInfo = \(userInfo)")
-                                    /*
-                                    if let insertedObjectIds = userInfo["inserted_objectsIDs"] {
-                                        if let idSet = insertedObjectIds as? NSSet {
-                                            for id in idSet {
-                                                print("inserted_objectsIDs: \(id) - \(self.persistenteContainer.viewContext.object(with: id as! NSManagedObjectID))")
-                                            }
-                                        }
-                                    } else if let updatedObjectIds = userInfo["updated_objectIDs"] {
-                                        if let idSet = updatedObjectIds as? NSSet {
-                                            for id in idSet {
-                                                print("updated_objectID: \(id) - \(self.persistenteContainer.viewContext.object(with: id as! NSManagedObjectID))")
-                                            }
-                                        }
-                                    }
-                                    */
-                                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: userInfo,
-                                                                        into: [self.persistenteContainer.viewContext])
-                                }
-                            }
-                        }
-                        
-                        self.lastToken = history.last?.token
-                        
-                    }
-                } catch {
-                    print("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error)")
+        persistence.fetchUpdates(notification) { _ in
+            DispatchQueue.main.async {
+                self.toggle.toggle()
+            }
+        }
+    }
+    
+    private func saveContext(completionHandler: @escaping (Error) -> Void) -> Void {
+        persistenceContainer.viewContext.transactionAuthor = "App"
+        persistence.save { result in
+            switch result {
+            case .success(_):
+                DispatchQueue.main.async {
+                    self.toggle.toggle()
+                }
+            case .failure(let error):
+                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+                print("Error while saving data: \(Thread.callStackSymbols)")
+                DispatchQueue.main.async {
+                    self.showAlert.toggle()
+                    completionHandler(error)
                 }
             }
         }
-    }
-    
-    private var lastToken: NSPersistentHistoryToken? = nil {
-        didSet {
-            guard let token = lastToken,
-                  let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) else {
-                return
-            }
-            
-            do {
-                try data.write(to: tokenFile)
-            } catch {
-                let message = "Could not write token data"
-                print("###\(#function): \(message): \(error)")
-            }
-        }
-    }
-    
-    lazy var tokenFile: URL = {
-        let url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("BawiBrowser",isDirectory: true)
-        if !FileManager.default.fileExists(atPath: url.path) {
-            do {
-                try FileManager.default.createDirectory(at: url,
-                                                        withIntermediateDirectories: true,
-                                                        attributes: nil)
-            } catch {
-                let message = "Could not create persistent container URL"
-                print("###\(#function): \(message): \(error)")
-            }
-        }
-        return url.appendingPathComponent("token.data", isDirectory: false)
-    }()
-    
-    private func saveContext() throws -> Void {
-        persistenteContainer.viewContext.transactionAuthor = "App"
-        try persistenteContainer.viewContext.save()
-        persistenteContainer.viewContext.transactionAuthor = nil
+        persistenceContainer.viewContext.transactionAuthor = nil
     }
     
     func getArticle(boardId: Int, articleId: Int) -> Article? {
@@ -240,7 +190,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         var fetchedArticles = [Article]()
         do {
-            fetchedArticles = try persistenteContainer.viewContext.fetch(fetchRequest)
+            fetchedArticles = try persistenceContainer.viewContext.fetch(fetchRequest)
             
             print("fetchedArticle = \(fetchedArticles)")
         } catch {

@@ -9,19 +9,18 @@ import SwiftUI
 
 @main
 struct BawiBrowserApp: App {
-    let persistenceController = PersistenceController.shared
-    let bawiBrowserViewModel = BawiBrowserViewModel.shared
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(bawiBrowserViewModel)
+                .environment(\.managedObjectContext, appDelegate.persistence.container.viewContext)
+                .environmentObject(appDelegate.viewModel)
         }
         .commands {
             CommandGroup(after: .pasteboard) {
                 Button(action: {
-                    bawiBrowserViewModel.enableSearch = true
+                    appDelegate.viewModel.enableSearch = true
                 }, label: {
                     Text("Find")
                 })

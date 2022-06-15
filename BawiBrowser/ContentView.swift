@@ -9,6 +9,7 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
+    @EnvironmentObject private var viewModel: BawiBrowserViewModel
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -20,8 +21,6 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
         animation: .default)
     private var articles: FetchedResults<Article>
-
-    @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     @AppStorage("BawiBrowser.appearance")
     var appearance: BawiBrowserAppearance = .light
@@ -113,9 +112,3 @@ private let itemFormatter: DateFormatter = {
     formatter.timeStyle = .medium
     return formatter
 }()
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-    }
-}

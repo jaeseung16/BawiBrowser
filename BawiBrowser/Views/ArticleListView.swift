@@ -142,10 +142,3 @@ struct ArticleListView: View {
     }
 }
 
-struct ArticleListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleListView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(BawiBrowserViewModel())
-    }
-}

@@ -6,12 +6,13 @@
 //
 
 import SafariServices
+import Persistence
 
 class SafariExtensionHandler: SFSafariExtensionHandler {
     
     private let attachments = ["attach1", "attach2", "attach3", "attach4", "attach5", "attach6", "attach7", "attach8", "attach9", "attach10"]
     
-    private let viewContext = PersistenceController.shared.container.viewContext
+    private let viewContext = Persistence(name: BawiBrowserConstants.appName.rawValue, identifier: BawiBrowserConstants.iCloudIdentifier.rawValue).container.viewContext
     
     private static var articleDTO: BawiArticleDTO?
     private static var attachedData: [Data]?

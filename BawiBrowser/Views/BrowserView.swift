@@ -80,9 +80,3 @@ struct BrowserView: View {
     }
 }
 
-struct BrowserView_Previews: PreviewProvider {
-    static var previews: some View {
-        BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
-            .environmentObject(BawiBrowserViewModel())
-    }
-}
