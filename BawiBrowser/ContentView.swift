@@ -25,27 +25,33 @@ struct ContentView: View {
     @AppStorage("BawiBrowser.appearance")
     var appearance: BawiBrowserAppearance = .light
     
+    @State private var selectedTab: String?
+    
     var body: some View {
-        TabView {
+        TabView(selection: $viewModel.selectedTab) {
             BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
                 .tabItem {
                     Text("Bawi")
                 }
+                .tag(BawiBrowserTab.browser)
             
             ArticleListView()
                 .tabItem {
                     Text("Articles")
                 }
+                .tag(BawiBrowserTab.articles)
             
             CommentListView()
                 .tabItem {
                     Text("Comments")
                 }
+                .tag(BawiBrowserTab.comments)
             
             NoteListView()
                 .tabItem {
                     Text("Notes")
                 }
+                .tag(BawiBrowserTab.notes)
         }
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         .alert(isPresented: $viewModel.showAlert, content: {

@@ -109,6 +109,9 @@ class AppDelegate: NSObject {
         content.body = title
         content.sound = UNNotificationSound.default
         
+        content.userInfo = ["articleId": record.value(forKey: "CD_articleId") as? Int64 ?? Int64(-1),
+                            "boardId": record.value(forKey: "CD_boardId") as? Int64 ?? Int64(-1)]
+        
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
         
@@ -165,6 +168,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         logger.info("userNotificationCenter: response=\(response, privacy: .public)")
         viewModel.searchArticleTitle = response.notification.request.content.body
+        
+        let userInfo = response.notification.request.content.userInfo
+        logger.info("userNotificationCenter: response=\(userInfo, privacy: .public)")
+        
+        viewModel.selectedArticle = ["articleId": userInfo["articleId"] as! Int64,
+                                     "boardId": userInfo["boardId"] as! Int64]
         completionHandler()
     }
 }

@@ -133,6 +133,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var searchArticleTitle = ""
     
+    @Published var selectedTab: BawiBrowserTab = BawiBrowserTab.browser
+    @Published var selectedArticle = [String: Int64]() {
+        didSet {
+            selectedTab = .articles
+        }
+    }
+    
     private let persistence: Persistence
     private var persistenceContainer: NSPersistentCloudKitContainer {
         persistence.container

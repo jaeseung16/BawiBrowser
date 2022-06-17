@@ -58,6 +58,8 @@ struct ArticleListView: View {
         }
     }
     
+    @State private var selectedArticle: Article?
+    
     var body: some View {
         GeometryReader { geometry in
             NavigationView {
@@ -70,10 +72,12 @@ struct ArticleListView: View {
                     
                     List {
                         ForEach(filteredArticles) { article in
-                            NavigationLink(destination: ArticleDetailView(article: article)
-                            ) {
+                            NavigationLink(tag: article, selection: $selectedArticle) {
+                                ArticleDetailView(article: article)
+                            } label: {
                                 label(article: article)
                             }
+
                         }
                         .onDelete(perform: { indexSet in
                             for index in indexSet {
@@ -93,6 +97,17 @@ struct ArticleListView: View {
             }
             .sheet(isPresented: $presentFilterItemsView) {
                 BoardFilterView(board: $selectedBoard, boards: boards)
+            }
+            .onChange(of: viewModel.selectedArticle) { newValue in
+                guard let articleId = newValue["articleId"], let boardId = newValue["boardId"] else {
+                    return
+                }
+                
+                let article = articles.first { $0.articleId == articleId && $0.boardId == boardId }
+                if article != nil {
+                    selectedBoard = nil
+                    selectedArticle = article
+                }
             }
         }
     }

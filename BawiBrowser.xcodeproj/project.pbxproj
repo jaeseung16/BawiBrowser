@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9000362526BC9A88007F4AF5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900215CC26B9FB8800A82706 /* CloudKit.framework */; };
 		900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 900215CC26B9FB8800A82706 /* CloudKit.framework */; };
+		900452F8285A9AC1009D9796 /* BawiBrowserTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900452F7285A9AC1009D9796 /* BawiBrowserTab.swift */; };
 		900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */; };
 		9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */; };
@@ -98,6 +99,7 @@
 
 /* Begin PBXFileReference section */
 		900215CC26B9FB8800A82706 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		900452F7285A9AC1009D9796 /* BawiBrowserTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserTab.swift; sourceTree = "<group>"; };
 		900630FF2697B990006B6340 /* BawiArticleDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiArticleDTO.swift; sourceTree = "<group>"; };
 		900B269F268BDF8100C03837 /* BawiBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserViewModel.swift; sourceTree = "<group>"; };
 		9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrwoserNavigation.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */,
 				9037CF092857ECD000B5C7C9 /* AppDelegate.swift */,
 				9037CF0B2857ED0C00B5C7C9 /* BawiBrowserConstants.swift */,
+				900452F7285A9AC1009D9796 /* BawiBrowserTab.swift */,
 			);
 			path = BawiBrowser;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				9089733826FBB86C005A03A8 /* SearchView.swift in Sources */,
 				90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */,
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
+				900452F8285A9AC1009D9796 /* BawiBrowserTab.swift in Sources */,
 				90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */,
 				900B26A0268BDF8100C03837 /* BawiBrowserViewModel.swift in Sources */,
 				908EE56026F2705B00BD4B90 /* NoteFilterView.swift in Sources */,
