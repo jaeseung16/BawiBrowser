@@ -20,6 +20,14 @@ struct BawiBrowserApp: App {
         .commands {
             CommandGroup(after: .pasteboard) {
                 Button(action: {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(appDelegate.viewModel.didFinishURLString, forType: .string)
+                }, label: {
+                    Text("Copy Link")
+                })
+                .keyboardShortcut("l", modifiers: [.command])
+                
+                Button(action: {
                     appDelegate.viewModel.enableSearch = true
                 }, label: {
                     Text("Find")

@@ -23,12 +23,12 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var innerHTML = String()
     @Published var httpBody = Data()
     
-    @Published var didStartProvisionalNavigationURLString = String()
-    @Published var didStartProvisionalNavigationTitle = String()
-    @Published var didCommitURLString = String()
-    @Published var didCommitTitle = String()
-    @Published var didFinishURLString = String()
-    @Published var didFinishTitle = String()
+    var didStartProvisionalNavigationURLString = String()
+    var didStartProvisionalNavigationTitle = String()
+    var didCommitURLString = String()
+    var didCommitTitle = String()
+    var didFinishURLString = String()
+    var didFinishTitle = String()
     
     @Published var toggle = false
     @Published var showAlert = false
@@ -139,6 +139,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             selectedTab = .articles
         }
     }
+    
+    var urlToCopy: String = ""
     
     private let persistence: Persistence
     private var persistenceContainer: NSPersistentCloudKitContainer {

@@ -165,17 +165,17 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            parent.viewModel.didStartProvisionalNavigationURLString = webView.url?.description ?? ""
+            parent.viewModel.didStartProvisionalNavigationURLString = webView.url?.absoluteString ?? ""
             parent.viewModel.didStartProvisionalNavigationTitle = webView.title ?? ""
         }
         
         func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-            parent.viewModel.didCommitURLString = webView.url?.description ?? ""
+            parent.viewModel.didCommitURLString = webView.url?.absoluteString ?? ""
             parent.viewModel.didCommitTitle = webView.title ?? ""
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            parent.viewModel.didFinishURLString = webView.url?.description ?? ""
+            parent.viewModel.didFinishURLString = webView.url?.absoluteString ?? ""
             parent.viewModel.didFinishTitle = webView.title ?? ""
             
             if articleDTO != nil {

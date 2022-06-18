@@ -15,6 +15,7 @@ struct BrowserView: View {
     @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
     
     @State private var searchCounter = 0
+    @State private var linkCopied = false
     
     var body: some View {
         VStack {
@@ -43,6 +44,15 @@ struct BrowserView: View {
                         viewModel.navigation = .reload
                     }
                 
+                Button(action: {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(viewModel.didFinishURLString, forType: .string)
+                    linkCopied.toggle()
+                }, label: {
+                    Label("Copy Link", systemImage: "link")
+                })
+                .keyboardShortcut("l", modifiers: [.command])
+                
                 HStack {
                     SearchView(searchString: $viewModel.searchString)
                     
@@ -69,6 +79,13 @@ struct BrowserView: View {
                 }, label: {
                     Image(systemName: "chevron.forward")
                 })
+            }
+            .alert("Link Copied", isPresented: $linkCopied) {
+                Button("OK") {
+                    
+                }
+            } message: {
+                Text("\(viewModel.didFinishURLString)")
             }
             
             WebView(url: url)
