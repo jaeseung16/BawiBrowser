@@ -120,38 +120,60 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
-            if let url = navigationAction.request.url, navigationAction.request.httpMethod == "POST" {
-                if url.absoluteString.contains("note.cgi"), let httpBody = navigationAction.request.httpBody {
-                    parent.viewModel.processNote(url: url, httpBody: httpBody)
-                }
-                
-                if url.absoluteString.contains("comment.cgi"), let httpBody = navigationAction.request.httpBody {
-                    parent.viewModel.processComment(url: url, httpBody: httpBody, articleTitle: self.articleTitle, boardTitle: self.boardTitle)
-                }
-                
-                if url.absoluteString.contains("write.cgi"), let boundary = extractBoundary(from: navigationAction) {
-                    parent.viewModel.preprocessWrite(url: url,
-                                 httpBody: navigationAction.request.httpBody,
-                                 httpBodyStream: navigationAction.request.httpBodyStream,
-                                 boundary: boundary,
-                                 boardTitle: self.boardTitle,
-                                 coordinator: self)
-                }
-                
-                if url.absoluteString.contains("edit.cgi"), let boundary = extractBoundary(from: navigationAction) {
-                    parent.viewModel.processEdit(url: url,
-                                 httpBody: navigationAction.request.httpBody,
-                                 httpBodyStream: navigationAction.request.httpBodyStream,
-                                 boundary: boundary,
-                                 boardTitle: self.boardTitle)
-                }
-            } else if let url = navigationAction.request.url, navigationAction.navigationType == .linkActivated {
-                if let host = url.host, !host.contains("bawi.org"), NSWorkspace.shared.open(url) {
-                    decisionHandler(.cancel, preferences)
-                }
+            
+            guard let url = navigationAction.request.url, needProcessing(navigationAction) else {
+                decisionHandler(.allow, preferences)
+                return
             }
             
+            if navigationAction.navigationType == .linkActivated {
+                if let host = url.host, !host.contains("bawi.org"), NSWorkspace.shared.open(url) {
+                    decisionHandler(.cancel, preferences)
+                } else {
+                    decisionHandler(.allow, preferences)
+                }
+                return
+            }
+            
+            if navigationAction.request.httpMethod == "POST", let action = getBawiAction(url: url) {
+                switch action {
+                case .note:
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processNote(url: url, httpBody: httpBody)
+                    }
+                case .comment:
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processComment(url: url, httpBody: httpBody, articleTitle: self.articleTitle, boardTitle: self.boardTitle)
+                    }
+                case .write:
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        parent.viewModel.preprocessWrite(url: url,
+                                     httpBody: navigationAction.request.httpBody,
+                                     httpBodyStream: navigationAction.request.httpBodyStream,
+                                     boundary: boundary,
+                                     boardTitle: self.boardTitle,
+                                     coordinator: self)
+                    }
+                case .edit:
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        parent.viewModel.processEdit(url: url,
+                                     httpBody: navigationAction.request.httpBody,
+                                     httpBodyStream: navigationAction.request.httpBodyStream,
+                                     boundary: boundary,
+                                     boardTitle: self.boardTitle)
+                    }
+                }
+            }
+                
             decisionHandler(.allow, preferences)
+        }
+        
+        private func needProcessing(_ navigationAction: WKNavigationAction) -> Bool {
+            return navigationAction.request.httpMethod == "POST" || navigationAction.navigationType == .linkActivated
+        }
+        
+        private func getBawiAction(url: URL) -> BawiAction? {
+            return BawiAction.allCases.first(where: { url.absoluteString.contains($0.cgi) })
         }
         
         private func extractBoundary(from navigationAction: WKNavigationAction) -> String? {
