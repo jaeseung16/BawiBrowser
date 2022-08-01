@@ -41,6 +41,7 @@
 		908EE56026F2705B00BD4B90 /* NoteFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */; };
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
+		90A0D9AE289880860057D328 /* BawiAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0D9AD289880860057D328 /* BawiAction.swift */; };
 		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
 		90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */; };
 		90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */; };
@@ -132,6 +133,7 @@
 		908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterView.swift; sourceTree = "<group>"; };
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
+		90A0D9AD289880860057D328 /* BawiAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiAction.swift; sourceTree = "<group>"; };
 		90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BawiBrowserSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		90A2777926AE3C26000A3080 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariExtensionHandler.swift; sourceTree = "<group>"; };
@@ -199,6 +201,7 @@
 				90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */,
 				90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */,
 				9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */,
+				90A0D9AD289880860057D328 /* BawiAction.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -515,6 +518,7 @@
 				90617696268A785C00871FB2 /* WebView.swift in Sources */,
 				906F364426A23585002F0915 /* CommentListView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
+				90A0D9AE289880860057D328 /* BawiAction.swift in Sources */,
 				90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */,
 				90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
@@ -735,7 +739,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.4;
+				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -763,7 +767,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.4;
+				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -870,7 +874,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.4;
+				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -894,7 +898,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 0.4;
+				MARKETING_VERSION = 0.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
