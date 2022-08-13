@@ -27,6 +27,13 @@ struct WebView: NSViewRepresentable {
             configuration.userContentController = userContentController
         }
         
+        if let path = Bundle.main.path(forResource: "LoginAutofill", ofType: "js"), let jsString = try? String(contentsOfFile: path, encoding: .utf8) {
+            let userContentController = WKUserContentController()
+            let userScript = WKUserScript(source: jsString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+            userContentController.addUserScript(userScript)
+            configuration.userContentController = userContentController
+        }
+        
         let request = URLRequest(url: url)
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
         webView.load(request)
@@ -244,6 +251,26 @@ struct WebView: NSViewRepresentable {
                     print("didFinish: articleTitle = \(result)")
                     self.articleTitle = result
                 }
+            })
+            
+            webView.evaluateJavaScript("document.getElementById('login_id').outerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
+                if error != nil {
+                    print("didFinish: \(String(describing: error))")
+                    return
+                }
+
+                if value != nil {
+                    print("didFinish: value = \(value!)")
+                    webView.evaluateJavaScript("LoginAutofill_EnableAutofill(\"galley\")") { result, error in
+                        if error != nil {
+                            print("LoginAutofill_EnableAutofill: \(String(describing: error))")
+                            return
+                        }
+                        
+                        print("LoginAutofill_EnableAutofill: result = \(result)")
+                    }
+                }
+                
             })
         }
         

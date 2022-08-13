@@ -36,11 +36,13 @@
 		906F364426A23585002F0915 /* CommentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364326A23585002F0915 /* CommentListView.swift */; };
 		906F364626A2373F002F0915 /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364526A2373F002F0915 /* BrowserView.swift */; };
 		906F364826A237E2002F0915 /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 906F364726A237E2002F0915 /* ArticleListView.swift */; };
+		907A199028A6F68D00606219 /* LoginAutofill.js in Resources */ = {isa = PBXBuildFile; fileRef = 907A198F28A6F68D00606219 /* LoginAutofill.js */; };
 		9089733826FBB86C005A03A8 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9089733726FBB86C005A03A8 /* SearchView.swift */; };
 		908EE55E26F2704E00BD4B90 /* BoardFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */; };
 		908EE56026F2705B00BD4B90 /* NoteFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */; };
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
+		9092AC4A28A470BA00FADF2E /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9092AC4928A470BA00FADF2E /* AuthenticationServices.framework */; };
 		90A0D9AE289880860057D328 /* BawiAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0D9AD289880860057D328 /* BawiAction.swift */; };
 		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
 		90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */; };
@@ -128,11 +130,13 @@
 		906F364326A23585002F0915 /* CommentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentListView.swift; sourceTree = "<group>"; };
 		906F364526A2373F002F0915 /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		906F364726A237E2002F0915 /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
+		907A198F28A6F68D00606219 /* LoginAutofill.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = LoginAutofill.js; sourceTree = "<group>"; };
 		9089733726FBB86C005A03A8 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardFilterView.swift; sourceTree = "<group>"; };
 		908EE55F26F2705B00BD4B90 /* NoteFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFilterView.swift; sourceTree = "<group>"; };
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
+		9092AC4928A470BA00FADF2E /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 		90A0D9AD289880860057D328 /* BawiAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiAction.swift; sourceTree = "<group>"; };
 		90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BawiBrowserSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		90A2777926AE3C26000A3080 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -157,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9037CF082857EC9700B5C7C9 /* Persistence in Frameworks */,
+				9092AC4A28A470BA00FADF2E /* AuthenticationServices.framework in Frameworks */,
 				9037CF0F2857F19900B5C7C9 /* NIO in Frameworks */,
 				90FC22422698DB730095848C /* MultipartKit in Frameworks */,
 				900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */,
@@ -246,6 +251,7 @@
 				9037CF092857ECD000B5C7C9 /* AppDelegate.swift */,
 				9037CF0B2857ED0C00B5C7C9 /* BawiBrowserConstants.swift */,
 				900452F7285A9AC1009D9796 /* BawiBrowserTab.swift */,
+				907A198F28A6F68D00606219 /* LoginAutofill.js */,
 			);
 			path = BawiBrowser;
 			sourceTree = "<group>";
@@ -298,6 +304,7 @@
 		90A2777826AE3C26000A3080 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9092AC4928A470BA00FADF2E /* AuthenticationServices.framework */,
 				900215CC26B9FB8800A82706 /* CloudKit.framework */,
 				90A2777926AE3C26000A3080 /* Cocoa.framework */,
 			);
@@ -475,6 +482,7 @@
 			files = (
 				90E857A526F5413200D15ED7 /* dark_bawi.css in Resources */,
 				9061766B268A781200871FB2 /* Preview Assets.xcassets in Resources */,
+				907A199028A6F68D00606219 /* LoginAutofill.js in Resources */,
 				90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */,
 				90617668268A781200871FB2 /* Assets.xcassets in Resources */,
 			);
