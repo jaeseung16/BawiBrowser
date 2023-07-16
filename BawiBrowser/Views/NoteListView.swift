@@ -28,6 +28,8 @@ struct NoteListView: View {
         return Array(toSet)
     }
     
+    @State private var searchString = ""
+    
     private var filteredNotes: Array<Note> {
         viewModel.notes.filter { note in
             if recipient == nil {
@@ -56,6 +58,10 @@ struct NoteListView: View {
             .padding()
             .sheet(isPresented: $presentFilterNoteView) {
                 NoteFilterView(to: $recipient, toList: recipients)
+            }
+            .searchable(text: $searchString)
+            .onChange(of: searchString) { newValue in
+                viewModel.searchNote(newValue)
             }
         }
     }

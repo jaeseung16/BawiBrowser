@@ -12,6 +12,7 @@ import MultipartKit
 import SwiftUI
 import Persistence
 import os
+import CoreSpotlight
 
 class BawiBrowserViewModel: NSObject, ObservableObject {
     private let logger = Logger()
@@ -145,6 +146,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let persistence: Persistence
     private var persistenceContainer: NSPersistentCloudKitContainer {
         persistence.cloudContainer!
+    }
+    private var viewContext: NSManagedObjectContext {
+        persistenceContainer.viewContext
     }
     private let persistenceHelper: PersistenceHelper
     
@@ -445,6 +449,11 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
         notes = persistenceHelper.perform(fetchRequest)
+        
+        let index = CSSearchableIndex(name: noteIndexName)
+        index.deleteAllSearchableItems()
+        
+        indexNotes()
     }
     
     func delete(_ object: NSManagedObject) {
@@ -460,5 +469,115 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
             }
         }
+    }
+    
+    private var domainIdentifier: String {
+        return "com.resonance.jlee.BawiBrowser"
+    }
+
+    private var noteIndexName : String {
+        return "bawibrowser-note-index"
+    }
+    
+    var spotlightFoundNotes: [CSSearchableItem] = []
+    var searchQuery: CSSearchQuery?
+    
+    private func indexNotes() -> Void {
+        let searchableItems: [CSSearchableItem] = notes.compactMap { (note: Note) -> CSSearchableItem? in
+            guard let attributeSet = attributeSet(for: note) else {
+                self.logger.log("Cannot generate attribute set for \(note, privacy: .public)")
+                return nil
+            }
+            return CSSearchableItem(uniqueIdentifier: note.objectID.uriRepresentation().absoluteString, domainIdentifier: domainIdentifier, attributeSet: attributeSet)
+        }
+        
+        searchableItems.forEach { item in
+            self.logger.log("searchableItem=\(String(describing: item.attributeSet.comment))")
+        }
+        
+        
+        CSSearchableIndex(name: noteIndexName).indexSearchableItems(searchableItems) { error in
+            guard let error = error else {
+                // self.logger.log("Indexed notes: \(searchableItems, privacy: .public)")
+                return
+            }
+            self.logger.log("Error while indexing compounds: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
+    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
+        if let note = object as? Note {
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
+            attributeSet.comment = note.msg?.removingPercentEncoding
+            //attributeSet.thumbnailData = compound.image
+            //attributeSet.contentDescription = "\(name ?? "") \(note.formula ?? "")"
+            return attributeSet
+        }
+
+        return nil
+    }
+    
+    func searchNote(_ name: String) -> Void {
+        if name.isEmpty {
+            searchQuery?.cancel()
+            fetchNotes()
+        } else {
+            searchUsingCoreSpotlight(name)
+        }
+    }
+    
+    private func searchUsingCoreSpotlight(_ name: String) {
+        let escapedName = name.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let queryString = "(comment == \"*\(escapedName)*\"cd)"
+        
+        logger.log("queryString=\(queryString)")
+        
+        searchQuery = CSSearchQuery(queryString: queryString, attributes: ["comment"])
+        
+        searchQuery?.foundItemsHandler = { items in
+            DispatchQueue.main.async {
+                self.spotlightFoundNotes += items
+            }
+        }
+        
+        searchQuery?.completionHandler = { error in
+            if let error = error {
+                self.logger.log("Searching \(name) came back with error: \(error.localizedDescription, privacy: .public)")
+            } else {
+                DispatchQueue.main.async {
+                    self.fetchSearchResults(self.spotlightFoundNotes)
+                    self.spotlightFoundNotes.removeAll()
+                }
+            }
+        }
+        
+        searchQuery?.start()
+    }
+    
+    private func fetchSearchResults(_ items: [CSSearchableItem]) {
+        let foundNotes = items.compactMap { (item: CSSearchableItem) -> Note? in
+            guard let noteURL = URL(string: item.uniqueIdentifier) else {
+                return nil
+            }
+            logger.log("item=\(item): \(String(describing: item.attributeSet.audiences)) \(String(describing: item.attributeSet.comment))")
+            return selectNote(for: noteURL)
+        }
+        logger.log("Found \(foundNotes.count) notes")
+        notes = foundNotes.sorted(by: { note1, note2 in
+            if note1.created == nil {
+                return false
+            } else if note2.created == nil {
+                return true
+            } else {
+                return note1.created! < note2.created!
+            }
+        })
+    }
+    
+    func selectNote(for url: URL) -> Note? {
+        guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+            return nil
+        }
+        return viewContext.object(with: objectID) as? Note
     }
 }

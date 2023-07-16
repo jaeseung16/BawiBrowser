@@ -29,7 +29,7 @@ struct NoteFilterView: View {
             
             Divider()
             
-            Picker("Boards", selection: $selectedTo) {
+            Picker("Id", selection: $selectedTo) {
                 ForEach(toList, id: \.self) { to in
                     Text(to)
                 }

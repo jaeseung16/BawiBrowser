@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -50,7 +50,7 @@
 		90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */; };
 		90A2778226AE3C26000A3080 /* script.js in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778126AE3C26000A3080 /* script.js */; };
 		90A2778526AE3C26000A3080 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778326AE3C26000A3080 /* SafariExtensionViewController.xib */; };
-		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
 		90D0A98326B48CEC00581D33 /* BawiBrowser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */; };
@@ -88,15 +88,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		90A2778B26AE3C26000A3080 /* Embed App Extensions */ = {
+		90A2778B26AE3C26000A3080 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed App Extensions */,
+				90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -354,7 +354,7 @@
 				9061765C268A781000871FB2 /* Sources */,
 				9061765D268A781000871FB2 /* Frameworks */,
 				9061765E268A781000871FB2 /* Resources */,
-				90A2778B26AE3C26000A3080 /* Embed App Extensions */,
+				90A2778B26AE3C26000A3080 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -433,8 +433,9 @@
 		90617658268A781000871FB2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					9061765F268A781000871FB2 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -649,6 +650,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -710,6 +712,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -741,6 +744,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -769,6 +773,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -793,6 +798,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				INFOPLIST_FILE = BawiBrowserTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -815,6 +821,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				INFOPLIST_FILE = BawiBrowserTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -836,6 +843,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				INFOPLIST_FILE = BawiBrowserUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -856,6 +864,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				INFOPLIST_FILE = BawiBrowserUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -877,6 +886,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;
@@ -901,6 +911,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = BawiBrowserSafariExtension/Info.plist;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Article" representedClassName="Article" syncable="YES" codeGenerationType="class">
         <attribute name="articleId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="articleTitle" optional="YES" attributeType="String"/>
@@ -28,7 +28,7 @@
     <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
         <attribute name="action" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="msg" optional="YES" attributeType="String"/>
+        <attribute name="msg" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="to" optional="YES" attributeType="String"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
@@ -37,10 +37,4 @@
         <memberEntity name="Comment"/>
         <memberEntity name="Note"/>
     </configuration>
-    <elements>
-        <element name="Article" positionX="-63" positionY="36" width="128" height="164"/>
-        <element name="Attachment" positionX="-63" positionY="72" width="128" height="89"/>
-        <element name="Comment" positionX="-63" positionY="-9" width="128" height="119"/>
-        <element name="Note" positionX="-63" positionY="-18" width="128" height="89"/>
-    </elements>
 </model>
