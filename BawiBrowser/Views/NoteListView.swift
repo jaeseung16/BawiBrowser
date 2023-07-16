@@ -8,14 +8,7 @@
 import SwiftUI
 
 struct NoteListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Note.created, ascending: false)],
-        animation: .default)
-    private var notes: FetchedResults<Note>
-    
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     @State private var presentFilterNoteView = false
@@ -25,7 +18,7 @@ struct NoteListView: View {
     private var recipients: Array<String> {
         var toSet = Set<String>()
         
-        notes.compactMap { note in
+        viewModel.notes.compactMap { note in
             note.to
         }
         .forEach { to in
@@ -36,7 +29,7 @@ struct NoteListView: View {
     }
     
     private var filteredNotes: Array<Note> {
-        notes.filter { note in
+        viewModel.notes.filter { note in
             if recipient == nil {
                 return true
             } else {
@@ -94,13 +87,8 @@ struct NoteListView: View {
             Spacer()
             
             Button {
-                viewContext.delete(note)
-                
-                do {
-                    try viewContext.save()
-                } catch {
-                    print(error)
-                }
+                viewModel.delete(note)
+                viewModel.save()
             } label: {
                 Image(systemName: "trash")
             }
@@ -129,11 +117,5 @@ struct NoteListView: View {
         dateFormatter.timeStyle = .long
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter
-    }
-}
-
-struct NoteListView_Previews: PreviewProvider {
-    static var previews: some View {
-        NoteListView()
     }
 }

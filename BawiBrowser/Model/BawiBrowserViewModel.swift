@@ -160,6 +160,12 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
           .store(in: &subscriptions)
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
+        fetchAll()
+    }
+    
+    private func fetchAll() {
+        fetchNotes()
     }
     
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
@@ -430,5 +436,29 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             body = bawiWriteForm.body
         }
         return (parentArticleId, articleTitle, boardId, body)
+    }
+    
+    // MARK: - Persistence
+    @Published var notes = [Note]()
+    
+    private func fetchNotes() {
+        let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
+        notes = persistenceHelper.perform(fetchRequest)
+    }
+    
+    func delete(_ object: NSManagedObject) {
+        persistenceHelper.delete(object)
+    }
+    
+    func save() {
+        persistenceHelper.save() { result in
+            switch result {
+            case .success(_):
+                self.logger.log("Data saved successfully")
+            case .failure(let error):
+                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+            }
+        }
     }
 }
