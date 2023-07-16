@@ -17,7 +17,9 @@ struct WebView: NSViewRepresentable {
     let url: URL
     
     func makeNSView(context: NSViewRepresentableContext<WebView>) -> WKWebView {
-        viewModel.isDarkMode = darkMode
+        DispatchQueue.main.async {
+            viewModel.isDarkMode = darkMode
+        }
         
         let configuration = WKWebViewConfiguration()
         if let path = Bundle.main.path(forResource: "UIWebViewSearch", ofType: "js"), let jsString = try? String(contentsOfFile: path, encoding: .utf8) {
@@ -69,9 +71,11 @@ struct WebView: NSViewRepresentable {
                         }
                     }
                 } else {
-                    viewModel.searchResultTotalCount = 0
-                    viewModel.searchResultCounter = 0
-                    webView.evaluateJavaScript("uiWebview_RemoveAllHighlights()")
+                    DispatchQueue.main.async {
+                        viewModel.searchResultTotalCount = 0
+                        viewModel.searchResultCounter = 0
+                        webView.evaluateJavaScript("uiWebview_RemoveAllHighlights()")
+                    }
                 }
             }
             .store(in: &viewModel.subscriptions)
@@ -267,7 +271,7 @@ struct WebView: NSViewRepresentable {
                             return
                         }
                         
-                        print("LoginAutofill_EnableAutofill: result = \(result)")
+                        print("LoginAutofill_EnableAutofill: result = \(String(describing: result))")
                     }
                 }
                 
