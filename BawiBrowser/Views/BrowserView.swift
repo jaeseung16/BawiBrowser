@@ -35,6 +35,13 @@ struct BrowserView: View {
                 })
                 .keyboardShortcut("h", modifiers: [.command])
                 
+                Button(action: {
+                    viewModel.navigation = .logout
+                }, label: {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                })
+                .keyboardShortcut("h", modifiers: [.command])
+                
                 Spacer()
                 
                 Toggle(viewModel.isDarkMode ? "dark" : "light", isOn: $darkMode)

@@ -92,22 +92,28 @@ struct WebView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
-        switch (viewModel.navigation) {
-        case .home:
-            viewModel.navigation = .none
-            let request = URLRequest(url: URL(string: "https://www.bawi.org/main/news.cgi")!)
-            nsView.load(request)
-        case .back:
-            viewModel.navigation = .none
-            nsView.goBack()
-        case .forward:
-            viewModel.navigation = .none
-            nsView.goForward()
-        case .reload:
-            viewModel.navigation = .none
-            nsView.reload()
-        case .none:
-            return
+        DispatchQueue.main.async {
+            switch (viewModel.navigation) {
+            case .home:
+                viewModel.navigation = .none
+                let request = URLRequest(url: URL(string: "https://www.bawi.org/main/news.cgi")!)
+                nsView.load(request)
+            case .logout:
+                viewModel.navigation = .none
+                let request = URLRequest(url: URL(string: "https://www.bawi.org/main/logout.cgi")!)
+                nsView.load(request)
+            case .back:
+                viewModel.navigation = .none
+                nsView.goBack()
+            case .forward:
+                viewModel.navigation = .none
+                nsView.goForward()
+            case .reload:
+                viewModel.navigation = .none
+                nsView.reload()
+            case .none:
+                return
+            }
         }
     }
     
