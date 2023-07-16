@@ -144,11 +144,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     private let persistence: Persistence
     private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.container
+        persistence.cloudContainer!
     }
+    private let persistenceHelper: PersistenceHelper
     
     init(persistence: Persistence) {
         self.persistence = persistence
+        self.persistenceHelper = PersistenceHelper(persistence: persistence)
         
         super.init()
         
