@@ -166,10 +166,23 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
         fetchAll()
+        
+        DispatchQueue.main.async {
+            let commentIndex = CSSearchableIndex(name: self.commentIndexName)
+            commentIndex.deleteAllSearchableItems()
+            
+            let noteIndex = CSSearchableIndex(name: self.noteIndexName)
+            noteIndex.deleteAllSearchableItems()
+            
+            self.indexComments()
+            self.indexNotes()
+        }
+        
     }
     
     private func fetchAll() {
         fetchNotes()
+        fetchComments()
     }
     
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
@@ -443,17 +456,19 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence
+    @Published var comments = [Comment]()
     @Published var notes = [Note]()
+    
+    private func fetchComments() {
+        let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
+        comments = persistenceHelper.perform(fetchRequest)
+    }
     
     private func fetchNotes() {
         let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
         notes = persistenceHelper.perform(fetchRequest)
-        
-        let index = CSSearchableIndex(name: noteIndexName)
-        index.deleteAllSearchableItems()
-        
-        indexNotes()
     }
     
     func delete(_ object: NSManagedObject) {
@@ -471,16 +486,15 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
-    private var domainIdentifier: String {
-        return "com.resonance.jlee.BawiBrowser"
-    }
-
-    private var noteIndexName : String {
-        return "bawibrowser-note-index"
-    }
+    private var domainIdentifier = "com.resonance.jlee.BawiBrowser"
+    private var noteIndexName = "bawibrowser-note-index"
+    private var commentIndexName = "bawibrowser-comment-index"
     
+    var spotlightFoundComments: Set<CSSearchableItem> = []
     var spotlightFoundNotes: [CSSearchableItem] = []
-    var searchQuery: CSSearchQuery?
+    
+    var searchQueryForComment: CSSearchQuery?
+    var searchQueryForNote: CSSearchQuery?
     
     private func indexNotes() -> Void {
         let searchableItems: [CSSearchableItem] = notes.compactMap { (note: Note) -> CSSearchableItem? in
@@ -495,13 +509,34 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             self.logger.log("searchableItem=\(String(describing: item.attributeSet.comment))")
         }
         
-        
         CSSearchableIndex(name: noteIndexName).indexSearchableItems(searchableItems) { error in
             guard let error = error else {
                 // self.logger.log("Indexed notes: \(searchableItems, privacy: .public)")
                 return
             }
-            self.logger.log("Error while indexing compounds: \(error.localizedDescription, privacy: .public)")
+            self.logger.log("Error while indexing notes: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
+    private func indexComments() -> Void {
+        let searchableItems: [CSSearchableItem] = comments.compactMap { (comment: Comment) -> CSSearchableItem? in
+            guard let attributeSet = attributeSet(for: comment) else {
+                self.logger.log("Cannot generate attribute set for \(comment, privacy: .public)")
+                return nil
+            }
+            return CSSearchableItem(uniqueIdentifier: comment.objectID.uriRepresentation().absoluteString, domainIdentifier: domainIdentifier, attributeSet: attributeSet)
+        }
+        
+        searchableItems.forEach { item in
+            self.logger.log("searchableItem=\(String(describing: item.attributeSet.textContent))")
+        }
+        
+        CSSearchableIndex(name: commentIndexName).indexSearchableItems(searchableItems) { error in
+            guard let error = error else {
+                // self.logger.log("Indexed notes: \(searchableItems, privacy: .public)")
+                return
+            }
+            self.logger.log("Error while indexing comments: \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -513,54 +548,101 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             //attributeSet.contentDescription = "\(name ?? "") \(note.formula ?? "")"
             return attributeSet
         }
+        
+        if let comment = object as? Comment {
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
+            attributeSet.textContent = comment.body?.removingPercentEncoding
+            //attributeSet.thumbnailData = compound.image
+            //attributeSet.contentDescription = "\(name ?? "") \(note.formula ?? "")"
+            return attributeSet
+        }
 
         return nil
     }
     
-    func searchNote(_ name: String) -> Void {
-        if name.isEmpty {
-            searchQuery?.cancel()
+    func searchNote(_ text: String) -> Void {
+        if text.isEmpty {
+            searchQueryForNote?.cancel()
             fetchNotes()
         } else {
-            searchUsingCoreSpotlight(name)
+            searchNotes(text)
         }
     }
     
-    private func searchUsingCoreSpotlight(_ name: String) {
-        let escapedName = name.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
-        let queryString = "(comment == \"*\(escapedName)*\"cd)"
+    func searchComment(_ text: String) -> Void {
+        if text.isEmpty {
+            searchQueryForComment?.cancel()
+            fetchComments()
+        } else {
+            searchComments(text)
+        }
+    }
+    
+    private func searchNotes(_ text: String) {
+        let escapedText = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let queryString = "(comment == \"*\(escapedText)*\"cd)"
         
         logger.log("queryString=\(queryString)")
         
-        searchQuery = CSSearchQuery(queryString: queryString, attributes: ["comment"])
+        searchQueryForNote = CSSearchQuery(queryString: queryString, attributes: ["comment"])
         
-        searchQuery?.foundItemsHandler = { items in
+        searchQueryForNote?.foundItemsHandler = { items in
             DispatchQueue.main.async {
                 self.spotlightFoundNotes += items
             }
         }
         
-        searchQuery?.completionHandler = { error in
+        searchQueryForNote?.completionHandler = { error in
             if let error = error {
-                self.logger.log("Searching \(name) came back with error: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
             } else {
                 DispatchQueue.main.async {
-                    self.fetchSearchResults(self.spotlightFoundNotes)
+                    self.fetchNotes(self.spotlightFoundNotes)
                     self.spotlightFoundNotes.removeAll()
                 }
             }
         }
         
-        searchQuery?.start()
+        searchQueryForNote?.start()
     }
     
-    private func fetchSearchResults(_ items: [CSSearchableItem]) {
+    private func searchComments(_ text: String) {
+        let escapedText = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let queryString = "(textContent == \"*\(escapedText)*\"cd)"
+        
+        logger.log("queryString=\(queryString)")
+        
+        searchQueryForComment = CSSearchQuery(queryString: queryString, attributes: ["textContent"])
+        
+        searchQueryForComment?.foundItemsHandler = { items in
+            DispatchQueue.main.async {
+                items.forEach { item in
+                    self.spotlightFoundComments.insert(item)
+                }
+            }
+        }
+        
+        searchQueryForComment?.completionHandler = { error in
+            if let error = error {
+                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
+            } else {
+                DispatchQueue.main.async {
+                    self.fetchComments(self.spotlightFoundComments)
+                    self.spotlightFoundComments.removeAll()
+                }
+            }
+        }
+        
+        searchQueryForComment?.start()
+    }
+    
+    private func fetchNotes(_ items: [CSSearchableItem]) {
+        logger.log("Fetching \(items.count) notes")
         let foundNotes = items.compactMap { (item: CSSearchableItem) -> Note? in
             guard let noteURL = URL(string: item.uniqueIdentifier) else {
                 return nil
             }
-            logger.log("item=\(item): \(String(describing: item.attributeSet.audiences)) \(String(describing: item.attributeSet.comment))")
-            return selectNote(for: noteURL)
+            return find(for: noteURL) as? Note
         }
         logger.log("Found \(foundNotes.count) notes")
         notes = foundNotes.sorted(by: { note1, note2 in
@@ -574,10 +656,31 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         })
     }
     
-    func selectNote(for url: URL) -> Note? {
+    private func fetchComments(_ items: Set<CSSearchableItem>) {
+        logger.log("Fetching \(items.count) comments")
+        let foundComments = items.compactMap { (item: CSSearchableItem) -> Comment? in
+            guard let commentURL = URL(string: item.uniqueIdentifier) else {
+                return nil
+            }
+            //logger.log("item=\(item): \(String(describing: item.attributeSet.textContent))")
+            return find(for: commentURL) as? Comment
+        }
+        logger.log("Found \(foundComments.count) comments")
+        comments = foundComments.sorted(by: { comment1, comment2 in
+            if comment1.created == nil {
+                return false
+            } else if comment2.created == nil {
+                return true
+            } else {
+                return comment1.created! < comment2.created!
+            }
+        })
+    }
+    
+    func find(for url: URL) -> NSManagedObject? {
         guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
             return nil
         }
-        return viewContext.object(with: objectID) as? Note
+        return viewContext.object(with: objectID)
     }
 }

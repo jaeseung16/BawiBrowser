@@ -8,13 +8,7 @@
 import SwiftUI
 
 struct CommentListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Comment.created, ascending: false)],
-        animation: .default)
-    private var comments: FetchedResults<Comment>
     
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
@@ -28,7 +22,7 @@ struct CommentListView: View {
     private var boards: [String] {
         var boardSet = Set<String>()
         
-        comments.compactMap { comment in
+        viewModel.comments.compactMap { comment in
             comment.boardTitle
         }
         .forEach { boardTitle in
@@ -39,7 +33,7 @@ struct CommentListView: View {
     }
     
     private var filteredComments: Array<Comment> {
-        comments.filter { comment in
+        viewModel.comments.filter { comment in
             if selectedBoard == nil {
                 return true
             } else {
@@ -49,21 +43,12 @@ struct CommentListView: View {
                 return boardTitle == selectedBoard!
             }
         }
-        .filter { comment in
-            if searchString.isEmpty {
-                return true
-            } else {
-                return comment.body?.contains(searchString) ?? false
-            }
-        }
     }
     
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 header(geometry: geometry)
-            
-                SearchView(searchString: $searchString)
                 
                 ScrollView {
                     LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
@@ -78,6 +63,10 @@ struct CommentListView: View {
             .padding()
             .sheet(isPresented: $presentFilterItemsView) {
                 BoardFilterView(board: $selectedBoard, boards: boards)
+            }
+            .searchable(text: $searchString)
+            .onChange(of: searchString) { newValue in
+                viewModel.searchComment(newValue)
             }
         }
     }
@@ -117,13 +106,8 @@ struct CommentListView: View {
             Spacer()
             
             Button {
-                viewContext.delete(comment)
-                
-                do {
-                    try viewContext.save()
-                } catch {
-                    print(error)
-                }
+                viewModel.delete(comment)
+                viewModel.save()
             } label: {
                 Image(systemName: "trash")
             }
