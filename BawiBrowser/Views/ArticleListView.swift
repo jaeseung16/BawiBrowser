@@ -11,11 +11,6 @@ struct ArticleListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     @State private var presentFilterItemsView = false
@@ -28,7 +23,7 @@ struct ArticleListView: View {
     private var boards: [String] {
         var boardSet = Set<String>()
         
-        articles.compactMap { article in
+        viewModel.articles.compactMap { article in
             article.boardTitle
         }
         .forEach { boardTitle in
@@ -39,7 +34,7 @@ struct ArticleListView: View {
     }
     
     private var filteredArticles: Array<Article> {
-        articles.filter { article in
+        viewModel.articles.filter { article in
             if selectedBoard == nil {
                 return true
             } else {
@@ -65,8 +60,6 @@ struct ArticleListView: View {
             NavigationView {
                 VStack {
                     header()
-                    
-                    SearchView(searchString: $searchString)
                     
                     Divider()
                     
@@ -103,11 +96,15 @@ struct ArticleListView: View {
                     return
                 }
                 
-                let article = articles.first { $0.articleId == articleId && $0.boardId == boardId }
+                let article = viewModel.articles.first { $0.articleId == articleId && $0.boardId == boardId }
                 if article != nil {
                     selectedBoard = nil
                     selectedArticle = article
                 }
+            }
+            .searchable(text: $searchString)
+            .onChange(of: searchString) { newValue in
+                viewModel.searchArticle(newValue)
             }
         }
     }
