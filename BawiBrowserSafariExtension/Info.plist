@@ -59,6 +59,6 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableDescription</key>
-	<string>This is BawiBrowserSafariExtension. You should tell us what your extension does here.</string>
+	<string>Send your articles and comments to BawiBrowser for backup</string>
 </dict>
 </plist>
