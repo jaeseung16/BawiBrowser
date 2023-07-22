@@ -59,10 +59,6 @@ struct NoteListView: View {
             .sheet(isPresented: $presentFilterNoteView) {
                 NoteFilterView(to: $recipient, toList: recipients)
             }
-            .searchable(text: $searchString)
-            .onChange(of: searchString) { newValue in
-                viewModel.searchNote(newValue)
-            }
         }
     }
     

@@ -44,13 +44,6 @@ struct ArticleListView: View {
                 return boardTitle == selectedBoard!
             }
         }
-        .filter { article in
-            if searchString.isEmpty {
-                return true
-            } else {
-                return article.body?.contains(searchString) ?? false
-            }
-        }
     }
     
     @State private var selectedArticle: Article?
@@ -101,10 +94,6 @@ struct ArticleListView: View {
                     selectedBoard = nil
                     selectedArticle = article
                 }
-            }
-            .searchable(text: $searchString)
-            .onChange(of: searchString) { newValue in
-                viewModel.searchArticle(newValue)
             }
         }
     }

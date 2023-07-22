@@ -12,20 +12,11 @@ struct ContentView: View {
     @EnvironmentObject private var viewModel: BawiBrowserViewModel
     @Environment(\.managedObjectContext) private var viewContext
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Comment.created, ascending: false)],
-        animation: .default)
-    private var comments: FetchedResults<Comment>
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-    
     @AppStorage("BawiBrowser.appearance")
     var appearance: BawiBrowserAppearance = .light
     
     @State private var selectedTab: String?
+    @State private var searchString = ""
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
@@ -54,11 +45,18 @@ struct ContentView: View {
                 .tag(BawiBrowserTab.notes)
         }
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
-        .alert(isPresented: $viewModel.showAlert, content: {
+        .alert(isPresented: $viewModel.showAlert) {
             Alert(title: Text("Unable to Save Data"),
                   message: Text(viewModel.message),
                   dismissButton: .default(Text("Dismiss")))
-        })
+        }
+        .searchable(text: $searchString)
+        .onChange(of: searchString) { newValue in
+            viewModel.search(newValue)
+        }
+        .onChange(of: viewModel.selectedTab) { _ in
+            searchString = ""
+        }
         
     }
     

@@ -64,10 +64,6 @@ struct CommentListView: View {
             .sheet(isPresented: $presentFilterItemsView) {
                 BoardFilterView(board: $selectedBoard, boards: boards)
             }
-            .searchable(text: $searchString)
-            .onChange(of: searchString) { newValue in
-                viewModel.searchComment(newValue)
-            }
         }
     }
     
