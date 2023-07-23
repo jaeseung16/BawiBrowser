@@ -56,6 +56,7 @@ struct ContentView: View {
         }
         .onChange(of: viewModel.selectedTab) { _ in
             searchString = ""
+            viewModel.cancelSearch()
         }
         
     }

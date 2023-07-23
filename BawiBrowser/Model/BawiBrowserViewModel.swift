@@ -770,4 +770,14 @@ extension BawiBrowserViewModel: BawiBrowserSearchDelegate {
             searchNote(text)
         }
     }
+    
+    func cancelSearch() {
+        DispatchQueue.main.async {
+            self.searchQueryForArticle?.cancel()
+            self.searchQueryForComment?.cancel()
+            self.searchQueryForNote?.cancel()
+            
+            self.fetchAll()
+        }
+    }
 }

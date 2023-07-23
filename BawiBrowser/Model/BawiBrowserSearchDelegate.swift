@@ -11,4 +11,6 @@ protocol BawiBrowserSearchDelegate {
     
     func search(_ text: String)
     
+    func cancelSearch()
+    
 }
