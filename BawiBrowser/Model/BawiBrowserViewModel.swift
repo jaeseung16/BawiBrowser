@@ -706,62 +706,63 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         searchQueryForArticle?.start()
     }
     
+    private func fetchNotes(_ items: [CSSearchableItem]) {
+        logger.log("Fetching \(items.count) notes")
+        notes = fetch(items).sorted(by: { note1, note2 in
+            guard let created1 = note1.created else {
+                return false
+            }
+            guard let created2 = note2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.notes.count) notes")
+    }
+    
+    private func fetchComments(_ items: Set<CSSearchableItem>) {
+        logger.log("Fetching \(items.count) comments")
+        comments = fetch(Array(items)).sorted(by: { comment1, comment2 in
+            guard let created1 = comment1.created else {
+                return false
+            }
+            guard let created2 = comment2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.comments.count) comments")
+    }
+    
+    private func fetchArticles(_ items: [CSSearchableItem]) {
+        logger.log("Fetching \(items.count) articles")
+        let fetched: [Article] = fetch(items)
+        logger.log("fetched.count=\(fetched.count)")
+        articles = fetched.sorted(by: { article1, article2 in
+            guard let created1 = article1.created else {
+                return false
+            }
+            guard let created2 = article2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.articles.count) articles")
+    }
+    
     private func fetch<T: NSManagedObject>(_ items: [CSSearchableItem]) -> [T] {
         return items.compactMap { (item: CSSearchableItem) -> T? in
             guard let url = URL(string: item.uniqueIdentifier) else {
+                self.logger.log("url is nil for item=\(item)")
                 return nil
             }
             return find(for: url) as? T
         }
     }
     
-    private func fetchNotes(_ items: [CSSearchableItem]) {
-        logger.log("Fetching \(items.count) notes")
-        let foundNotes: [Note] = fetch(items)
-        logger.log("Found \(foundNotes.count) notes")
-        notes = foundNotes.sorted(by: { note1, note2 in
-            if note1.created == nil {
-                return false
-            } else if note2.created == nil {
-                return true
-            } else {
-                return note1.created! > note2.created!
-            }
-        })
-    }
-    
-    private func fetchComments(_ items: Set<CSSearchableItem>) {
-        logger.log("Fetching \(items.count) comments")
-        let foundComments: [Comment] = fetch(Array(items))
-        logger.log("Found \(foundComments.count) comments")
-        comments = foundComments.sorted(by: { comment1, comment2 in
-            if comment1.created == nil {
-                return false
-            } else if comment2.created == nil {
-                return true
-            } else {
-                return comment1.created! > comment2.created!
-            }
-        })
-    }
-    
-    private func fetchArticles(_ items: [CSSearchableItem]) {
-        logger.log("Fetching \(items.count) articles")
-        let foundArticles: [Article] = fetch(items)
-        logger.log("Found \(foundArticles.count) articles")
-        articles = foundArticles.sorted(by: { article1, article2 in
-            if article1.created == nil {
-                return false
-            } else if article2.created == nil {
-                return true
-            } else {
-                return article1.created! > article2.created!
-            }
-        })
-    }
-    
     func find(for url: URL) -> NSManagedObject? {
         guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+            self.logger.log("objectID is nil for url=\(url)")
             return nil
         }
         return viewContext.object(with: objectID)
