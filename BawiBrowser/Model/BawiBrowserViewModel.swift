@@ -169,17 +169,28 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         DispatchQueue.main.async {
             let articleIndex = CSSearchableIndex(name: self.articleIndexName)
-            articleIndex.deleteAllSearchableItems()
+            articleIndex.deleteAllSearchableItems() { error in
+                if let error = error {
+                    self.logger.log("Error while deleting article index: \(error.localizedDescription)")
+                }
+                self.indexArticles()
+            }
             
             let commentIndex = CSSearchableIndex(name: self.commentIndexName)
-            commentIndex.deleteAllSearchableItems()
+            commentIndex.deleteAllSearchableItems() { error in
+                if let error = error {
+                    self.logger.log("Error while deleting comment index: \(error.localizedDescription)")
+                }
+                self.indexComments()
+            }
             
             let noteIndex = CSSearchableIndex(name: self.noteIndexName)
-            noteIndex.deleteAllSearchableItems()
-            
-            self.indexArticles()
-            self.indexComments()
-            self.indexNotes()
+            noteIndex.deleteAllSearchableItems() { error in
+                if let error = error {
+                    self.logger.log("Error while deleting note index: \(error.localizedDescription)")
+                }
+                self.indexNotes()
+            }
         }
         
     }
