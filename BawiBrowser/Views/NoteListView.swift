@@ -27,9 +27,7 @@ struct NoteListView: View {
         
         return Array(toSet)
     }
-    
-    @State private var searchString = ""
-    
+  
     private var filteredNotes: Array<Note> {
         viewModel.notes.filter { note in
             if recipient == nil {

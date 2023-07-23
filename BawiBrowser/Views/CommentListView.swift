@@ -17,8 +17,6 @@ struct CommentListView: View {
     
     @State private var selectedBoard: String?
     
-    @State private var searchString = ""
-    
     private var boards: [String] {
         var boardSet = Set<String>()
         

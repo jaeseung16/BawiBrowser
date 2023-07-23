@@ -17,9 +17,7 @@ struct ArticleListView: View {
     @State private var presentSortItemsView = false
     
     @State private var selectedBoard: String?
-    
-    @State private var searchString = ""
-    
+
     private var boards: [String] {
         var boardSet = Set<String>()
         
