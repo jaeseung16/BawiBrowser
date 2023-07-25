@@ -9,10 +9,13 @@ import SwiftUI
 import WebKit
 import MultipartKit
 import Combine
+import os
 
 struct WebView: NSViewRepresentable {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     @AppStorage("BawiBrowser.appearance") private var darkMode: Bool = false
+    
+    private static let logger = Logger()
     
     let url: URL
     
@@ -49,15 +52,15 @@ struct WebView: NSViewRepresentable {
                     
                     webView.find($0) { result in
                         if result.matchFound {
-                            webView.evaluateJavaScript(startSearch) { result, error in
-                                if error != nil {
-                                    print("uiWebview_HighlightAllOccurencesOfString: \(String(describing: error))")
+                            webView.evaluateJavaScript(startSearch) { _, error in
+                                guard error == nil else {
+                                    WebView.logger.log("uiWebview_HighlightAllOccurencesOfString: \(error!.localizedDescription, privacy: .public)")
                                     return
                                 }
                                 
                                 webView.evaluateJavaScript("uiWebview_SearchResultTotalCount") { result, error in
-                                    if error != nil {
-                                        print("uiWebview_SearchResultTotalCount: \(String(describing: error))")
+                                    guard error == nil else {
+                                        WebView.logger.log("uiWebview_SearchResultTotalCount: \(error!.localizedDescription, privacy: .public)")
                                         return
                                     }
                                     
@@ -83,7 +86,6 @@ struct WebView: NSViewRepresentable {
         viewModel.$searchResultCounter
             .sink {
                 let idx = viewModel.searchResultTotalCount - $0 + 1
-                print("idx=\(idx)")
                 webView.evaluateJavaScript("uiWebview_ScrollTo(\(idx))")
             }
             .store(in: &viewModel.subscriptions)
@@ -180,17 +182,16 @@ struct WebView: NSViewRepresentable {
                                                      boardTitle: self.boardTitle)
                     }
                 case .login:
-                    print("url=\(url), request=\(navigationAction.request)")
                     if let httpBody = navigationAction.request.httpBody {
                         parent.viewModel.processCredentials(httpBody)
                     }
                 default:
-                    print("url=\(url), navigationAction=\(navigationAction)")
+                    WebView.logger.log("url=\(url), navigationAction=\(navigationAction)")
                     if let httpBody = navigationAction.request.httpBody {
-                        print("url=\(url), httpBody=\(String(describing: String(data: httpBody, encoding: .utf8)))")
+                        WebView.logger.log("httpBody=\(String(describing: String(data: httpBody, encoding: .utf8)), privacy: .public)")
                     }
                     if let boundary = extractBoundary(from: navigationAction) {
-                        print("url=\(url), boundary=\(boundary)")
+                        WebView.logger.log("boundary=\(boundary, privacy: .public)")
                     }
                 }
             }
@@ -252,51 +253,50 @@ struct WebView: NSViewRepresentable {
                 articleDTO = nil
             }
             
-            webView.evaluateJavaScript("document.getElementsByTagName('h1')[0].innerText", completionHandler: { (value: Any!, error: Error!) -> Void in
-                if error != nil {
-                    print("didFinish: \(String(describing: error))")
+            webView.evaluateJavaScript("document.getElementsByTagName('h1')[0].innerText") { value, error in
+                guard error == nil else {
+                    WebView.logger.log("didFinish: \(error!.localizedDescription, privacy: .public))")
                     return
                 }
 
                 if let result = value as? String {
-                    print("didFinish: boardTitle = \(result)")
+                    WebView.logger.log("didFinish: boardTitle = \(result, privacy: .public)")
                     self.boardTitle = result
                 }
-            })
+            }
             
-            webView.evaluateJavaScript("document.getElementsByClassName('article')[0].innerText", completionHandler: { (value: Any!, error: Error!) -> Void in
-                if error != nil {
-                    print("didFinish: \(String(describing: error))")
+            webView.evaluateJavaScript("document.getElementsByClassName('article')[0].innerText") { value, error in
+                guard error == nil else {
+                    WebView.logger.log("didFinish: \(error!.localizedDescription, privacy: .public))")
                     return
                 }
 
                 if let result = value as? String {
-                    print("didFinish: articleTitle = \(result)")
+                    WebView.logger.log("didFinish: articleTitle = \(result)")
                     self.articleTitle = result
                 }
-            })
+            }
             
-            webView.evaluateJavaScript("document.getElementById('login_id').outerHTML", completionHandler: { (value: Any!, error: Error!) -> Void in
-                if error != nil {
-                    print("didFinish: \(String(describing: error))")
+            webView.evaluateJavaScript("document.getElementById('login_id').outerHTML") { value, error in
+                guard error == nil else {
+                    WebView.logger.log("didFinish: \(error!.localizedDescription, privacy: .public)")
                     return
                 }
 
-                if value != nil {
-                    print("didFinish: value = \(value!)")
+                if let value = value as? String {
+                    WebView.logger.log("didFinish: value = \(value)")
                     
                     let credentials = self.parent.viewModel.bawiCredentials
                     webView.evaluateJavaScript("LoginAutofill_EnableAutofill('\(credentials.username)', '\(credentials.password)')") { result, error in
-                        if error != nil {
-                            print("LoginAutofill_EnableAutofill: \(String(describing: error))")
+                        guard error == nil else {
+                            WebView.logger.log("LoginAutofill_EnableAutofill: \(error!.localizedDescription, privacy: .public))")
                             return
                         }
                         
-                        print("LoginAutofill_EnableAutofill: result = \(String(describing: result))")
+                        WebView.logger.log("LoginAutofill_EnableAutofill: result = \(String(describing: result))")
                     }
                 }
-                
-            })
+            }
         }
         
         func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
@@ -336,7 +336,7 @@ struct WebView: NSViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
-            print("runJavaScriptTextInputPanelWithPrompt: \(prompt)")
+                        WebView.logger.log("runJavaScriptTextInputPanelWithPrompt: \(prompt)")
         }
         
         func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
