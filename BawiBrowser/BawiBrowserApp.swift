@@ -42,5 +42,10 @@ struct BawiBrowserApp: App {
                 .keyboardShortcut(" ", modifiers: [.command, .control])
             }
         }
+        
+        Settings {
+            SettingsView()
+                .environmentObject(appDelegate.viewModel)
+        }
     }
 }

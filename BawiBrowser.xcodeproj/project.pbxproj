@@ -24,6 +24,9 @@
 		9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		9039535B26B6308B004CB410 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90492BBE26A4A567005F337C /* AttachmentListView.swift */; };
+		904FD3262A6D801C00EF7B31 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904FD3252A6D801C00EF7B31 /* SettingsView.swift */; };
+		904FD3282A6D9D4A00EF7B31 /* BawiCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904FD3272A6D9D4A00EF7B31 /* BawiCredentials.swift */; };
+		904FD32A2A6D9DF000EF7B31 /* KeyChainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904FD3292A6D9DF000EF7B31 /* KeyChainHelper.swift */; };
 		90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617663268A781000871FB2 /* BawiBrowserApp.swift */; };
 		90617666268A781000871FB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90617665268A781000871FB2 /* ContentView.swift */; };
 		90617668268A781200871FB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90617667268A781200871FB2 /* Assets.xcassets */; };
@@ -113,6 +116,9 @@
 		9037CF092857ECD000B5C7C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9037CF0B2857ED0C00B5C7C9 /* BawiBrowserConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserConstants.swift; sourceTree = "<group>"; };
 		90492BBE26A4A567005F337C /* AttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentListView.swift; sourceTree = "<group>"; };
+		904FD3252A6D801C00EF7B31 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		904FD3272A6D9D4A00EF7B31 /* BawiCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiCredentials.swift; sourceTree = "<group>"; };
+		904FD3292A6D9DF000EF7B31 /* KeyChainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainHelper.swift; sourceTree = "<group>"; };
 		90617660268A781000871FB2 /* BawiBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BawiBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90617663268A781000871FB2 /* BawiBrowserApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserApp.swift; sourceTree = "<group>"; };
 		90617665268A781000871FB2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -213,6 +219,8 @@
 				9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */,
 				90A0D9AD289880860057D328 /* BawiAction.swift */,
 				90A103852A64398F0017EEB8 /* PersistenceHelper.swift */,
+				904FD3272A6D9D4A00EF7B31 /* BawiCredentials.swift */,
+				904FD3292A6D9DF000EF7B31 /* KeyChainHelper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -303,6 +311,7 @@
 				90CDB73D26A7800900568700 /* NoteListView.swift */,
 				9089733726FBB86C005A03A8 /* SearchView.swift */,
 				90617695268A785C00871FB2 /* WebView.swift */,
+				904FD3252A6D801C00EF7B31 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -536,6 +545,7 @@
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
 				90A0D9AE289880860057D328 /* BawiAction.swift in Sources */,
 				90A103862A64398F0017EEB8 /* PersistenceHelper.swift in Sources */,
+				904FD3282A6D9D4A00EF7B31 /* BawiCredentials.swift in Sources */,
 				90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */,
 				90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */,
 				900631002697B990006B6340 /* BawiArticleDTO.swift in Sources */,
@@ -543,8 +553,10 @@
 				9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */,
 				90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */,
 				90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */,
+				904FD32A2A6D9DF000EF7B31 /* KeyChainHelper.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
 				9089733826FBB86C005A03A8 /* SearchView.swift in Sources */,
+				904FD3262A6D801C00EF7B31 /* SettingsView.swift in Sources */,
 				90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */,
 				90617664268A781000871FB2 /* BawiBrowserApp.swift in Sources */,
 				900452F8285A9AC1009D9796 /* BawiBrowserTab.swift in Sources */,

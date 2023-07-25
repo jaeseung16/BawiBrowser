@@ -12,6 +12,8 @@ enum BawiAction: String, CaseIterable {
     case comment
     case write
     case edit
+    case index
+    case login
     
     var cgi: String {
         return rawValue + ".cgi"

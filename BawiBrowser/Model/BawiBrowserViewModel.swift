@@ -18,6 +18,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let logger = Logger()
     
     private let multipartPrefix = "multipart/form-data; boundary="
+    
+    @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
+    
     var subscriptions: Set<AnyCancellable> = []
     
     @Published var httpCookies = [HTTPCookie]()
@@ -152,6 +155,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     private let persistenceHelper: PersistenceHelper
     
+    private let keyChainHelper = KeyChainHelper()
+    @Published var bawiCredentials = BawiCredentials(username: "", password: "")
+    
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
@@ -193,6 +199,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             }
         }
         
+        if useKeychain {
+            keyChainHelper.initialize()
+            bawiCredentials = keyChainHelper.credentials
+        }
     }
     
     private func fetchAll() {
@@ -593,6 +603,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         return nil
     }
     
+    private func search(_ text: String, in tab: BawiBrowserTab) {
+        
+    }
+    
     func searchNote(_ text: String) -> Void {
         if text.isEmpty {
             searchQueryForNote?.cancel()
@@ -766,6 +780,88 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             return nil
         }
         return viewContext.object(with: objectID)
+    }
+    
+    // MARK: - credentials
+    func searchCredentials(completionHandler: @escaping (Result<BawiCredentials, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.keyChainHelper.search(completionHandler: completionHandler)
+        }
+    }
+    
+    func processCredentials(_ httpBody: Data) -> Void {
+        guard useKeychain else {
+            logger.log("Do nothing since useKeychain=\(self.useKeychain, privacy: .public)")
+            bawiCredentials = BawiCredentials(username: "", password: "")
+            return
+        }
+        
+        guard let dataString = String(data: httpBody, encoding: .utf8) else {
+            logger.log("Cannot convert to String: httpBody=\(httpBody)")
+            return
+        }
+        
+        let keyValuePair: [String: String] = Dictionary(uniqueKeysWithValues: dataString.split(separator: "&")
+                .map {
+                    let keyValuePair = $0.split(separator: "=")
+                    return (String(keyValuePair[0]), String(keyValuePair[1]))
+                }
+            )
+
+        var credentials: BawiCredentials?
+        if let username = keyValuePair["id"], let password = keyValuePair["passwd"] {
+            credentials = BawiCredentials(username: username, password: password)
+            logger.log("username=\(credentials!.username), password=\(credentials!.password)")
+        }
+        
+        searchCredentials { result in
+            switch result {
+            case .failure(let error):
+                self.logger.log("Can't find credentials in key chain: \(error.localizedDescription, privacy: .public)")
+                if let credentials = credentials {
+                    self.logger.log("Trying to add credentials to keychain")
+                    self.keyChainHelper.credentials = credentials
+                    self.setCredentials(credentials)
+                    do {
+                        try self.keyChainHelper.add()
+                    } catch {
+                        self.logger.log("Failed to add credentials to keychain: \(error.localizedDescription, privacy: .public)")
+                    }
+                }
+            case .success(let existingCredentials):
+                self.bawiCredentials = existingCredentials
+                if let credentials = credentials {
+                    if existingCredentials.username != credentials.username || existingCredentials.password != credentials.password {
+                        self.logger.log("Trying to update credentials in keychain")
+                        self.keyChainHelper.credentials = credentials
+                        self.setCredentials(credentials)
+                        do {
+                            try self.keyChainHelper.update()
+                        } catch {
+                            self.logger.log("Failed to update credentials in keychain: \(error.localizedDescription, privacy: .public)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func deleteCredentials() -> Void {
+        setCredentials(BawiCredentials(username: "", password: ""))
+        navigation = .reload
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try self.keyChainHelper.delete()
+            } catch {
+                self.logger.log("Failed to delete credentials in keychain: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+    
+    func setCredentials(_ credentials: BawiCredentials) -> Void {
+        DispatchQueue.main.async {
+            self.bawiCredentials = credentials
+        }
     }
 }
 

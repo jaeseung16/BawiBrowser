@@ -12,7 +12,7 @@ import Combine
 
 struct WebView: NSViewRepresentable {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
-    @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
+    @AppStorage("BawiBrowser.appearance") private var darkMode: Bool = false
     
     let url: URL
     
@@ -22,19 +22,19 @@ struct WebView: NSViewRepresentable {
         }
         
         let configuration = WKWebViewConfiguration()
+        let userContentController = WKUserContentController()
+        
         if let path = Bundle.main.path(forResource: "UIWebViewSearch", ofType: "js"), let jsString = try? String(contentsOfFile: path, encoding: .utf8) {
-            let userContentController = WKUserContentController()
             let userScript = WKUserScript(source: jsString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
             userContentController.addUserScript(userScript)
-            configuration.userContentController = userContentController
         }
         
         if let path = Bundle.main.path(forResource: "LoginAutofill", ofType: "js"), let jsString = try? String(contentsOfFile: path, encoding: .utf8) {
-            let userContentController = WKUserContentController()
             let userScript = WKUserScript(source: jsString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
             userContentController.addUserScript(userScript)
-            configuration.userContentController = userContentController
         }
+        
+        configuration.userContentController = userContentController
         
         let request = URLRequest(url: url)
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
@@ -165,19 +165,32 @@ struct WebView: NSViewRepresentable {
                 case .write:
                     if let boundary = extractBoundary(from: navigationAction) {
                         parent.viewModel.preprocessWrite(url: url,
-                                     httpBody: navigationAction.request.httpBody,
-                                     httpBodyStream: navigationAction.request.httpBodyStream,
-                                     boundary: boundary,
-                                     boardTitle: self.boardTitle,
-                                     coordinator: self)
+                                                         httpBody: navigationAction.request.httpBody,
+                                                         httpBodyStream: navigationAction.request.httpBodyStream,
+                                                         boundary: boundary,
+                                                         boardTitle: self.boardTitle,
+                                                         coordinator: self)
                     }
                 case .edit:
                     if let boundary = extractBoundary(from: navigationAction) {
                         parent.viewModel.processEdit(url: url,
-                                     httpBody: navigationAction.request.httpBody,
-                                     httpBodyStream: navigationAction.request.httpBodyStream,
-                                     boundary: boundary,
-                                     boardTitle: self.boardTitle)
+                                                     httpBody: navigationAction.request.httpBody,
+                                                     httpBodyStream: navigationAction.request.httpBodyStream,
+                                                     boundary: boundary,
+                                                     boardTitle: self.boardTitle)
+                    }
+                case .login:
+                    print("url=\(url), request=\(navigationAction.request)")
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processCredentials(httpBody)
+                    }
+                default:
+                    print("url=\(url), navigationAction=\(navigationAction)")
+                    if let httpBody = navigationAction.request.httpBody {
+                        print("url=\(url), httpBody=\(String(describing: String(data: httpBody, encoding: .utf8)))")
+                    }
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        print("url=\(url), boundary=\(boundary)")
                     }
                 }
             }
@@ -271,7 +284,9 @@ struct WebView: NSViewRepresentable {
 
                 if value != nil {
                     print("didFinish: value = \(value!)")
-                    webView.evaluateJavaScript("LoginAutofill_EnableAutofill(\"galley\")") { result, error in
+                    
+                    let credentials = self.parent.viewModel.bawiCredentials
+                    webView.evaluateJavaScript("LoginAutofill_EnableAutofill('\(credentials.username)', '\(credentials.password)')") { result, error in
                         if error != nil {
                             print("LoginAutofill_EnableAutofill: \(String(describing: error))")
                             return
