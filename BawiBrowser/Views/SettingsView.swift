@@ -12,10 +12,20 @@ struct SettingsView: View {
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
     
     var body: some View {
-        Form {
-            Section(header: Text("Login")) {
-                Toggle("Use keychain", isOn: $useKeychain)
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Form {
+                    Picker("Use Keychain:", selection: $useKeychain) {
+                        Text("Yes").tag(true)
+                        Text("No").tag(false)
+                    }
+                    .pickerStyle(.inline)
+                }
+                Spacer()
             }
+            Spacer()
         }
         .frame(width: 300)
         .navigationTitle("Bawi Browser Settings")
