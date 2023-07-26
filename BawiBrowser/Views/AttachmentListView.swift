@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct AttachmentListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    
+    @EnvironmentObject var viewModel: BawiBrowserViewModel
     @State var attachments: [Attachment]
 
     var body: some View {
@@ -30,20 +29,14 @@ struct AttachmentListView: View {
                         }
                     }
                 }
-                .onDelete(perform: { indexSet in
-                    print("\(indexSet)")
+                .onDelete { indexSet in
                     for index in indexSet {
                         let attachment = attachments[index]
                         attachments.remove(at: index)
-                        viewContext.delete(attachment)
+                        viewModel.delete(attachment)
                     }
-                    
-                    do {
-                        try viewContext.save()
-                    } catch {
-                        print(error)
-                    }
-                })
+                    viewModel.save()
+                }
 
             }
         }
@@ -55,11 +48,5 @@ struct AttachmentListView: View {
         dateFormatter.timeStyle = .long
         dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter
-    }
-}
-
-struct AttachmentListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentListView(attachments: [Attachment]())
     }
 }

@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ArticleDetailView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    
+    @EnvironmentObject var viewModel: BawiBrowserViewModel
     @State var article: Article
     
     var body: some View {
@@ -67,6 +66,7 @@ struct ArticleDetailView: View {
                 
                 if !attachments.isEmpty {
                     AttachmentListView(attachments: attachments)
+                        .environmentObject(viewModel)
                 }
             }
             .frame(height: geometry.size.height, alignment: .top)
@@ -90,10 +90,4 @@ struct ArticleDetailView: View {
         return dateFormatter
     }
     
-}
-
-struct ArticleDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleDetailView(article: Article())
-    }
 }

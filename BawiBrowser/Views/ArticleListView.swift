@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ArticleListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
     
     @EnvironmentObject var viewModel: BawiBrowserViewModel
@@ -58,23 +57,19 @@ struct ArticleListView: View {
                         ForEach(filteredArticles) { article in
                             NavigationLink(tag: article, selection: $selectedArticle) {
                                 ArticleDetailView(article: article)
+                                    .environmentObject(viewModel)
                             } label: {
                                 label(article: article)
                             }
 
                         }
-                        .onDelete(perform: { indexSet in
+                        .onDelete { indexSet in
                             for index in indexSet {
                                 let article = filteredArticles[index]
-                                viewContext.delete(article)
+                                viewModel.delete(article)
                             }
-                            
-                            do {
-                                try viewContext.save()
-                            } catch {
-                                print(error)
-                            }
-                        })
+                            viewModel.save()
+                        }
                     }
                     .frame(width: geometry.size.width * 0.25)
                 }
