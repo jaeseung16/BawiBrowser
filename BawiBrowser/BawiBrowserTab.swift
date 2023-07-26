@@ -7,6 +7,10 @@
 
 import Foundation
 
-enum BawiBrowserTab {
+enum BawiBrowserTab: String, CaseIterable, Identifiable {
     case browser, articles, comments, notes
+    
+    var id: Self {
+        return self
+    }
 }
