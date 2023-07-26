@@ -792,7 +792,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     func processCredentials(_ httpBody: Data) -> Void {
         guard useKeychain else {
             logger.log("Do nothing since useKeychain=\(self.useKeychain, privacy: .public)")
-            bawiCredentials = BawiCredentials(username: "", password: "")
+            self.setCredentials(BawiCredentials(username: "", password: ""))
             return
         }
         
@@ -829,7 +829,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                     }
                 }
             case .success(let existingCredentials):
-                self.bawiCredentials = existingCredentials
+                self.setCredentials(existingCredentials)
                 if let credentials = credentials {
                     if existingCredentials.username != credentials.username || existingCredentials.password != credentials.password {
                         self.logger.log("Trying to update credentials in keychain")
