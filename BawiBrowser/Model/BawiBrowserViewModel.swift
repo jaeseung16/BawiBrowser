@@ -513,6 +513,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             switch result {
             case .success(_):
                 self.logger.log("Data saved successfully")
+                self.fetchAll()
             case .failure(let error):
                 self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
             }
