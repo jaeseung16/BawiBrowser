@@ -105,7 +105,7 @@ class PersistenceHelper {
         save(completionHandler: completionHandler)
     }
     
-    func save(note dto: BawiNoteDTO, completiongHandler: @escaping (Result<Void,Error>) -> Void) {
+    func save(note dto: BawiNoteDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) {
         let note = Note(context: viewContext)
         note.action = dto.action
         note.to = dto.to
