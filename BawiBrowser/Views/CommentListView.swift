@@ -81,7 +81,7 @@ struct CommentListView: View {
                 HStack {
                     Spacer()
                     
-                    Text(dateFormatter.string(from: comment.created!))
+                    Text(dateFormatter.string(from: comment.created ?? Date()))
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }

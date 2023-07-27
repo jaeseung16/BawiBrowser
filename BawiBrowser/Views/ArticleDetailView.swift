@@ -34,7 +34,7 @@ struct ArticleDetailView: View {
                         .font(.headline)
                         .frame(width: geometry.size.width * 0.16)
                     
-                    Text(dateFormatter.string(from: article.created!))
+                    Text(dateFormatter.string(from: article.created ?? Date()))
                         .font(.body)
                         .frame(width: geometry.size.width * 0.3)
                 }

@@ -120,7 +120,7 @@ struct ArticleListView: View {
             HStack {
                 Spacer()
                 
-                Text(dateFormatter.string(from: article.created!))
+                Text(dateFormatter.string(from: article.created ?? Date()))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
