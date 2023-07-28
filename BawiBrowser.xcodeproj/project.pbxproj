@@ -54,6 +54,7 @@
 		90A2778226AE3C26000A3080 /* script.js in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778126AE3C26000A3080 /* script.js */; };
 		90A2778526AE3C26000A3080 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90A2778326AE3C26000A3080 /* SafariExtensionViewController.xib */; };
 		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		90A42F802A746B5100FC8795 /* BawiBrowserSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A42F7F2A746B5100FC8795 /* BawiBrowserSpotlight.swift */; };
 		90AD18482A68A09400744D21 /* BawiBrowserSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
@@ -155,6 +156,7 @@
 		90A2778426AE3C26000A3080 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SafariExtensionViewController.xib; sourceTree = "<group>"; };
 		90A2778626AE3C26000A3080 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90A2778726AE3C26000A3080 /* BawiBrowserSafariExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BawiBrowserSafariExtension.entitlements; sourceTree = "<group>"; };
+		90A42F7F2A746B5100FC8795 /* BawiBrowserSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserSpotlight.swift; sourceTree = "<group>"; };
 		90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserSearchDelegate.swift; sourceTree = "<group>"; };
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				90A103852A64398F0017EEB8 /* PersistenceHelper.swift */,
 				904FD3272A6D9D4A00EF7B31 /* BawiCredentials.swift */,
 				904FD3292A6D9DF000EF7B31 /* KeyChainHelper.swift */,
+				90A42F7F2A746B5100FC8795 /* BawiBrowserSpotlight.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -553,6 +556,7 @@
 				9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */,
 				90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */,
 				90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */,
+				90A42F802A746B5100FC8795 /* BawiBrowserSpotlight.swift in Sources */,
 				904FD32A2A6D9DF000EF7B31 /* KeyChainHelper.swift in Sources */,
 				9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */,
 				9089733826FBB86C005A03A8 /* SearchView.swift in Sources */,

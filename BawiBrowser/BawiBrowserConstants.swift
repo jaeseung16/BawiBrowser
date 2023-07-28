@@ -10,4 +10,8 @@ import Foundation
 enum BawiBrowserConstants: String {
     case appName = "BawiBrowser"
     case iCloudIdentifier = "iCloud.com.resonance.jlee.BawiBrowser"
+    case domainIdentifier = "com.resonance.jlee.BawiBrowser"
+    case noteIndexName = "bawibrowser-note-index"
+    case commentIndexName = "bawibrowser-comment-index"
+    case articleIndexName = "bawibrowser-article-index"
 }

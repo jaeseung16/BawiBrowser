@@ -20,6 +20,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let multipartPrefix = "multipart/form-data; boundary="
     
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
+    @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
     
     var subscriptions: Set<AnyCancellable> = []
     
@@ -115,6 +116,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let keyChainHelper = KeyChainHelper()
     @Published var bawiCredentials = BawiCredentials(username: "", password: "")
     
+    private(set) var articleIndexer: ArticleSpotlightDelegate?
+    private(set) var commentIndexer: CommentSpotlightDelegate?
+    private(set) var noteIndexer: NoteSpotlightDelegate?
+    
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
@@ -128,31 +133,24 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
+        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
+            self.articleIndexer = ArticleSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
+            self.commentIndexer = CommentSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
+            self.noteIndexer = NoteSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
+            
+            self.toggleIndexing(self.articleIndexer, enabled: true)
+            self.toggleIndexing(self.commentIndexer, enabled: true)
+            self.toggleIndexing(self.noteIndexer, enabled: true)
+        }
+        
         fetchAll()
         
-        DispatchQueue.main.async {
-            let articleIndex = CSSearchableIndex(name: self.articleIndexName)
-            articleIndex.deleteAllSearchableItems() { error in
-                if let error = error {
-                    self.logger.log("Error while deleting article index: \(error.localizedDescription)")
-                }
+        if !spotlightIndexing {
+            DispatchQueue.main.async {
                 self.indexArticles()
-            }
-            
-            let commentIndex = CSSearchableIndex(name: self.commentIndexName)
-            commentIndex.deleteAllSearchableItems() { error in
-                if let error = error {
-                    self.logger.log("Error while deleting comment index: \(error.localizedDescription)")
-                }
                 self.indexComments()
-            }
-            
-            let noteIndex = CSSearchableIndex(name: self.noteIndexName)
-            noteIndex.deleteAllSearchableItems() { error in
-                if let error = error {
-                    self.logger.log("Error while deleting note index: \(error.localizedDescription)")
-                }
                 self.indexNotes()
+                self.spotlightIndexing.toggle()
             }
         }
         
@@ -458,10 +456,16 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
-    private var domainIdentifier = "com.resonance.jlee.BawiBrowser"
-    private var noteIndexName = "bawibrowser-note-index"
-    private var commentIndexName = "bawibrowser-comment-index"
-    private var articleIndexName = "bawibrowser-article-index"
+    // MARK: - Search
+    func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
+        guard let indexer = indexer else { return }
+        
+        if enabled {
+            indexer.startSpotlightIndexing()
+        } else {
+            indexer.stopSpotlightIndexing()
+        }
+    }
     
     var spotlightFoundArticles: [CSSearchableItem] = []
     var spotlightFoundComments: Set<CSSearchableItem> = []
@@ -477,18 +481,18 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
                 return nil
             }
-            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: domainIdentifier, attributeSet: attributeSet)
+            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: BawiBrowserConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
         }
         
         var indexName = ""
         
         switch T.self {
         case is Article.Type:
-            indexName = articleIndexName
+            indexName = BawiBrowserConstants.articleIndexName.rawValue
         case is Comment.Type:
-            indexName = commentIndexName
+            indexName = BawiBrowserConstants.commentIndexName.rawValue
         case is Note.Type:
-            indexName = noteIndexName
+            indexName = BawiBrowserConstants.noteIndexName.rawValue
         default:
             indexName = ""
         }
@@ -522,12 +526,16 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         if let note = object as? Note {
             let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
             attributeSet.comment = note.msg?.removingPercentEncoding
+            attributeSet.displayName = note.to
+            attributeSet.contentDescription = note.msg?.removingPercentEncoding
             return attributeSet
         }
         
         if let comment = object as? Comment {
             let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
             attributeSet.textContent = comment.body?.removingPercentEncoding
+            attributeSet.displayName = comment.boardTitle
+            attributeSet.contentDescription = comment.body?.removingPercentEncoding
             return attributeSet
         }
         
@@ -536,6 +544,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             attributeSet.title = article.boardTitle
             attributeSet.subject = article.articleTitle
             attributeSet.textContent = article.body?.removingPercentEncoding
+            attributeSet.displayName = article.boardTitle
+            attributeSet.contentDescription = article.articleTitle
             return attributeSet
         }
 
