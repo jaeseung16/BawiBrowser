@@ -12,6 +12,7 @@ import CoreData
 import Persistence
 import UserNotifications
 import AppKit
+import CoreSpotlight
 
 class AppDelegate: NSObject {
     private let logger = Logger()
@@ -155,6 +156,16 @@ extension AppDelegate: NSApplicationDelegate {
                 processRemoteNotification()
             }
         }
+    }
+    
+    func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
+        guard let info = userActivity.userInfo, let _ = info[CSSearchableItemActivityIdentifier] as? String else {
+            return false
+        }
+        
+        viewModel.continueActivity(userActivity)
+        
+        return true
     }
     
 }

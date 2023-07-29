@@ -89,7 +89,7 @@ class PersistenceHelper {
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
         fetchRequest.predicate = NSPredicate(format: "boardId == %@ AND articleId == %@", argumentArray: [boardId, articleId])
         
-        var fetchedArticles = perform(fetchRequest)
+        let fetchedArticles = perform(fetchRequest)
         return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
     }
     

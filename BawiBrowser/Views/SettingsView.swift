@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
+    @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
     
     var body: some View {
         VStack {
@@ -22,6 +23,9 @@ struct SettingsView: View {
                         Text("No").tag(false)
                     }
                     .pickerStyle(.inline)
+                    Button("Refresh Spotlight Indices") {
+                        UserDefaults.standard.set(false, forKey: "BawiBrowser.spotlightIndexing")
+                    }
                 }
                 Spacer()
             }
