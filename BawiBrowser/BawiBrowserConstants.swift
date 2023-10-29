@@ -14,4 +14,5 @@ enum BawiBrowserConstants: String {
     case noteIndexName = "bawibrowser-note-index"
     case commentIndexName = "bawibrowser-comment-index"
     case articleIndexName = "bawibrowser-article-index"
+    case indexName = "bawibrowser-index"
 }

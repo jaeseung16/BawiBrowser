@@ -21,6 +21,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
     @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
+    @AppStorage("BawiBrowser.oldIndexDeleted") private var oldIndexDeleted: Bool = false
     
     var subscriptions: Set<AnyCancellable> = []
     
@@ -116,6 +117,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let keyChainHelper = KeyChainHelper()
     @Published var bawiCredentials = BawiCredentials(username: "", password: "")
     
+    private(set) var spotlightIndexer: BawiBrowserSpotlightDelegate?
     private(set) var articleIndexer: ArticleSpotlightDelegate?
     private(set) var commentIndexer: CommentSpotlightDelegate?
     private(set) var noteIndexer: NoteSpotlightDelegate?
@@ -134,13 +136,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
         if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
-            self.articleIndexer = ArticleSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            self.commentIndexer = CommentSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            self.noteIndexer = NoteSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            
-            self.toggleIndexing(self.articleIndexer, enabled: true)
-            self.toggleIndexing(self.commentIndexer, enabled: true)
-            self.toggleIndexing(self.noteIndexer, enabled: true)
+            if !self.oldIndexDeleted {
+                deleteOldIndicies()
+                resetSpotlightIndexing()
+                self.oldIndexDeleted.toggle()
+            }
+            self.spotlightIndexer = BawiBrowserSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
+            self.toggleIndexing(self.spotlightIndexer, enabled: true)
             
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
@@ -165,12 +167,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @objc private func defaultsChanged() -> Void {
         logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
         if !spotlightIndexing {
-            toggleIndexing(articleIndexer, enabled: false)
-            toggleIndexing(commentIndexer, enabled: false)
-            toggleIndexing(noteIndexer, enabled: false)
-            toggleIndexing(articleIndexer, enabled: true)
-            toggleIndexing(commentIndexer, enabled: true)
-            toggleIndexing(noteIndexer, enabled: true)
+            toggleIndexing(spotlightIndexer, enabled: false)
+            toggleIndexing(spotlightIndexer, enabled: true)
             spotlightIndexing.toggle()
         }
     }
@@ -474,6 +472,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     // MARK: - Search
     private let searchHelper = SearchHelper.shared
     
+    private func deleteOldIndicies() {
+        let indexNames = [BawiBrowserConstants.articleIndexName, BawiBrowserConstants.commentIndexName, BawiBrowserConstants.noteIndexName]
+        
+        for indexName in indexNames {
+            let index = CSSearchableIndex(name: indexName.rawValue)
+            index.deleteAllSearchableItems { error in
+                self.logger.log("Error while deleting index=\(indexName.rawValue, privacy: .public)")
+            }
+        }
+    }
+    
+    private func resetSpotlightIndexing() {
+        spotlightIndexing = false
+    }
+    
     func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
         guard let indexer = indexer else { return }
         if enabled {
@@ -512,17 +525,17 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     private func indexNotes() -> Void {
         logger.log("Indexing \(self.notes.count, privacy: .public) notes")
-        index<Note>(notes, indexName: BawiBrowserConstants.noteIndexName.rawValue)
+        index<Note>(notes, indexName: BawiBrowserConstants.indexName.rawValue)
     }
     
     private func indexComments() -> Void {
         logger.log("Indexing \(self.comments.count, privacy: .public) comments")
-        index<Comment>(comments, indexName: BawiBrowserConstants.commentIndexName.rawValue)
+        index<Comment>(comments, indexName: BawiBrowserConstants.indexName.rawValue)
     }
     
     private func indexArticles() -> Void {
         logger.log("Indexing \(self.articles.count, privacy: .public) articles")
-        index<Article>(articles, indexName: BawiBrowserConstants.articleIndexName.rawValue)
+        index<Article>(articles, indexName: BawiBrowserConstants.indexName.rawValue)
     }
     
     private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
@@ -531,6 +544,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             attributeSet.comment = note.msg?.removingPercentEncoding
             attributeSet.displayName = note.to
             attributeSet.contentDescription = note.msg?.removingPercentEncoding
+            attributeSet.kind = BawiBrowserTab.notes.rawValue
             return attributeSet
         }
         
@@ -539,6 +553,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             attributeSet.textContent = comment.body?.removingPercentEncoding
             attributeSet.displayName = comment.boardTitle
             attributeSet.contentDescription = comment.body?.removingPercentEncoding
+            attributeSet.kind = BawiBrowserTab.comments.rawValue
             return attributeSet
         }
         
@@ -549,6 +564,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             attributeSet.textContent = article.body?.removingPercentEncoding
             attributeSet.displayName = article.boardTitle
             attributeSet.contentDescription = article.articleTitle
+            attributeSet.kind = BawiBrowserTab.articles.rawValue
             return attributeSet
         }
 

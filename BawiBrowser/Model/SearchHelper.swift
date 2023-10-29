@@ -18,6 +18,7 @@ enum QueryAttribute: String {
     case textContent
     case comment
     case subject
+    case kind
 }
 
 class SearchHelper {
@@ -39,21 +40,21 @@ class SearchHelper {
     
     func prepareArticleQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
-        let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd) || (\(QueryAttribute.subject.rawValue) == \"*\(escapedText)*\"cd)"
+        let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd || \(QueryAttribute.subject.rawValue) == \"*\(escapedText)*\"cd) && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.articles.rawValue)\""
         logger.log("articleQuery=\(queryString)")
-        return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.textContent.rawValue, QueryAttribute.subject.rawValue])
+        return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.textContent.rawValue, QueryAttribute.subject.rawValue, QueryAttribute.kind.rawValue])
     }
     
     func prepareCommentQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
-        let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd)"
+        let queryString = "\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.comments.rawValue)\""
         logger.log("commentQuery=\(queryString)")
         return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.textContent.rawValue])
     }
     
     func prepareNoteQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
-        let queryString = "(\(QueryAttribute.comment.rawValue) == \"*\(escapedText)*\"cd)"
+        let queryString = "\(QueryAttribute.comment.rawValue) == \"*\(escapedText)*\"cd && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.notes.rawValue)\""
         logger.log("noteQuery=\(queryString)")
         return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.comment.rawValue])
     }
