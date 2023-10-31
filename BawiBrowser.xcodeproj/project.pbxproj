@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -56,6 +56,8 @@
 		90A2778A26AE3C26000A3080 /* BawiBrowserSafariExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		90A42F802A746B5100FC8795 /* BawiBrowserSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A42F7F2A746B5100FC8795 /* BawiBrowserSpotlight.swift */; };
 		90A42F822A74769200FC8795 /* SearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A42F812A74769200FC8795 /* SearchHelper.swift */; };
+		90A85BD62AEF104E00857175 /* BawiBrowserUIPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A85BD52AEF104E00857175 /* BawiBrowserUIPerformanceTests.swift */; };
+		90A85BD82AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A85BD72AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift */; };
 		90AD18482A68A09400744D21 /* BawiBrowserSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
@@ -90,6 +92,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 90A2777626AE3C26000A3080;
 			remoteInfo = BawiBrowserSafariExtension;
+		};
+		90A85BD92AEF104E00857175 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90617658268A781000871FB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9061765F268A781000871FB2;
+			remoteInfo = BawiBrowser;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -159,6 +168,9 @@
 		90A2778726AE3C26000A3080 /* BawiBrowserSafariExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BawiBrowserSafariExtension.entitlements; sourceTree = "<group>"; };
 		90A42F7F2A746B5100FC8795 /* BawiBrowserSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserSpotlight.swift; sourceTree = "<group>"; };
 		90A42F812A74769200FC8795 /* SearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHelper.swift; sourceTree = "<group>"; };
+		90A85BD32AEF104D00857175 /* BawiBrowserUIPerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BawiBrowserUIPerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		90A85BD52AEF104E00857175 /* BawiBrowserUIPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUIPerformanceTests.swift; sourceTree = "<group>"; };
+		90A85BD72AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUIPerformanceTestsLaunchTests.swift; sourceTree = "<group>"; };
 		90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserSearchDelegate.swift; sourceTree = "<group>"; };
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
@@ -206,6 +218,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90A85BD02AEF104D00857175 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -238,6 +257,7 @@
 				9061767A268A781300871FB2 /* BawiBrowserTests */,
 				90617685268A781300871FB2 /* BawiBrowserUITests */,
 				90A2777B26AE3C26000A3080 /* BawiBrowserSafariExtension */,
+				90A85BD42AEF104E00857175 /* BawiBrowserUIPerformanceTests */,
 				90A2777826AE3C26000A3080 /* Frameworks */,
 				90617661268A781000871FB2 /* Products */,
 			);
@@ -250,6 +270,7 @@
 				90617677268A781300871FB2 /* BawiBrowserTests.xctest */,
 				90617682268A781300871FB2 /* BawiBrowserUITests.xctest */,
 				90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */,
+				90A85BD32AEF104D00857175 /* BawiBrowserUIPerformanceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -354,6 +375,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		90A85BD42AEF104E00857175 /* BawiBrowserUIPerformanceTests */ = {
+			isa = PBXGroup;
+			children = (
+				90A85BD52AEF104E00857175 /* BawiBrowserUIPerformanceTests.swift */,
+				90A85BD72AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift */,
+			);
+			path = BawiBrowserUIPerformanceTests;
+			sourceTree = "<group>";
+		};
 		90E857A326F5411E00D15ED7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +475,24 @@
 			productReference = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		90A85BD22AEF104D00857175 /* BawiBrowserUIPerformanceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90A85BDB2AEF104E00857175 /* Build configuration list for PBXNativeTarget "BawiBrowserUIPerformanceTests" */;
+			buildPhases = (
+				90A85BCF2AEF104D00857175 /* Sources */,
+				90A85BD02AEF104D00857175 /* Frameworks */,
+				90A85BD12AEF104D00857175 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90A85BDA2AEF104E00857175 /* PBXTargetDependency */,
+			);
+			name = BawiBrowserUIPerformanceTests;
+			productName = BawiBrowserUIPerformanceTests;
+			productReference = 90A85BD32AEF104D00857175 /* BawiBrowserUIPerformanceTests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -452,7 +500,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					9061765F268A781000871FB2 = {
@@ -468,6 +516,10 @@
 					};
 					90A2777626AE3C26000A3080 = {
 						CreatedOnToolsVersion = 12.5.1;
+					};
+					90A85BD22AEF104D00857175 = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 9061765F268A781000871FB2;
 					};
 				};
 			};
@@ -493,6 +545,7 @@
 				90617676268A781300871FB2 /* BawiBrowserTests */,
 				90617681268A781300871FB2 /* BawiBrowserUITests */,
 				90A2777626AE3C26000A3080 /* BawiBrowserSafariExtension */,
+				90A85BD22AEF104D00857175 /* BawiBrowserUIPerformanceTests */,
 			);
 		};
 /* End PBXProject section */
@@ -532,6 +585,13 @@
 				90DB6C0626B0D13800BEF1C9 /* Toolbar.pdf in Resources */,
 				90A2778526AE3C26000A3080 /* SafariExtensionViewController.xib in Resources */,
 				90A2778226AE3C26000A3080 /* script.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90A85BD12AEF104D00857175 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,6 +668,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90A85BCF2AEF104D00857175 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90A85BD62AEF104E00857175 /* BawiBrowserUIPerformanceTests.swift in Sources */,
+				90A85BD82AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -625,6 +694,11 @@
 			isa = PBXTargetDependency;
 			target = 90A2777626AE3C26000A3080 /* BawiBrowserSafariExtension */;
 			targetProxy = 90A2778826AE3C26000A3080 /* PBXContainerItemProxy */;
+		};
+		90A85BDA2AEF104E00857175 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9061765F268A781000871FB2 /* BawiBrowser */;
+			targetProxy = 90A85BD92AEF104E00857175 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -778,7 +852,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -807,7 +881,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -830,7 +904,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -853,7 +927,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -875,6 +949,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -896,6 +971,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -919,7 +995,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -944,12 +1020,57 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		90A85BDC2AEF104E00857175 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUIPerformanceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BawiBrowser;
+			};
+			name = Debug;
+		};
+		90A85BDD2AEF104E00857175 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8VSJXRJTQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUIPerformanceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = BawiBrowser;
 			};
 			name = Release;
 		};
@@ -997,6 +1118,15 @@
 			buildConfigurations = (
 				90A2778C26AE3C26000A3080 /* Debug */,
 				90A2778D26AE3C26000A3080 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90A85BDB2AEF104E00857175 /* Build configuration list for PBXNativeTarget "BawiBrowserUIPerformanceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90A85BDC2AEF104E00857175 /* Debug */,
+				90A85BDD2AEF104E00857175 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
