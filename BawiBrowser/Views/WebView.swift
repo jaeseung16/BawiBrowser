@@ -353,5 +353,12 @@ struct WebView: NSViewRepresentable {
                 }
             }
         }
+        
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: any Error) {
+            
+            print("didFailProvisionalNavigation:: \(error.localizedDescription)")
+            
+            webView.reload()
+        }
     }
 }
