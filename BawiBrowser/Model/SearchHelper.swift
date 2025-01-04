@@ -22,8 +22,6 @@ enum QueryAttribute: String {
 }
 
 class SearchHelper {
-    static let shared = SearchHelper()
-    
     private let logger = Logger()
     
     var spotlightFoundArticles: [CSSearchableItem] = []
@@ -34,8 +32,54 @@ class SearchHelper {
     private var searchQueryForComment: CSSearchQuery?
     private var searchQueryForNote: CSSearchQuery?
     
-    private init() {
-        
+    private let spotlightIndexer: BawiBrowserSpotlightDelegate?
+    
+    init(spotlightIndexer: BawiBrowserSpotlightDelegate?) {
+        self.spotlightIndexer = spotlightIndexer
+    }
+    
+    func toggleIndexing() {
+        guard let spotlightIndexer = spotlightIndexer else { return }
+        if spotlightIndexer.isIndexingEnabled {
+            spotlightIndexer.stopSpotlightIndexing()
+        } else {
+            spotlightIndexer.startSpotlightIndexing()
+        }
+    }
+    
+    func startIndexing() {
+        guard let spotlightIndexer = spotlightIndexer else { return }
+        if !spotlightIndexer.isIndexingEnabled {
+            spotlightIndexer.startSpotlightIndexing()
+        }
+    }
+    
+    func stopIndexing() {
+        guard let spotlightIndexer = spotlightIndexer else { return }
+        if spotlightIndexer.isIndexingEnabled {
+            spotlightIndexer.stopSpotlightIndexing()
+        }
+    }
+    
+    func refresh() {
+        stopIndexing()
+        delete(indexName: BawiBrowserConstants.indexName.rawValue)
+        startIndexing()
+    }
+    
+    private func delete(indexName: String) {
+        let index = CSSearchableIndex(name: indexName)
+        index.deleteAllSearchableItems { error in
+            self.logger.log("Error while deleting index=\(BawiBrowserConstants.indexName.rawValue, privacy: .public)")
+        }
+    }
+    
+    func deleteOldIndicies() {
+        [BawiBrowserConstants.articleIndexName,
+         BawiBrowserConstants.commentIndexName,
+         BawiBrowserConstants.noteIndexName].forEach {
+            delete(indexName: $0.rawValue)
+        }
     }
     
     func prepareArticleQuery(_ text: String) -> CSSearchQuery {

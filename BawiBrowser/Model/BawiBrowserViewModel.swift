@@ -118,13 +118,15 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var bawiCredentials = BawiCredentials(username: "", password: "")
     
     private(set) var spotlightIndexer: BawiBrowserSpotlightDelegate?
-    private(set) var articleIndexer: ArticleSpotlightDelegate?
-    private(set) var commentIndexer: CommentSpotlightDelegate?
-    private(set) var noteIndexer: NoteSpotlightDelegate?
     
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
+        
+        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
+        self.spotlightIndexer = persistence.createCoreSpotlightDelegate()
+        self.searchHelper = SearchHelper(spotlightIndexer: self.spotlightIndexer)
         
         super.init()
         
@@ -133,16 +135,14 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
           .sink { self.fetchUpdates($0) }
           .store(in: &subscriptions)
         
-        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        
-        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
+        if self.spotlightIndexer != nil {
             if !self.oldIndexDeleted {
-                deleteOldIndicies()
-                resetSpotlightIndexing()
-                self.oldIndexDeleted.toggle()
+                self.searchHelper.deleteOldIndicies()
+                self.spotlightIndexing = false
+                self.oldIndexDeleted = true
             }
-            self.spotlightIndexer = BawiBrowserSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            self.toggleIndexing(self.spotlightIndexer, enabled: true)
+            
+            self.searchHelper.startIndexing()
             
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
@@ -167,9 +167,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @objc private func defaultsChanged() -> Void {
         logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
         if !spotlightIndexing {
-            toggleIndexing(spotlightIndexer, enabled: false)
-            toggleIndexing(spotlightIndexer, enabled: true)
-            spotlightIndexing.toggle()
+            searchHelper.refresh()
+            spotlightIndexing = true
         }
     }
     
@@ -470,31 +469,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Search
-    private let searchHelper = SearchHelper.shared
-    
-    private func deleteOldIndicies() {
-        let indexNames = [BawiBrowserConstants.articleIndexName, BawiBrowserConstants.commentIndexName, BawiBrowserConstants.noteIndexName]
-        
-        for indexName in indexNames {
-            let index = CSSearchableIndex(name: indexName.rawValue)
-            index.deleteAllSearchableItems { error in
-                self.logger.log("Error while deleting index=\(indexName.rawValue, privacy: .public)")
-            }
-        }
-    }
-    
-    private func resetSpotlightIndexing() {
-        spotlightIndexing = false
-    }
-    
-    func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
-        guard let indexer = indexer else { return }
-        if enabled {
-            indexer.startSpotlightIndexing()
-        } else {
-            indexer.stopSpotlightIndexing()
-        }
-    }
+    private let searchHelper: SearchHelper
     
     var spotlightFoundArticles: [CSSearchableItem] = []
     var spotlightFoundComments: Set<CSSearchableItem> = []
