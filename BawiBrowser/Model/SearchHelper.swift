@@ -118,6 +118,18 @@ class SearchHelper {
         index<Article>(articles)
     }
     
+    func remove<T: NSManagedObject>(_ entity: T) -> Void {
+        remove(with: entity.objectID.uriRepresentation().absoluteString)
+    }
+    
+    private func remove(with identifier: String) {
+        guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
+        
+        CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
+            self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
+        }
+    }
+    
     func prepareArticleQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
         let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd || \(QueryAttribute.subject.rawValue) == \"*\(escapedText)*\"cd) && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.articles.rawValue)\""
