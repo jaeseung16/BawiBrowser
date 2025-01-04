@@ -82,6 +82,42 @@ class SearchHelper {
         }
     }
     
+    private func index<T: NSManagedObject>(_ entities: [T]) {
+        guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
+        
+        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
+            guard let attributeSet = spotlightIndexer.attributeSet(for: entity) else {
+                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
+                return nil
+            }
+            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: BawiBrowserConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
+        }
+        
+        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
+        
+        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
+            guard let error = error else {
+                return
+            }
+            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
+    func index(notes: [Note]) -> Void {
+        logger.log("Indexing \(notes.count, privacy: .public) notes")
+        index<Note>(notes)
+    }
+    
+    func index(comments: [Comment]) -> Void {
+        logger.log("Indexing \(comments.count, privacy: .public) comments")
+        index<Comment>(comments)
+    }
+    
+    func index(articles: [Article]) -> Void {
+        logger.log("Indexing \(articles.count, privacy: .public) articles")
+        index<Article>(articles)
+    }
+    
     func prepareArticleQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
         let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd || \(QueryAttribute.subject.rawValue) == \"*\(escapedText)*\"cd) && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.articles.rawValue)\""

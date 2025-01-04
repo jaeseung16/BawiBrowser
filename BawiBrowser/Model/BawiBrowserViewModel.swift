@@ -151,9 +151,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         if !spotlightIndexing {
             DispatchQueue.main.async {
-                self.indexArticles()
-                self.indexComments()
-                self.indexNotes()
+                self.searchHelper.index(notes: self.notes)
+                self.searchHelper.index(comments: self.comments)
+                self.searchHelper.index(articles: self.articles)
                 self.spotlightIndexing.toggle()
             }
         }
@@ -478,73 +478,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     var articleSearchQuery: CSSearchQuery?
     var commentSearchQuery: CSSearchQuery?
     var noteSearchQuery: CSSearchQuery?
-    
-    private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
-        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
-            guard let attributeSet = attributeSet(for: entity) else {
-                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
-                return nil
-            }
-            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: BawiBrowserConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
-        }
-        
-        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
-        
-        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
-            guard let error = error else {
-                return
-            }
-            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
-        }
-    }
-    
-    private func indexNotes() -> Void {
-        logger.log("Indexing \(self.notes.count, privacy: .public) notes")
-        index<Note>(notes, indexName: BawiBrowserConstants.indexName.rawValue)
-    }
-    
-    private func indexComments() -> Void {
-        logger.log("Indexing \(self.comments.count, privacy: .public) comments")
-        index<Comment>(comments, indexName: BawiBrowserConstants.indexName.rawValue)
-    }
-    
-    private func indexArticles() -> Void {
-        logger.log("Indexing \(self.articles.count, privacy: .public) articles")
-        index<Article>(articles, indexName: BawiBrowserConstants.indexName.rawValue)
-    }
-    
-    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
-        if let note = object as? Note {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.comment = note.msg?.removingPercentEncoding
-            attributeSet.displayName = note.to
-            attributeSet.contentDescription = note.msg?.removingPercentEncoding
-            attributeSet.kind = BawiBrowserTab.notes.rawValue
-            return attributeSet
-        }
-        
-        if let comment = object as? Comment {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.textContent = comment.body?.removingPercentEncoding
-            attributeSet.displayName = comment.boardTitle
-            attributeSet.contentDescription = comment.body?.removingPercentEncoding
-            attributeSet.kind = BawiBrowserTab.comments.rawValue
-            return attributeSet
-        }
-        
-        if let article = object as? Article {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = article.boardTitle
-            attributeSet.subject = article.articleTitle
-            attributeSet.textContent = article.body?.removingPercentEncoding
-            attributeSet.displayName = article.boardTitle
-            attributeSet.contentDescription = article.articleTitle
-            attributeSet.kind = BawiBrowserTab.articles.rawValue
-            return attributeSet
-        }
-
-        return nil
-    }
     
     func searchNote(_ text: String) -> Void {
         if text.isEmpty {
