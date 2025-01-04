@@ -167,8 +167,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @objc private func defaultsChanged() -> Void {
         logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
         if !spotlightIndexing {
-            searchHelper.refresh()
-            spotlightIndexing = true
+            DispatchQueue.main.async {
+                self.searchHelper.refresh()
+                self.searchHelper.index(notes: self.notes)
+                self.searchHelper.index(comments: self.comments)
+                self.searchHelper.index(articles: self.articles)
+                self.spotlightIndexing = true
+            }
         }
     }
     
