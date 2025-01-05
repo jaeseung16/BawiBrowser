@@ -20,30 +20,31 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
-            BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
-                .tabItem {
-                    Text("Bawi")
-                }
-                .tag(BawiBrowserTab.browser)
+            Tab(value: BawiBrowserTab.browser) {
+                BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+            } label: {
+                Text("Bawi")
+            }
             
-            ArticleListView()
-                .tabItem {
-                    Text("Articles")
-                }
-                .tag(BawiBrowserTab.articles)
+            Tab(value: BawiBrowserTab.articles) {
+                ArticleListView()
+            } label: {
+                Text("Articles")
+            }
             
-            CommentListView()
-                .tabItem {
-                    Text("Comments")
-                }
-                .tag(BawiBrowserTab.comments)
+            Tab(value: BawiBrowserTab.comments) {
+                CommentListView()
+            } label: {
+                Text("Comments")
+            }
             
-            NoteListView()
-                .tabItem {
-                    Text("Notes")
-                }
-                .tag(BawiBrowserTab.notes)
+            Tab(value: BawiBrowserTab.notes) {
+                NoteListView()
+            } label: {
+                Text("Notes")
+            }
         }
+        .tabViewStyle(TabBarOnlyTabViewStyle())
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         .alert(isPresented: $viewModel.showAlert) {
             Alert(title: Text("Unable to Save Data"),
