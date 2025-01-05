@@ -8,9 +8,9 @@
 import Foundation
 import CoreData
 import os
-import Persistence
+@preconcurrency import Persistence
 
-class PersistenceHelper {
+final class PersistenceHelper: Sendable {
     private static let logger = Logger()
     
     private let persistence: Persistence
@@ -24,6 +24,10 @@ class PersistenceHelper {
     
     func save(completionHandler: @escaping (Result<Void, Error>) -> Void) -> Void {
         persistence.save { completionHandler($0) }
+    }
+    
+    func save() async throws -> Void {
+        try await persistence.save()
     }
     
     func delete(_ object: NSManagedObject) -> Void {
@@ -40,7 +44,19 @@ class PersistenceHelper {
         return fetchedEntities
     }
     
+    @available(*, renamed: "save(article:)")
     func save(article dto: BawiArticleDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
+        Task {
+            do {
+                try await save(article: dto)
+                completionHandler(.success(()))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    func save(article dto: BawiArticleDTO) async throws {
         if dto.articleId > 0, let existingArticle = getArticle(boardId: dto.boardId, articleId: dto.articleId) {
             existingArticle.articleId = Int64(dto.articleId)
             existingArticle.articleTitle = dto.articleTitle
@@ -81,7 +97,7 @@ class PersistenceHelper {
             PersistenceHelper.logger.log("article = \(article)")
         }
         
-        save(completionHandler: completionHandler)
+        try await save()
     }
     
     private func getArticle(boardId: Int, articleId: Int) -> Article? {
@@ -93,7 +109,20 @@ class PersistenceHelper {
         return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
     }
     
+    @available(*, renamed: "save(comment:)")
     func save(comment dto: BawiCommentDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) {
+        Task {
+            do {
+                try await save(comment: dto)
+                completionHandler(.success(()))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    
+    func save(comment dto: BawiCommentDTO) async throws {
         let comment = Comment(context: viewContext)
         comment.articleId = Int64(dto.articleId)
         comment.articleTitle = dto.articleTitle
@@ -102,17 +131,29 @@ class PersistenceHelper {
         comment.body = dto.body.replacingOccurrences(of: "+", with: "%20")
         comment.created = Date()
         
-        save(completionHandler: completionHandler)
+        try await save()
     }
     
+    @available(*, renamed: "save(note:)")
     func save(note dto: BawiNoteDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) {
+        Task {
+            do {
+                try await save(note: dto)
+                completionHandler(.success(()))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    func save(note dto: BawiNoteDTO) async throws -> Void {
         let note = Note(context: viewContext)
         note.action = dto.action
         note.to = dto.to
         note.msg = dto.msg
         note.created = Date()
         
-        save(completionHandler: completionHandler)
+        try await save()
     }
     
 }

@@ -44,11 +44,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
         didSet {
-            persistenceHelper.save(note: noteDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
+            Task {
+                do {
+                    try await persistenceHelper.save(note: noteDTO)
+                } catch let error {
                     self.message = "Cannot save a note to \(self.noteDTO.to) with msg = \(self.noteDTO.msg)"
                     self.logger.log("While saving \(self.noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
                     self.showAlert.toggle()
@@ -59,11 +58,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
-            persistenceHelper.save(comment: commentDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
+            Task {
+                do {
+                    try await persistenceHelper.save(comment: commentDTO)
+                } catch let error {
                     self.message = "Cannot save a comment: \"\(self.commentDTO.body)\""
                     self.logger.log("While saving \(self.commentDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
                     self.showAlert.toggle()
@@ -74,11 +72,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
-            persistenceHelper.save(article: articleDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
+            Task {
+                do {
+                    try await persistenceHelper.save(article: articleDTO)
+                } catch let error {
                     self.message = "Cannot save an article with title = \(self.articleDTO.articleTitle)"
                     self.logger.log("Cannot save articleDTO=\(self.articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
                     self.showAlert.toggle()
