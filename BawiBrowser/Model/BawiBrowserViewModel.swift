@@ -154,6 +154,14 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 keyChainHelper.initialize()
                 bawiCredentials = keyChainHelper.credentials
             }
+            
+    
+            $searchString
+                .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+                .sink { _ in
+                    self.search()
+                }
+                .store(in: &subscriptions)
         }
     }
     
@@ -532,6 +540,19 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     var commentSearchQuery: CSSearchQuery?
     var noteSearchQuery: CSSearchQuery?
     
+    private func search() {
+        switch selectedTab {
+        case .browser:
+            return
+        case .articles:
+            searchArticle(searchString)
+        case .comments:
+            searchComment(searchString)
+        case .notes:
+            searchNote(searchString)
+        }
+    }
+    
     func searchNote(_ text: String) -> Void {
         if text.isEmpty {
             noteSearchQuery?.cancel()
@@ -819,16 +840,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
 
 extension BawiBrowserViewModel: BawiBrowserSearchDelegate {
     func search(_ text: String) {
-        switch selectedTab {
-        case .browser:
-            return
-        case .articles:
-            searchArticle(text)
-        case .comments:
-            searchComment(text)
-        case .notes:
-            searchNote(text)
-        }
+        searchString = text
     }
     
     func cancelSearch() {
