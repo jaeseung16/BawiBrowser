@@ -14,6 +14,7 @@ import Persistence
 import os
 import CoreSpotlight
 
+@MainActor
 class BawiBrowserViewModel: NSObject, ObservableObject {
     private let logger = Logger()
     
@@ -103,12 +104,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     var urlToCopy: String = ""
     
     private let persistence: Persistence
-    private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.cloudContainer!
-    }
-    private var viewContext: NSManagedObjectContext {
-        persistenceContainer.viewContext
-    }
+    
     private let persistenceHelper: PersistenceHelper
     
     private let keyChainHelper = KeyChainHelper()
@@ -132,43 +128,43 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
           .sink { self.fetchUpdates($0) }
           .store(in: &subscriptions)
         
-        if self.spotlightIndexer != nil {
-            if !self.oldIndexDeleted {
-                self.searchHelper.deleteOldIndicies()
-                self.spotlightIndexing = false
-                self.oldIndexDeleted = true
+        Task {
+            if self.spotlightIndexer != nil {
+                if !self.oldIndexDeleted {
+                    await self.searchHelper.deleteOldIndicies()
+                    self.spotlightIndexing = false
+                    self.oldIndexDeleted = true
+                }
+                
+                await self.searchHelper.startIndexing()
+                
+                NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
             }
             
-            self.searchHelper.startIndexing()
+            fetchAll()
             
-            NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
-        }
-        
-        fetchAll()
-        
-        if !spotlightIndexing {
-            DispatchQueue.main.async {
-                self.searchHelper.index(notes: self.notes)
-                self.searchHelper.index(comments: self.comments)
-                self.searchHelper.index(articles: self.articles)
+            if !spotlightIndexing {
+                await self.searchHelper.index(notes: self.notes)
+                await self.searchHelper.index(comments: self.comments)
+                await self.searchHelper.index(articles: self.articles)
                 self.spotlightIndexing.toggle()
             }
-        }
-        
-        if useKeychain {
-            keyChainHelper.initialize()
-            bawiCredentials = keyChainHelper.credentials
+            
+            if useKeychain {
+                keyChainHelper.initialize()
+                bawiCredentials = keyChainHelper.credentials
+            }
         }
     }
     
     @objc private func defaultsChanged() -> Void {
-        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
-        if !spotlightIndexing {
-            DispatchQueue.main.async {
-                self.searchHelper.refresh()
-                self.searchHelper.index(notes: self.notes)
-                self.searchHelper.index(comments: self.comments)
-                self.searchHelper.index(articles: self.articles)
+        Task {
+            logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
+            if !spotlightIndexing {
+                await self.searchHelper.refresh()
+                await self.searchHelper.index(notes: self.notes)
+                await self.searchHelper.index(comments: self.comments)
+                await self.searchHelper.index(articles: self.articles)
                 self.spotlightIndexing = true
             }
         }
@@ -182,32 +178,68 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
-        persistence.fetchUpdates(notification) { _ in
-            DispatchQueue.main.async {
-                self.toggle.toggle()
+        Task {
+            await persistence.fetchUpdates(notification) { result in
+                switch result {
+                case .success(let notification):
+                    if let userInfo = notification.userInfo {
+                        userInfo.forEach { key, value in
+                            if let objectIDs = value as? Set<NSManagedObjectID> {
+                                for objectId in objectIDs {
+                                    Task {
+                                        await self.addToIndex(objectId)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break
+                case .failure(let error):
+                    self.logger.log("Error while persistence.fetchUpdates: \(error.localizedDescription, privacy: .public)")
+                }
             }
         }
     }
     
+    private func addToIndex(_ objectID: NSManagedObjectID) async -> Void {
+        guard let object = persistenceHelper.find(with: objectID) else {
+            await searchHelper.remove(with: objectID.uriRepresentation().absoluteString)
+            logger.log("Removed from index: \(objectID)")
+            return
+        }
+        
+        if let article = object as? Article {
+            let articleAttributeSet = SearchAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
+                                                         title: article.boardTitle,
+                                                         subject: article.articleTitle,
+                                                         textContent: article.body?.removingPercentEncoding,
+                                                         comment: nil,
+                                                         displayName: article.boardTitle,
+                                                         contentDescription: article.articleTitle,
+                                                         kind: BawiBrowserTab.articles.rawValue)
+            
+            await searchHelper.index(articleAttributeSet)
+        }
+        
+    }
+    
     private func saveContext(completionHandler: @escaping (Error) -> Void) -> Void {
-        persistenceContainer.viewContext.transactionAuthor = "App"
-        persistence.save { result in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
+        Task {
+            persistence.container.viewContext.transactionAuthor = "App"
+            await persistence.save { result in
+                switch result {
+                case .success(_):
                     self.toggle.toggle()
-                }
-            case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                print("Error while saving data: \(Thread.callStackSymbols)")
-                DispatchQueue.main.async {
+                case .failure(let error):
+                    self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                    self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+                    
                     self.showAlert.toggle()
                     completionHandler(error)
                 }
             }
+            persistence.container.viewContext.transactionAuthor = nil
         }
-        persistenceContainer.viewContext.transactionAuthor = nil
     }
     
     func processComment(url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> Void {
@@ -437,21 +469,40 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var notes = [Note]()
     
     private func fetchArticles() {
-        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)]
-        articles = persistenceHelper.perform(fetchRequest)
+        Task {
+            let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)]
+            let articles = persistenceHelper.perform(fetchRequest)
+            
+            DispatchQueue.main.async {
+                self.articles = articles
+            }
+        }
+        
     }
     
     private func fetchComments() {
-        let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
-        comments = persistenceHelper.perform(fetchRequest)
+        Task {
+            let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
+            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
+            let comments = persistenceHelper.perform(fetchRequest)
+            
+            DispatchQueue.main.async {
+                self.comments = comments
+            }
+        }
     }
     
     private func fetchNotes() {
-        let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
-        notes = persistenceHelper.perform(fetchRequest)
+        Task {
+            let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
+            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
+            let notes = persistenceHelper.perform(fetchRequest)
+            
+            DispatchQueue.main.async {
+                self.notes = notes
+            }
+        }
     }
     
     func delete(_ object: NSManagedObject) {
@@ -473,7 +524,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     // MARK: - Search
     private let searchHelper: SearchHelper
     
-    var spotlightFoundArticles: [CSSearchableItem] = []
+
     var spotlightFoundComments: Set<CSSearchableItem> = []
     var spotlightFoundNotes: [CSSearchableItem] = []
     
@@ -509,74 +560,24 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     private func searchNotes(_ text: String) {
-        noteSearchQuery = searchHelper.prepareNoteQuery(text)
-        
-        noteSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundNotes += items
-            }
+        Task {
+            let items = await searchHelper.searchNotes(text)
+            self.fetchNotes(items)
         }
-        
-        noteSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchNotes(self.spotlightFoundNotes)
-                    self.spotlightFoundNotes.removeAll()
-                }
-            }
-        }
-        
-        noteSearchQuery?.start()
     }
     
     private func searchComments(_ text: String) {
-        commentSearchQuery = searchHelper.prepareCommentQuery(text)
-        
-        commentSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                items.forEach { item in
-                    self.spotlightFoundComments.insert(item)
-                }
-            }
+        Task {
+            let items = await searchHelper.searchComments(text)
+            self.fetchComments(items)
         }
-        
-        commentSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchComments(self.spotlightFoundComments)
-                    self.spotlightFoundComments.removeAll()
-                }
-            }
-        }
-        
-        commentSearchQuery?.start()
     }
     
     private func searchArticles(_ text: String) {
-        articleSearchQuery = searchHelper.prepareArticleQuery(text)
-        
-        articleSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundArticles += items
-            }
+        Task {
+            let items = await searchHelper.searchArticles(text)
+            self.fetchArticles(items)
         }
-        
-        articleSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchArticles(self.spotlightFoundArticles)
-                    self.spotlightFoundArticles.removeAll()
-                }
-            }
-        }
-        
-        articleSearchQuery?.start()
     }
     
     private func fetchNotes(_ items: [CSSearchableItem]) {
@@ -593,9 +594,37 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         logger.log("Found \(self.notes.count) notes")
     }
     
+    private func fetchNotes(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) notes")
+        notes = fetch(uniqueIdentifiers).sorted(by: { note1, note2 in
+            guard let created1 = note1.created else {
+                return false
+            }
+            guard let created2 = note2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.notes.count) notes")
+    }
+    
     private func fetchComments(_ items: Set<CSSearchableItem>) {
         logger.log("Fetching \(items.count) comments")
         comments = fetch(Array(items)).sorted(by: { comment1, comment2 in
+            guard let created1 = comment1.created else {
+                return false
+            }
+            guard let created2 = comment2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.comments.count) comments")
+    }
+    
+    private func fetchComments(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) comments")
+        comments = fetch(uniqueIdentifiers).sorted(by: { comment1, comment2 in
             guard let created1 = comment1.created else {
                 return false
             }
@@ -633,12 +662,38 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
+    private func fetchArticles(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) articles")
+        let fetched: [Article] = fetch(uniqueIdentifiers)
+        logger.log("fetched.count=\(fetched.count)")
+        articles = fetched.sorted(by: { article1, article2 in
+            guard let created1 = article1.created else {
+                return false
+            }
+            guard let created2 = article2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.articles.count) articles")
+    }
+    
+    private func fetch<T: NSManagedObject>(_ uniqueIdentifiers: [String]) -> [T] {
+        return uniqueIdentifiers.compactMap { (uniqueIdentifier: String) -> T? in
+            guard let url = URL(string: uniqueIdentifier) else {
+                self.logger.log("url is nil for uniqueIdentifier=\(uniqueIdentifier)")
+                return nil
+            }
+            return find(for: url) as? T
+        }
+    }
+    
     func find(for url: URL) -> NSManagedObject? {
-        guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+        guard let objectID = persistence.container.viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
             self.logger.log("objectID is nil for url=\(url)")
             return nil
         }
-        return viewContext.object(with: objectID)
+        return persistence.container.viewContext.object(with: objectID)
     }
     
     func continueActivity(_ activity: NSUserActivity) {
@@ -777,11 +832,8 @@ extension BawiBrowserViewModel: BawiBrowserSearchDelegate {
     }
     
     func cancelSearch() {
-        DispatchQueue.main.async {
-            self.articleSearchQuery?.cancel()
-            self.commentSearchQuery?.cancel()
-            self.noteSearchQuery?.cancel()
-            
+        Task {
+            await searchHelper.cancelSearch()
             self.fetchAll()
         }
     }

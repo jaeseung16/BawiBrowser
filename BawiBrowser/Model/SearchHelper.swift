@@ -21,12 +21,11 @@ enum QueryAttribute: String {
     case kind
 }
 
-class SearchHelper {
+actor SearchHelper {
     private let logger = Logger()
     
-    var spotlightFoundArticles: [CSSearchableItem] = []
-    var spotlightFoundComments: Set<CSSearchableItem> = []
-    var spotlightFoundNotes: [CSSearchableItem] = []
+    private var spotlightFoundComments: Set<CSSearchableItem> = []
+    private var spotlightFoundNotes: [CSSearchableItem] = []
     
     private var searchQueryForArticle: CSSearchQuery?
     private var searchQueryForComment: CSSearchQuery?
@@ -118,40 +117,111 @@ class SearchHelper {
         index<Article>(articles)
     }
     
+    public func index(_ attributeSet: SearchAttributeSet) {
+        guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
+        
+        let searchableItem: CSSearchableItem = CSSearchableItem(uniqueIdentifier: attributeSet.uid,
+                                                                domainIdentifier: spotlightIndexer.domainIdentifier(),
+                                                                attributeSet: attributeSet.getCSSearchableItemAttributeSet())
+        
+        CSSearchableIndex(name: indexName).indexSearchableItems([searchableItem]) { error in
+            guard let error = error else {
+                return
+            }
+            self.logger.log("Error while indexing: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
     func remove<T: NSManagedObject>(_ entity: T) -> Void {
         remove(with: entity.objectID.uriRepresentation().absoluteString)
     }
     
-    private func remove(with identifier: String) {
+    func remove(with identifier: String) {
         guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
         
         CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
             self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
         }
     }
+
+    private func search(with query: CSSearchQuery) async throws -> [String] {
+        var results: [String] = []
+        for try await result in query.results {
+            results.append(result.item.uniqueIdentifier)
+        }
+        return results
+    }
+        
+    func searchArticles(_ text: String) async -> [String] {
+        var results: [String] = []
+        do {
+            results = try await search(with: prepareArticleQuery(text))
+        } catch {
+            self.logger.log("Caught an error while searching articles with search string \(text): \(error.localizedDescription, privacy: .public)")
+        }
+        return results
+    }
     
     func prepareArticleQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
         let queryString = "(\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd || \(QueryAttribute.subject.rawValue) == \"*\(escapedText)*\"cd) && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.articles.rawValue)\""
         logger.log("articleQuery=\(queryString)")
-        return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.textContent.rawValue, QueryAttribute.subject.rawValue, QueryAttribute.kind.rawValue])
+        
+        let queryContext = CSSearchQueryContext()
+        queryContext.fetchAttributes = [QueryAttribute.textContent.rawValue, QueryAttribute.subject.rawValue, QueryAttribute.kind.rawValue]
+        
+        return CSSearchQuery(queryString: queryString, queryContext: queryContext)
+    }
+    
+    func searchComments(_ text: String) async -> [String] {
+        var results: [String] = []
+        do {
+            results = try await search(with: prepareCommentQuery(text))
+        } catch {
+            self.logger.log("Caught an error while searching comments with search string \(text): \(error.localizedDescription, privacy: .public)")
+        }
+        return results
     }
     
     func prepareCommentQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
         let queryString = "\(QueryAttribute.textContent.rawValue) == \"*\(escapedText)*\"cd && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.comments.rawValue)\""
         logger.log("commentQuery=\(queryString)")
-        return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.textContent.rawValue])
+        
+        let queryContext = CSSearchQueryContext()
+        queryContext.fetchAttributes = [QueryAttribute.textContent.rawValue, QueryAttribute.kind.rawValue]
+        
+        return CSSearchQuery(queryString: queryString, queryContext: queryContext)
+    }
+    
+    func searchNotes(_ text: String) async -> [String] {
+        var results: [String] = []
+        do {
+            results = try await search(with: prepareNoteQuery(text))
+        } catch {
+            self.logger.log("Caught an error while searching notes with search string \(text): \(error.localizedDescription, privacy: .public)")
+        }
+        return results
     }
     
     func prepareNoteQuery(_ text: String) -> CSSearchQuery {
         let escapedText = escape(text: text)
         let queryString = "\(QueryAttribute.comment.rawValue) == \"*\(escapedText)*\"cd && \(QueryAttribute.kind.rawValue) == \"\(BawiBrowserTab.notes.rawValue)\""
         logger.log("noteQuery=\(queryString)")
-        return CSSearchQuery(queryString: queryString, attributes: [QueryAttribute.comment.rawValue])
+        
+        let queryContext = CSSearchQueryContext()
+        queryContext.fetchAttributes = [QueryAttribute.comment.rawValue, QueryAttribute.kind.rawValue]
+        
+        return CSSearchQuery(queryString: queryString, queryContext: queryContext)
     }
     
     private func escape(text: String) -> String {
         text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+    }
+    
+    func cancelSearch() {
+        self.searchQueryForArticle?.cancel()
+        self.searchQueryForComment?.cancel()
+        self.searchQueryForNote?.cancel()
     }
 }

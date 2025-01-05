@@ -23,7 +23,14 @@ final class PersistenceHelper: Sendable {
     }
     
     func save(completionHandler: @escaping (Result<Void, Error>) -> Void) -> Void {
-        persistence.save { completionHandler($0) }
+        Task {
+            do {
+                try await save()
+                completionHandler(.success(()))
+            } catch {
+                completionHandler(.failure(error))
+            }
+        }
     }
     
     func save() async throws -> Void {
@@ -32,6 +39,16 @@ final class PersistenceHelper: Sendable {
     
     func delete(_ object: NSManagedObject) -> Void {
         viewContext.delete(object)
+    }
+    
+    func fetch<Element>(_ fetchRequest: NSFetchRequest<Element>) -> [Element] {
+        var fetchedEntities = [Element]()
+        do {
+            fetchedEntities = try viewContext.fetch(fetchRequest)
+        } catch {
+            PersistenceHelper.logger.error("Failed to fetch with fetchRequest=\(fetchRequest, privacy: .public): error=\(error.localizedDescription, privacy: .public)")
+        }
+        return fetchedEntities
     }
     
     func perform<Element>(_ fetchRequest: NSFetchRequest<Element>) -> [Element] {
@@ -156,4 +173,7 @@ final class PersistenceHelper: Sendable {
         try await save()
     }
     
+    func find(with objectID: NSManagedObjectID) -> NSManagedObject? {
+        return viewContext.object(with: objectID)
+    }
 }

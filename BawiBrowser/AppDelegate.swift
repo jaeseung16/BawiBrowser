@@ -14,6 +14,7 @@ import UserNotifications
 import AppKit
 import CoreSpotlight
 
+@MainActor
 class AppDelegate: NSObject {
     private let logger = Logger()
     
