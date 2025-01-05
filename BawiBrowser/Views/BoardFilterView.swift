@@ -34,7 +34,7 @@ struct BoardFilterView: View {
                     Text(board)
                 }
             }
-            .onChange(of: selectedBoard) { _ in
+            .onChange(of: selectedBoard) {
                 self.selected()
             }
             

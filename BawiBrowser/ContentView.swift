@@ -52,10 +52,10 @@ struct ContentView: View {
                   dismissButton: .default(Text("Dismiss")))
         }
         .searchable(text: $searchString)
-        .onChange(of: searchString) { newValue in
+        .onChange(of: searchString) { oldValue, newValue in
             viewModel.search(newValue)
         }
-        .onChange(of: viewModel.selectedTab) { _ in
+        .onChange(of: viewModel.selectedTab) {
             searchString = ""
             viewModel.cancelSearch()
         }

@@ -46,7 +46,7 @@ struct BrowserView: View {
                 
                 Toggle(viewModel.isDarkMode ? "dark" : "light", isOn: $darkMode)
                     .toggleStyle(SwitchToggleStyle())
-                    .onChange(of: darkMode) { _ in
+                    .onChange(of: darkMode) {
                         viewModel.isDarkMode = darkMode
                         viewModel.navigation = .reload
                     }

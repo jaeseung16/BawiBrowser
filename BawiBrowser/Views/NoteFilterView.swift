@@ -34,7 +34,7 @@ struct NoteFilterView: View {
                     Text(to)
                 }
             }
-            .onChange(of: selectedTo) { _ in
+            .onChange(of: selectedTo) {
                 self.selected()
             }
             

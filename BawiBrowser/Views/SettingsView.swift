@@ -34,7 +34,7 @@ struct SettingsView: View {
         .frame(width: 300)
         .navigationTitle("Bawi Browser Settings")
         .padding(80)
-        .onChange(of: useKeychain) { newValue in
+        .onChange(of: useKeychain) {
             if !useKeychain {
                 viewModel.deleteCredentials()
             }
