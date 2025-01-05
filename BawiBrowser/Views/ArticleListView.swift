@@ -47,37 +47,42 @@ struct ArticleListView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            NavigationView {
-                VStack {
-                    header()
-                    
-                    Divider()
-                    
-                    List {
-                        ForEach(filteredArticles) { article in
-                            NavigationLink(tag: article, selection: $selectedArticle) {
-                                ArticleDetailView(article: article)
-                                    .environmentObject(viewModel)
-                            } label: {
-                                label(article: article)
-                            }
-
-                        }
-                        .onDelete { indexSet in
-                            for index in indexSet {
-                                let article = filteredArticles[index]
-                                viewModel.delete(article)
-                            }
-                            viewModel.save()
+            NavigationSplitView {
+                List(selection: $selectedArticle) {
+                    ForEach(filteredArticles) { article in
+                        NavigationLink(value: article) {
+                            label(article: article)
                         }
                     }
-                    .frame(width: geometry.size.width * 0.25)
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            let article = filteredArticles[index]
+                            viewModel.delete(article)
+                        }
+                        viewModel.save()
+                    }
+                }
+                .frame(width: geometry.size.width * 0.25)
+                .toolbar {
+                    ToolbarItemGroup {
+                        Button {
+                            presentFilterItemsView = true
+                        } label: {
+                            Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
+                        }
+                    }
+                }
+            } detail: {
+                if let selectedArticle = selectedArticle {
+                    ArticleDetailView(article: selectedArticle)
+                        .id(selectedArticle)
+                        .environmentObject(viewModel)
                 }
             }
             .sheet(isPresented: $presentFilterItemsView) {
                 BoardFilterView(board: $selectedBoard, boards: boards)
             }
-            .onChange(of: viewModel.selectedArticle) { newValue in
+            .onChange(of: viewModel.selectedArticle) { oldValue, newValue in
                 guard let articleId = newValue["articleId"], let boardId = newValue["boardId"] else {
                     return
                 }
