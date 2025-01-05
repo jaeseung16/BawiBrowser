@@ -118,8 +118,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
-        self.spotlightIndexer = persistence.createCoreSpotlightDelegate()
-        self.searchHelper = SearchHelper(spotlightIndexer: self.spotlightIndexer)
+        self.searchHelper = SearchHelper(persistence: persistence)
         
         super.init()
         
@@ -143,10 +142,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             
             fetchAll()
             
+            logger.log("init: spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
             if !spotlightIndexing {
-                await self.searchHelper.index(notes: self.notes)
-                await self.searchHelper.index(comments: self.comments)
-                await self.searchHelper.index(articles: self.articles)
+                await self.indexAll()
                 self.spotlightIndexing.toggle()
             }
             
@@ -170,11 +168,25 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
             if !spotlightIndexing {
                 await self.searchHelper.refresh()
-                await self.searchHelper.index(notes: self.notes)
-                await self.searchHelper.index(comments: self.comments)
-                await self.searchHelper.index(articles: self.articles)
+                await self.indexAll()
                 self.spotlightIndexing = true
             }
+        }
+    }
+    
+    private func indexAll() async {
+        Task {
+            logger.log("indexing all")
+            for note in notes {
+                await addToIndex(note.objectID)
+            }
+            for comment in comments {
+                await addToIndex(comment.objectID)
+            }
+            for article in articles {
+                await addToIndex(article.objectID)
+            }
+            logger.log("indexed all")
         }
     }
     
@@ -227,6 +239,32 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                                                          kind: BawiBrowserTab.articles.rawValue)
             
             await searchHelper.index(articleAttributeSet)
+        }
+        
+        if let comment = object as? Comment {
+            let commentAttributeSet = SearchAttributeSet(uid: comment.objectID.uriRepresentation().absoluteString,
+                                                         title: nil,
+                                                         subject: nil,
+                                                         textContent: comment.body?.removingPercentEncoding,
+                                                         comment: nil,
+                                                         displayName: comment.boardTitle,
+                                                         contentDescription: comment.body?.removingPercentEncoding,
+                                                         kind: BawiBrowserTab.comments.rawValue)
+            
+            await searchHelper.index(commentAttributeSet)
+        }
+        
+        if let note = object as? Note {
+            let noteAttributeSet = SearchAttributeSet(uid: note.objectID.uriRepresentation().absoluteString,
+                                                         title: nil,
+                                                         subject: nil,
+                                                         textContent: nil,
+                                                         comment: note.msg?.removingPercentEncoding,
+                                                         displayName: note.to,
+                                                         contentDescription: note.msg?.removingPercentEncoding,
+                                                         kind: BawiBrowserTab.notes.rawValue)
+            
+            await searchHelper.index(noteAttributeSet)
         }
         
     }

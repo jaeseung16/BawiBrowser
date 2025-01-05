@@ -9,6 +9,7 @@ import Foundation
 import CoreSpotlight
 import CoreData
 import os
+import Persistence
 
 enum SearchError: Error {
     case emptySearchText
@@ -32,6 +33,10 @@ actor SearchHelper {
     private var searchQueryForNote: CSSearchQuery?
     
     private let spotlightIndexer: BawiBrowserSpotlightDelegate?
+    
+    init(persistence: Persistence) {
+        self.spotlightIndexer = persistence.createCoreSpotlightDelegate()
+    }
     
     init(spotlightIndexer: BawiBrowserSpotlightDelegate?) {
         self.spotlightIndexer = spotlightIndexer
