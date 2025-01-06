@@ -859,7 +859,7 @@
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -888,7 +888,7 @@
 				MARKETING_VERSION = 0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
