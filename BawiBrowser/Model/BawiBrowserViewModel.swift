@@ -116,7 +116,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
         
-        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         
         self.searchHelper = SearchHelper(persistence: persistence)
         
@@ -124,7 +124,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         NotificationCenter.default
           .publisher(for: .NSPersistentStoreRemoteChange)
-          .sink { self.fetchUpdates($0) }
+          .receive(on: DispatchQueue.main)
+          .sink { [weak self] notification in
+              self?.fetchUpdates(notification)
+          }
           .store(in: &subscriptions)
         
         Task {
@@ -196,7 +199,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         fetchArticles()
     }
     
-    private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
         Task {
             await persistence.fetchUpdates(notification) { result in
@@ -272,18 +274,16 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private func saveContext(completionHandler: @escaping (Error) -> Void) -> Void {
         Task {
             persistence.container.viewContext.transactionAuthor = "App"
-            await persistence.save { result in
-                switch result {
-                case .success(_):
-                    self.toggle.toggle()
-                case .failure(let error):
-                    self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                    self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                    
-                    self.showAlert.toggle()
-                    completionHandler(error)
-                }
+            
+            do {
+                try await persistence.save()
+                self.toggle.toggle()
+            } catch {
+                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+                self.showAlert.toggle()
             }
+            
             persistence.container.viewContext.transactionAuthor = nil
         }
     }
@@ -560,7 +560,9 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             switch result {
             case .success(_):
                 self.logger.log("Data saved successfully")
-                self.fetchAll()
+                DispatchQueue.main.async {
+                    self.fetchAll()
+                }
             case .failure(let error):
                 self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
             }
@@ -795,9 +797,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     // MARK: - credentials
     func searchCredentials(completionHandler: @escaping (Result<BawiCredentials, Error>) -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.keyChainHelper.search(completionHandler: completionHandler)
-        }
+        self.keyChainHelper.search(completionHandler: completionHandler)
     }
     
     func processCredentials(_ httpBody: Data) -> Void {
@@ -860,12 +860,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     func deleteCredentials() -> Void {
         setCredentials(BawiCredentials(username: "", password: ""))
         navigation = .reload
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try self.keyChainHelper.delete()
-            } catch {
-                self.logger.log("Failed to delete credentials in keychain: \(error.localizedDescription, privacy: .public)")
-            }
+        do {
+            try self.keyChainHelper.delete()
+        } catch {
+            self.logger.log("Failed to delete credentials in keychain: \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -874,17 +872,24 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             self.bawiCredentials = credentials
         }
     }
+    
+    func selectArticle(title: String, articleId: Int64, boradId: Int64) -> Void {
+        searchArticleTitle = title
+        selectedArticle = ["articleId": articleId, "boardId": boradId]
+    }
 }
 
 extension BawiBrowserViewModel: BawiBrowserSearchDelegate {
-    func search(_ text: String) {
-        searchString = text
+    nonisolated func search(_ text: String) {
+        Task { @MainActor in
+            searchString = text
+        }
     }
     
-    func cancelSearch() {
-        Task {
+    nonisolated func cancelSearch() {
+        Task { @MainActor in
             await searchHelper.cancelSearch()
-            self.fetchAll()
+            fetchAll()
         }
     }
 }
