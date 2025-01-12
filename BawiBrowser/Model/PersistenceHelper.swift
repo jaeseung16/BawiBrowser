@@ -22,7 +22,7 @@ final class PersistenceHelper: Sendable {
         self.persistence = persistence
     }
     
-    func save(completionHandler: @escaping (Result<Void, Error>) -> Void) -> Void {
+    func save(completionHandler: @escaping @Sendable (Result<Void, Error>) -> Void) -> Void {
         Task {
             do {
                 try await save()
@@ -62,7 +62,7 @@ final class PersistenceHelper: Sendable {
     }
     
     @available(*, renamed: "save(article:)")
-    func save(article dto: BawiArticleDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
+    func save(article dto: BawiArticleDTO, completionHandler: @escaping @Sendable (Result<Void,Error>) -> Void) -> Void {
         Task {
             do {
                 try await save(article: dto)
@@ -127,7 +127,7 @@ final class PersistenceHelper: Sendable {
     }
     
     @available(*, renamed: "save(comment:)")
-    func save(comment dto: BawiCommentDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) {
+    func save(comment dto: BawiCommentDTO, completionHandler: @escaping @Sendable (Result<Void,Error>) -> Void) {
         Task {
             do {
                 try await save(comment: dto)
@@ -152,7 +152,7 @@ final class PersistenceHelper: Sendable {
     }
     
     @available(*, renamed: "save(note:)")
-    func save(note dto: BawiNoteDTO, completionHandler: @escaping (Result<Void,Error>) -> Void) {
+    func save(note dto: BawiNoteDTO, completionHandler: @escaping @Sendable (Result<Void,Error>) -> Void) {
         Task {
             do {
                 try await save(note: dto)
