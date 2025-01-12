@@ -24,7 +24,8 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.inline)
                     Button("Refresh Spotlight Indices") {
-                        UserDefaults.standard.set(false, forKey: "BawiBrowser.spotlightIndexing")
+                        print("SettingsView: spotlightIndexing=\(spotlightIndexing)")
+                        spotlightIndexing = false
                     }
                 }
                 Spacer()

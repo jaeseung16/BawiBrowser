@@ -42,6 +42,10 @@ actor SearchHelper {
         self.spotlightIndexer = spotlightIndexer
     }
     
+    func isReady() -> Bool {
+        return spotlightIndexer != nil
+    }
+    
     func toggleIndexing() {
         guard let spotlightIndexer = spotlightIndexer else { return }
         if spotlightIndexer.isIndexingEnabled {

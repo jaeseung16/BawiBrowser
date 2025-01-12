@@ -110,8 +110,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private let keyChainHelper = KeyChainHelper()
     @Published var bawiCredentials = BawiCredentials(username: "", password: "")
     
-    private(set) var spotlightIndexer: BawiBrowserSpotlightDelegate?
-    
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
@@ -130,8 +128,18 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
           }
           .store(in: &subscriptions)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+        
+        fetchAll()
+        
+        if useKeychain {
+            keyChainHelper.initialize()
+            bawiCredentials = keyChainHelper.credentials
+        }
+        
         Task {
-            if self.spotlightIndexer != nil {
+            if await self.searchHelper.isReady() {
+                logger.log("init: oldIndexDeleted=\(self.oldIndexDeleted, privacy: .public)")
                 if !self.oldIndexDeleted {
                     await self.searchHelper.deleteOldIndicies()
                     self.spotlightIndexing = false
@@ -140,29 +148,19 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
                 
                 await self.searchHelper.startIndexing()
                 
-                NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
-            }
-            
-            fetchAll()
-            
-            logger.log("init: spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
-            if !spotlightIndexing {
-                await self.indexAll()
-                self.spotlightIndexing.toggle()
-            }
-            
-            if useKeychain {
-                keyChainHelper.initialize()
-                bawiCredentials = keyChainHelper.credentials
-            }
-            
-    
-            $searchString
-                .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-                .sink { _ in
-                    self.search()
+                logger.log("init: spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
+                if !spotlightIndexing {
+                    await self.indexAll()
+                    self.spotlightIndexing.toggle()
                 }
-                .store(in: &subscriptions)
+                
+                $searchString
+                    .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+                    .sink { _ in
+                        self.search()
+                    }
+                    .store(in: &subscriptions)
+            }
         }
     }
     
@@ -515,40 +513,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @Published var notes = [Note]()
     
     private func fetchArticles() {
-        Task {
-            let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)]
-            let articles = persistenceHelper.perform(fetchRequest)
-            
-            DispatchQueue.main.async {
-                self.articles = articles
-            }
-        }
-        
+        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)]
+        self.articles = persistenceHelper.perform(fetchRequest)
     }
     
     private func fetchComments() {
-        Task {
-            let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
-            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
-            let comments = persistenceHelper.perform(fetchRequest)
-            
-            DispatchQueue.main.async {
-                self.comments = comments
-            }
-        }
+        let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
+        self.comments = persistenceHelper.perform(fetchRequest)
     }
     
     private func fetchNotes() {
-        Task {
-            let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
-            fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
-            let notes = persistenceHelper.perform(fetchRequest)
-            
-            DispatchQueue.main.async {
-                self.notes = notes
-            }
-        }
+        let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
+        self.notes = persistenceHelper.perform(fetchRequest)
     }
     
     func delete(_ object: NSManagedObject) {
