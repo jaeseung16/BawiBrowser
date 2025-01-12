@@ -69,6 +69,7 @@
 		90E857A726F569B300D15ED7 /* BawiBrowserAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */; };
 		90E8F6702D341FCC001EB946 /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E8F66F2D341FCC001EB946 /* NoteDetailView.swift */; };
 		90E8F6732D342161001EB946 /* CommentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E8F6722D342161001EB946 /* CommentDetailView.swift */; };
+		90E8F6762D344910001EB946 /* ArticleWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E8F6752D344910001EB946 /* ArticleWebView.swift */; };
 		90ECFCB927C83DFE0076777A /* UIWebViewSearch.js in Resources */ = {isa = PBXBuildFile; fileRef = 90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */; };
 		90FC22422698DB730095848C /* MultipartKit in Frameworks */ = {isa = PBXBuildFile; productRef = 90FC22412698DB730095848C /* MultipartKit */; };
 		90FC224426990CEF0095848C /* BawiWriteForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FC224326990CEF0095848C /* BawiWriteForm.swift */; };
@@ -183,6 +184,7 @@
 		90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserAppearance.swift; sourceTree = "<group>"; };
 		90E8F66F2D341FCC001EB946 /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		90E8F6722D342161001EB946 /* CommentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentDetailView.swift; sourceTree = "<group>"; };
+		90E8F6752D344910001EB946 /* ArticleWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleWebView.swift; sourceTree = "<group>"; };
 		90ECFCB827C83DFE0076777A /* UIWebViewSearch.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = UIWebViewSearch.js; sourceTree = "<group>"; };
 		90FC224326990CEF0095848C /* BawiWriteForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiWriteForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -421,6 +423,7 @@
 				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
 				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
 				906F364726A237E2002F0915 /* ArticleListView.swift */,
+				90E8F6752D344910001EB946 /* ArticleWebView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -644,6 +647,7 @@
 				90E8F6702D341FCC001EB946 /* NoteDetailView.swift in Sources */,
 				90AD18482A68A09400744D21 /* BawiBrowserSearchDelegate.swift in Sources */,
 				90A42F822A74769200FC8795 /* SearchHelper.swift in Sources */,
+				90E8F6762D344910001EB946 /* ArticleWebView.swift in Sources */,
 				90617666268A781000871FB2 /* ContentView.swift in Sources */,
 				90A0D9AE289880860057D328 /* BawiAction.swift in Sources */,
 				90A103862A64398F0017EEB8 /* PersistenceHelper.swift in Sources */,

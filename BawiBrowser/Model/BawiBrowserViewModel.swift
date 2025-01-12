@@ -23,6 +23,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
     @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
     @AppStorage("BawiBrowser.oldIndexDeleted") private var oldIndexDeleted: Bool = false
+    @AppStorage("BawiBrowser.articleAsHtml") var articleAsHtml: Bool = false
     
     var subscriptions: Set<AnyCancellable> = []
     

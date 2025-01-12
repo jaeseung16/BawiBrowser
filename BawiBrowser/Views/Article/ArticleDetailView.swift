@@ -49,19 +49,23 @@ struct ArticleDetailView: View {
                         Text(dateFormatter.string(from: article.lastupd!))
                             .font(.body)
                             .frame(width: geometry.size.width * 0.3)
-                        
                     }
                     .frame(alignment: .center)
                 }
                 
                 Divider()
                 
-                ScrollView {
-                    Text(article.body?.removingPercentEncoding ?? "")
-                        .font(.body)
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .center)
-                        .fixedSize(horizontal: false, vertical: true)
+                if viewModel.articleAsHtml {
+                    ArticleWebView(htmlBody: article.body ?? "")
+                        .frame(maxHeight: 0.75 * geometry.size.height, alignment: .center)
+                } else {
+                    ScrollView {
+                        Text(LocalizedStringKey(article.body?.removingPercentEncoding ?? ""))
+                            .font(.body)
+                            .multilineTextAlignment(.leading)
+                            .frame(alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 
                 if !attachments.isEmpty {
