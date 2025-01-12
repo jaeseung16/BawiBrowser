@@ -51,7 +51,7 @@ struct CommentListView: View {
                 ScrollView {
                     LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
                         ForEach(filteredComments) { comment in
-                            label(comment: comment, in: geometry)
+                            CommentDetailView(comment: comment, geometry: geometry)
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
                         }
@@ -61,49 +61,6 @@ struct CommentListView: View {
             .padding()
             .sheet(isPresented: $presentFilterItemsView) {
                 BoardFilterView(board: $selectedBoard, boards: boards)
-            }
-        }
-    }
-    
-    private func label(comment: Comment, in geometry: GeometryProxy) -> some View {
-        HStack {
-            VStack {
-                Text(comment.boardTitle ?? "")
-                    .font(.subheadline)
-                    
-                HStack {
-                    Text(comment.articleTitle ?? "")
-                        .font(.body)
-                    
-                    Spacer()
-                }
-                
-                HStack {
-                    Spacer()
-                    
-                    Text(dateFormatter.string(from: comment.created ?? Date()))
-                        .font(.callout)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.trailing)
-            .frame(width: geometry.size.width * 0.25)
-            
-            Divider()
-            
-            Text(comment.body?.removingPercentEncoding ?? "")
-                .font(.body)
-                .multilineTextAlignment(.leading)
-                .padding(.leading)
-                .frame(alignment: .leading)
-            
-            Spacer()
-            
-            Button {
-                viewModel.delete(comment)
-                viewModel.save()
-            } label: {
-                Image(systemName: "trash")
             }
         }
     }
@@ -127,12 +84,5 @@ struct CommentListView: View {
             */
         }
     }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
-    }
+
 }
