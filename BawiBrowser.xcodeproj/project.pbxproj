@@ -334,11 +334,9 @@
 		90617694268A784800871FB2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				90E8F6742D342200001EB946 /* Article */,
 				90E8F6712D342143001EB946 /* Comment */,
 				90E8F66E2D341FB5001EB946 /* Note */,
-				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
-				906F364726A237E2002F0915 /* ArticleListView.swift */,
-				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
 				90E857A626F569B300D15ED7 /* BawiBrowserAppearance.swift */,
 				906F364526A2373F002F0915 /* BrowserView.swift */,
 				908EE55D26F2704E00BD4B90 /* BoardFilterView.swift */,
@@ -415,6 +413,16 @@
 				90E8F6722D342161001EB946 /* CommentDetailView.swift */,
 			);
 			path = Comment;
+			sourceTree = "<group>";
+		};
+		90E8F6742D342200001EB946 /* Article */ = {
+			isa = PBXGroup;
+			children = (
+				90492BBE26A4A567005F337C /* AttachmentListView.swift */,
+				90CDB73F26A7857400568700 /* ArticleDetailView.swift */,
+				906F364726A237E2002F0915 /* ArticleListView.swift */,
+			);
+			path = Article;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

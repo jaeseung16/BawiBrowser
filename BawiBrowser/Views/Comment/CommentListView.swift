@@ -52,6 +52,8 @@ struct CommentListView: View {
                     LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
                         ForEach(filteredComments) { comment in
                             CommentDetailView(comment: comment, geometry: geometry)
+                                .id(comment)
+                                .environmentObject(viewModel)
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
                         }

@@ -22,24 +22,28 @@ struct ContentView: View {
         TabView(selection: $viewModel.selectedTab) {
             Tab(value: BawiBrowserTab.browser) {
                 BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                    .environmentObject(viewModel)
             } label: {
                 Text("Bawi")
             }
             
             Tab(value: BawiBrowserTab.articles) {
                 ArticleListView()
+                    .environmentObject(viewModel)
             } label: {
                 Text("Articles")
             }
             
             Tab(value: BawiBrowserTab.comments) {
                 CommentListView()
+                    .environmentObject(viewModel)
             } label: {
                 Text("Comments")
             }
             
             Tab(value: BawiBrowserTab.notes) {
                 NoteListView()
+                    .environmentObject(viewModel)
             } label: {
                 Text("Notes")
             }

@@ -47,6 +47,8 @@ struct NoteListView: View {
                     LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
                         ForEach(filteredNotes) { note in
                             NoteDetailView(note: note, geometry: geometry)
+                                .id(note)
+                                .environmentObject(viewModel)
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
                         }
