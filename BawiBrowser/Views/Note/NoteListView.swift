@@ -46,7 +46,7 @@ struct NoteListView: View {
                 ScrollView {
                     LazyVGrid(columns: Array(repeating: .init(), count: 1)) {
                         ForEach(filteredNotes) { note in
-                            label(note: note, in: geometry)
+                            NoteDetailView(note: note, geometry: geometry)
                                 .padding()
                                 .background(RoundedRectangle(cornerRadius: 8.0).stroke(lineWidth: 0.5))
                         }
@@ -60,45 +60,6 @@ struct NoteListView: View {
         }
     }
     
-    private func label(note: Note, in geometry: GeometryProxy) -> some View {
-        HStack {
-            VStack {
-                Text(note.to ?? "")
-                    
-                HStack {
-                    Spacer()
-                    
-                    Text(dateFormatter.string(from: note.created ?? Date()))
-                        .font(.callout)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.trailing)
-            .frame(width: geometry.size.width * 0.2)
-         
-            Divider()
-            
-            Text(makeReadable(note.msg))
-                .font(.body)
-                .multilineTextAlignment(.leading)
-                .padding(.leading)
-                .frame(alignment: .leading)
-            
-            Spacer()
-            
-            Button {
-                viewModel.delete(note)
-                viewModel.save()
-            } label: {
-                Image(systemName: "trash")
-            }
-        }
-    }
-    
-    private func makeReadable(_ msg: String?) -> String {
-        return msg?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? ""
-    }
-    
     private func header(geometry: GeometryProxy) -> some View {
         HStack {
             Button(action: {
@@ -110,12 +71,5 @@ struct NoteListView: View {
             Spacer()
         }
     }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
-    }
+
 }
