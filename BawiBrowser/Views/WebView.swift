@@ -377,20 +377,6 @@ struct WebView: NSViewRepresentable {
             _ = alert.runModal()
         }
         
-        func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-            let alert = NSAlert()
-            alert.messageText = message
-            alert.informativeText = "Please confirm"
-            alert.alertStyle = .warning
-            
-            let deleteButton = alert.addButton(withTitle: "OK")
-            deleteButton.tag = NSApplication.ModalResponse.OK.rawValue
-            
-            _ = alert.runModal()
-            
-            completionHandler()
-        }
-        
         func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async -> Bool {
             
             let alert = NSAlert()
@@ -407,23 +393,6 @@ struct WebView: NSViewRepresentable {
             let response = alert.runModal()
             
             return response == .OK
-        }
-        
-        func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-            let alert = NSAlert()
-            alert.messageText = message
-            alert.informativeText = "Please confirm"
-            alert.alertStyle = .warning
-            
-            let deleteButton = alert.addButton(withTitle: "OK")
-            deleteButton.tag = NSApplication.ModalResponse.OK.rawValue
-            
-            let cancelButton = alert.addButton(withTitle: "Cancel")
-            cancelButton.tag = NSApplication.ModalResponse.cancel.rawValue
-            
-            let response = alert.runModal()
-            
-            completionHandler(response == .OK)
         }
         
         func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo) async -> String? {
@@ -450,21 +419,6 @@ struct WebView: NSViewRepresentable {
                 }
             }
             return url != nil ? [url!] : nil
-        }
-        
-        func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
-            let openPanel = NSOpenPanel()
-            openPanel.canChooseFiles = true
-            openPanel.begin { result in
-                if result == NSApplication.ModalResponse.OK {
-                    if let url = openPanel.url {
-                        self.url = url
-                        completionHandler([url])
-                    }
-                } else if result == NSApplication.ModalResponse.cancel {
-                    completionHandler(nil)
-                }
-            }
         }
         
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: any Error) {
