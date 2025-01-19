@@ -408,16 +408,18 @@ struct WebView: NSViewRepresentable {
             var url: URL?
             let openPanel = NSOpenPanel()
             openPanel.canChooseFiles = true
-            openPanel.begin { result in
-                if result == NSApplication.ModalResponse.OK {
-                    url = openPanel.url
-                    if let url = url {
-                        self.url = url
-                    }
-                } else if result == NSApplication.ModalResponse.cancel {
-                    url = nil
+            
+            let response = await openPanel.begin()
+            
+            if response == NSApplication.ModalResponse.OK {
+                url = openPanel.url
+                if let url = url {
+                    self.url = url
                 }
+            } else if response == NSApplication.ModalResponse.cancel {
+                url = nil
             }
+            
             return url != nil ? [url!] : nil
         }
         
