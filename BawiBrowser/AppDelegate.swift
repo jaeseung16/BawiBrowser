@@ -10,7 +10,7 @@ import os
 import CloudKit
 import CoreData
 import Persistence
-import UserNotifications
+@preconcurrency import UserNotifications
 import AppKit
 import CoreSpotlight
 
@@ -40,26 +40,26 @@ class AppDelegate: NSObject {
     }
     
     private func registerForPushNotifications() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                guard granted else {
-                    return
-                }
-                self?.getNotificationSettings()
+        Task {
+            do {
+                try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+                getNotificationSettings()
+            } catch {
+                logger.log("Error whie requesting notification authorization: \(error.localizedDescription)")
             }
+        }
     }
 
     private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .authorized else {
-                return
-            }
-            DispatchQueue.main.async {
-                #if os(macOS)
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            
+            if settings.authorizationStatus == .authorized {
+#if os(macOS)
                 NSApplication.shared.registerForRemoteNotifications()
-                #else
+#else
                 UIApplication.shared.registerForRemoteNotifications()
-                #endif
+#endif
             }
         }
     }
