@@ -63,6 +63,7 @@ struct ArticleDetailView: View {
                         Text(LocalizedStringKey(article.body?.removingPercentEncoding ?? ""))
                             .font(.body)
                             .multilineTextAlignment(.leading)
+                            .textSelection(.enabled)
                             .frame(alignment: .center)
                             .fixedSize(horizontal: false, vertical: true)
                     }

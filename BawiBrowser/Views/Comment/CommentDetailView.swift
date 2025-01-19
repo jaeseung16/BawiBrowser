@@ -42,6 +42,7 @@ struct CommentDetailView: View {
             Text(LocalizedStringKey(comment.body?.removingPercentEncoding ?? ""))
                 .font(.body)
                 .multilineTextAlignment(.leading)
+                .textSelection(.enabled)
                 .padding(.leading)
                 .frame(alignment: .leading)
             

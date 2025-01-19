@@ -34,6 +34,7 @@ struct NoteDetailView: View {
             Text(convertToLocalizedStringKey(note.msg))
                 .font(.body)
                 .multilineTextAlignment(.leading)
+                .textSelection(.enabled)
                 .padding(.leading)
                 .frame(alignment: .leading)
             
