@@ -129,7 +129,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
           }
           .store(in: &subscriptions)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+        NotificationCenter.default
+            .publisher(for: UserDefaults.didChangeNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.defaultsChanged()
+            }
+            .store(in: &subscriptions)
         
         fetchAll()
         
