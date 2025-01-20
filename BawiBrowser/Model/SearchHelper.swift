@@ -103,11 +103,14 @@ actor SearchHelper {
         
         logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
         
-        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
-            guard let error = error else {
-                return
+        searchableItems.forEach { item in
+            Task {
+                do {
+                    try await CSSearchableIndex(name: indexName).indexSearchableItems([item])
+                } catch {
+                    self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
+                }
             }
-            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -127,17 +130,17 @@ actor SearchHelper {
     }
     
     public func index(_ attributeSet: SearchAttributeSet) {
-        guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
-        
-        let searchableItem: CSSearchableItem = CSSearchableItem(uniqueIdentifier: attributeSet.uid,
-                                                                domainIdentifier: spotlightIndexer.domainIdentifier(),
-                                                                attributeSet: attributeSet.getCSSearchableItemAttributeSet())
-        
-        CSSearchableIndex(name: indexName).indexSearchableItems([searchableItem]) { error in
-            guard let error = error else {
-                return
+        Task {
+            guard let spotlightIndexer = spotlightIndexer, let indexName = spotlightIndexer.indexName() else { return }
+            
+            let searchableItem: CSSearchableItem = CSSearchableItem(uniqueIdentifier: attributeSet.uid,
+                                                                    domainIdentifier: spotlightIndexer.domainIdentifier(),
+                                                                    attributeSet: attributeSet.getCSSearchableItemAttributeSet())
+            do {
+                try await CSSearchableIndex(name: indexName).indexSearchableItems([searchableItem])
+            } catch {
+                self.logger.log("Error while indexing: \(error.localizedDescription, privacy: .public)")
             }
-            self.logger.log("Error while indexing: \(error.localizedDescription, privacy: .public)")
         }
     }
     
