@@ -24,7 +24,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         Task {
             let properties = await page.properties()
             
-            logger.log("The extension received a message (\(messageName)) from a script injected into (\(String(describing: properties?.url))) with userInfo (\(userInfo ?? [:]))")
+            logger.log("The extension received a message (\(messageName, privacy: .public)) from a script injected into (\(String(describing: properties?.url), privacy: .public)) with userInfo (\(userInfo ?? [:], privacy: .public))")
             
             // Assume that attachments do not come before article
             if self.attachments.contains(messageName) {
@@ -64,7 +64,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
         do {
             fetchedArticles = try viewContext.fetch(fetchRequest)
         } catch {
-            logger.log("Failed to fetch article with boardId = \(boardId) and articleId = \(articleId): \(error.localizedDescription)")
+            logger.log("Failed to fetch article with boardId = \(boardId, privacy: .public) and articleId = \(articleId, privacy: .public): \(error.localizedDescription)")
         }
         
         return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
@@ -92,7 +92,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
             }
         }
         
-        logger.log("articleId = \(articleId)")
+        logger.log("articleId = \(articleId, privacy: .public)")
         return articleId
     }
     
@@ -116,7 +116,7 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
                                             body: body ?? "",
                                             attachCount: attachCount != nil ? Int(attachCount!)! : 0)
             
-            logger.log("articleDTO = \(articleDTO)")
+            logger.log("articleDTO = \(articleDTO, privacy: .public)")
             await persister.populate(article: articleDTO)
         }
     }

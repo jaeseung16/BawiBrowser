@@ -28,7 +28,7 @@ actor SafariExtensionPersister {
     
     func populate(article dto: BawiArticleDTO) -> Void {
         self.articleDTO = dto
-        logger.log("articleDTO = \(String(describing: self.articleDTO))")
+        logger.log("articleDTO = \(String(describing: self.articleDTO), privacy: .public)")
     }
     
     func addAttachments(_ data: Data) -> Void {
@@ -41,12 +41,12 @@ actor SafariExtensionPersister {
     func saveArticle(_ articleId: Int) {
         if isAricleAvailable() {
             if hasAttachments() && articleDTO!.attachCount != attachedData!.count {
-                logger.log("WARNING: \(String(describing: self.articleDTO!.attachCount)) files are expected. But \(self.attachedData!.count) files have been downloaded")
+                logger.log("WARNING: \(String(describing: self.articleDTO!.attachCount), privacy: .public) files are expected. But \(self.attachedData!.count, privacy: .public) files have been downloaded")
             }
             
             articleDTO!.articleId = articleId
             articleDTO!.attachments = attachedData
-            logger.log("articleDTO = \(String(describing: self.articleDTO))")
+            logger.log("articleDTO = \(String(describing: self.articleDTO), privacy: .public)")
             
             if let dto = articleDTO {
                 save(article: dto)
@@ -64,14 +64,14 @@ actor SafariExtensionPersister {
             if let queryItems = urlComponents?.queryItems {
                 for queryItem in queryItems {
                     if queryItem.name == "aid", let aid = queryItem.value {
-                        logger.log("aid = \(aid)")
+                        logger.log("aid = \(aid, privacy: .public)")
                         self.articleDTO!.articleId = Int(aid)!
                     }
                 }
             }
             
             if self.attachedData != nil && self.articleDTO!.attachCount != self.attachedData!.count {
-                logger.log("WARNING: \(String(describing: self.articleDTO!.attachCount)) files are expected. But \(self.attachedData!.count) files have been downloaded")
+                logger.log("WARNING: \(String(describing: self.articleDTO!.attachCount), privacy: .public) files are expected. But \(self.attachedData!.count, privacy: .public) files have been downloaded")
             }
             
             self.articleDTO!.attachments = self.attachedData
@@ -111,7 +111,7 @@ actor SafariExtensionPersister {
         do {
             try saveContext()
         } catch {
-            logger.log("While saving \(dto) occured an unresolved error \(error.localizedDescription)")
+            logger.log("While saving \(dto, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -125,7 +125,7 @@ actor SafariExtensionPersister {
         do {
             fetchedArticles = try viewContext.fetch(fetchRequest)
         } catch {
-            logger.log("Failed to fetch article with boardId = \(boardId) and articleId = \(articleId): \(error.localizedDescription)")
+            logger.log("Failed to fetch article with boardId = \(boardId, privacy: .public) and articleId = \(articleId, privacy: .public): \(error.localizedDescription)")
         }
         
         return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
@@ -139,12 +139,12 @@ actor SafariExtensionPersister {
                 attachmentEntity.content = attachment
                 attachmentEntity.created = Date()
             }
-            logger.log("attachments.count = \(attachments.count)")
+            logger.log("attachments.count = \(attachments.count, privacy: .public)")
         }
     }
     
     func save(comment dto: BawiCommentDTO) -> Void {
-        logger.log("commentDTO = \(dto)")
+        logger.log("commentDTO = \(dto, privacy: .public)")
         
         let comment = Comment(context: self.viewContext)
         comment.articleId = Int64(dto.articleId)
@@ -157,7 +157,7 @@ actor SafariExtensionPersister {
         do {
             try saveContext()
         } catch {
-            logger.log("Error occured while saving \(dto): \(error.localizedDescription)")
+            logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -173,7 +173,7 @@ actor SafariExtensionPersister {
         do {
             try saveContext()
         } catch {
-            logger.log("Error occured while saving \(dto): \(error.localizedDescription)")
+            logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
     }
     
