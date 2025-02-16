@@ -206,24 +206,13 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     private func fetchUpdates(_ notification: Notification) -> Void {
         Task {
-            await persistence.fetchUpdates(notification) { result in
-                switch result {
-                case .success(let notification):
-                    if let userInfo = notification.userInfo {
-                        userInfo.forEach { key, value in
-                            if let objectIDs = value as? Set<NSManagedObjectID> {
-                                for objectId in objectIDs {
-                                    Task {
-                                        await self.addToIndex(objectId)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break
-                case .failure(let error):
-                    self.logger.log("Error while persistence.fetchUpdates: \(error.localizedDescription, privacy: .public)")
+            do {
+                let objectIDs = try await persistence.fetchUpdates(notification)
+                for objectId in objectIDs {
+                    await addToIndex(objectId)
                 }
+            } catch {
+                self.logger.log("Error while persistence.fetchUpdates: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -274,23 +263,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             await searchHelper.index(noteAttributeSet)
         }
         
-    }
-    
-    private func saveContext(completionHandler: @escaping (Error) -> Void) -> Void {
-        Task {
-            persistence.container.viewContext.transactionAuthor = "App"
-            
-            do {
-                try await persistence.save()
-                self.toggle.toggle()
-            } catch {
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                self.showAlert.toggle()
-            }
-            
-            persistence.container.viewContext.transactionAuthor = nil
-        }
     }
     
     func processComment(url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> Void {
@@ -542,16 +514,19 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func save() {
-        persistenceHelper.save() { result in
-            switch result {
-            case .success(_):
-                self.logger.log("Data saved successfully")
-                DispatchQueue.main.async {
-                    self.fetchAll()
-                }
-            case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+        Task {
+            persistence.container.viewContext.transactionAuthor = "App"
+            
+            do {
+                try await persistenceHelper.save()
+                logger.log("Data saved successfully")
+                fetchAll()
+            } catch {
+                logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
             }
+            
+            persistence.container.viewContext.transactionAuthor = nil
         }
     }
     
