@@ -44,20 +44,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var navigation = BawiBrowserNavigation.none
     
-    @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
-        didSet {
-            Task {
-                do {
-                    try await persistenceHelper.save(comment: commentDTO)
-                } catch let error {
-                    self.message = "Cannot save a comment: \"\(self.commentDTO.body)\""
-                    self.logger.log("While saving \(self.commentDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
     @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             Task {
@@ -252,6 +238,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func processComment(url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> Void {
+        saveComment(populateCommment(from: url, httpBody: httpBody, articleTitle: articleTitle, boardTitle: boardTitle))
+    }
+    
+    private func populateCommment(from url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> BawiCommentDTO {
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         urlComponents?.query = String(data: httpBody, encoding: .utf8)
         
@@ -279,11 +269,23 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             }
         }
         
-        self.commentDTO = BawiCommentDTO(articleId: articleId,
-                                                     articleTitle: articleTitle ?? "",
-                                                     boardId: boardId,
-                                                     boardTitle: boardTitle ?? "",
-                                                     body: body)
+        return BawiCommentDTO(articleId: articleId,
+                              articleTitle: articleTitle ?? "",
+                              boardId: boardId,
+                              boardTitle: boardTitle ?? "",
+                              body: body)
+    }
+    
+    private func saveComment(_ commentDTO: BawiCommentDTO) {
+        Task {
+            do {
+                try await persistenceHelper.save(comment: commentDTO)
+            } catch let error {
+                message = "Cannot save a comment: \"\(commentDTO.body)\""
+                logger.log("While saving \(commentDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+            }
+        }
     }
     
     func processNote(url: URL, httpBody: Data) -> Void {
