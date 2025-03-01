@@ -44,20 +44,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var navigation = BawiBrowserNavigation.none
     
-    @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
-        didSet {
-            Task {
-                do {
-                    try await persistenceHelper.save(note: noteDTO)
-                } catch let error {
-                    self.message = "Cannot save a note to \(self.noteDTO.to) with msg = \(self.noteDTO.msg)"
-                    self.logger.log("While saving \(self.noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
     @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
         didSet {
             Task {
@@ -301,6 +287,12 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func processNote(url: URL, httpBody: Data) -> Void {
+        if let note = populateNote(from: url, httpBody: httpBody) {
+            saveNote(note)
+        }
+    }
+    
+    private func populateNote(from url: URL, httpBody: Data) -> BawiNoteDTO? {
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         urlComponents?.query = String(data: httpBody, encoding: .utf8)
         
@@ -328,8 +320,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             }
         }
         
-        if let message = msg, !message.isEmpty {
-            noteDTO = BawiNoteDTO(action: action ?? "", to: to ?? "", msg: message)
+        guard let message = msg, !message.isEmpty else {
+            return nil
+        }
+        return BawiNoteDTO(action: action ?? "", to: to ?? "", msg: message)
+    }
+    
+    private func saveNote(_ noteDTO: BawiNoteDTO) {
+        Task {
+            do {
+                try await persistenceHelper.save(note: noteDTO)
+            } catch let error {
+                message = "Cannot save a note to \(noteDTO.to) with msg = \(noteDTO.msg)"
+                logger.log("While saving \(noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+            }
         }
     }
     
