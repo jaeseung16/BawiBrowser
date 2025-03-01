@@ -44,20 +44,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var navigation = BawiBrowserNavigation.none
     
-    @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
-        didSet {
-            Task {
-                do {
-                    try await persistenceHelper.save(article: articleDTO)
-                } catch let error {
-                    self.message = "Cannot save an article with title = \(self.articleDTO.articleTitle)"
-                    self.logger.log("Cannot save articleDTO=\(self.articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
     @Published var isDarkMode = false
     
     @Published var enableSearch = false
@@ -351,24 +337,41 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func processEdit(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?) -> Void {
+        var articleDTO: BawiArticleDTO?
         if let httpBody = httpBody {
-             populate(from: httpBody, with: boundary) { bawiWriteForm in
-                let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
-                self.articleDTO = BawiArticleDTO(articleId: articleId,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body)
-            }
+            let bawiWriteForm = populate(from: httpBody, with: boundary)
+            let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
+            articleDTO = BawiArticleDTO(articleId: articleId,
+                                        articleTitle: articleTitle,
+                                        boardId: boardId,
+                                        boardTitle: boardTitle ?? "",
+                                        body: body)
         } else if let httpBodyStream = httpBodyStream {
-            populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
-                self.articleDTO = BawiArticleDTO(articleId: articleId,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body,
-                                                 attachments: attachments)
+            let (bawiWriteForm, attachments) = populate(from: httpBodyStream, with: boundary)
+            let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
+            articleDTO = BawiArticleDTO(articleId: articleId,
+                                        articleTitle: articleTitle,
+                                        boardId: boardId,
+                                        boardTitle: boardTitle ?? "",
+                                        body: body,
+                                        attachments: attachments)
+        }
+        
+        guard let articleDTO = articleDTO else {
+            return
+        }
+        
+        saveArticle(articleDTO)
+    }
+    
+    func saveArticle(_ articleDTO: BawiArticleDTO) -> Void {
+        Task {
+            do {
+                try await persistenceHelper.save(article: articleDTO)
+            } catch {
+                message = "Cannot save an article with title = \(articleDTO.articleTitle)"
+                logger.log("Cannot save articleDTO=\(articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
             }
         }
     }
@@ -387,20 +390,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         return (articleId, articleTitle, boardId, body)
     }
     
-    private func populate(from httpBody: Data, with boundary: String, completionHandler: (BawiWriteForm?) -> Void) -> Void {
-        if let stringToParse = String(data: httpBody, encoding: .utf8) {
-            var bawiWriteForm: BawiWriteForm?
-            do {
-                bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
-            } catch {
-                print("error: \(error).")
-            }
-            
-            completionHandler(bawiWriteForm)
+    private func populate(from httpBody: Data, with boundary: String) -> BawiWriteForm? {
+        guard let stringToParse = String(data: httpBody, encoding: .utf8) else {
+            return nil
         }
+        
+        var bawiWriteForm: BawiWriteForm?
+        do {
+            bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
+        } catch {
+            logger.log("Cannot decode \(stringToParse, privacy: .public): \(error.localizedDescription, privacy: .public)")
+        }
+        return bawiWriteForm
     }
     
-    private func populate(from httpBodyStream: InputStream, with boundary: String, completionHandler: (BawiWriteForm?, [Data]) -> Void) -> Void {
+    private func populate(from httpBodyStream: InputStream, with boundary: String) -> (BawiWriteForm?, [Data]) {
         httpBodyStream.open()
 
         var data = Data()
@@ -419,64 +423,70 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         do {
             let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundary)
-            print("bawiWriteForm = \(bawiWriteForm)")
+            logger.log("bawiWriteForm = \(String(describing: bawiWriteForm), privacy: .public)")
             
-            var attachements = [Data]()
+            var attachments = [Data]()
             if bawiWriteForm.attach1 != nil {
-                attachements.append(bawiWriteForm.attach1!)
+                attachments.append(bawiWriteForm.attach1!)
             }
             if bawiWriteForm.attach2 != nil {
-                attachements.append(bawiWriteForm.attach2!)
+                attachments.append(bawiWriteForm.attach2!)
             }
             if bawiWriteForm.attach3 != nil {
-                attachements.append(bawiWriteForm.attach3!)
+                attachments.append(bawiWriteForm.attach3!)
             }
             if bawiWriteForm.attach4 != nil {
-                attachements.append(bawiWriteForm.attach4!)
+                attachments.append(bawiWriteForm.attach4!)
             }
             if bawiWriteForm.attach5 != nil {
-                attachements.append(bawiWriteForm.attach5!)
+                attachments.append(bawiWriteForm.attach5!)
             }
             if bawiWriteForm.attach6 != nil {
-                attachements.append(bawiWriteForm.attach6!)
+                attachments.append(bawiWriteForm.attach6!)
             }
             if bawiWriteForm.attach7 != nil {
-                attachements.append(bawiWriteForm.attach7!)
+                attachments.append(bawiWriteForm.attach7!)
             }
             if bawiWriteForm.attach8 != nil {
-                attachements.append(bawiWriteForm.attach8!)
+                attachments.append(bawiWriteForm.attach8!)
             }
             if bawiWriteForm.attach9 != nil {
-                attachements.append(bawiWriteForm.attach9!)
+                attachments.append(bawiWriteForm.attach9!)
             }
             if bawiWriteForm.attach10 != nil {
-                attachements.append(bawiWriteForm.attach10!)
+                attachments.append(bawiWriteForm.attach10!)
             }
             
-            completionHandler(bawiWriteForm, attachements)
+            return (bawiWriteForm, attachments)
         } catch {
-            print("error: \(error).")
+            logger.log("Cannot populate bawiWriteForm and attachments: \(error.localizedDescription, privacy: .public)")
+            return (nil, [])
         }
     }
     
-    func preprocessWrite(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?, coordinator: WebView.Coordinator) -> Void {
+    func preprocessWrite(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?) -> BawiArticleDTO? {
+        var bawiArticleDTO: BawiArticleDTO?
         if let httpBody = httpBody {
-            populate(from: httpBody, with: boundary) { bawiWriteForm in
-                let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
-                coordinator.articleDTO = BawiArticleDTO(articleId: -1, articleTitle: articleTitle, boardId: boardId, boardTitle: boardTitle ?? "", body: body, parentArticleId: parentArticleId)
-           }
+            let bawiWriteForm = populate(from: httpBody, with: boundary)
+            let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
+            bawiArticleDTO = BawiArticleDTO(articleId: -1,
+                                            articleTitle: articleTitle,
+                                            boardId: boardId,
+                                            boardTitle: boardTitle ?? "",
+                                            body: body,
+                                            parentArticleId: parentArticleId)
         } else if let httpBodyStream = httpBodyStream {
-            populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
-                coordinator.articleDTO = BawiArticleDTO(articleId: -1,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body,
-                                                 parentArticleId: parentArticleId,
-                                                 attachments: attachments)
-            }
+            let (bawiWriteForm, attachments) = populate(from: httpBodyStream, with: boundary)
+            let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
+            bawiArticleDTO = BawiArticleDTO(articleId: -1,
+                                            articleTitle: articleTitle,
+                                            boardId: boardId,
+                                            boardTitle: boardTitle ?? "",
+                                            body: body,
+                                            parentArticleId: parentArticleId,
+                                            attachments: attachments)
         }
+        return bawiArticleDTO
     }
     
     private func extractPropertiesForWrite(from bawiWriteForm: BawiWriteForm?) -> (Int, String, Int, String) {

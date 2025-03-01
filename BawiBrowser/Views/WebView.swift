@@ -165,12 +165,11 @@ struct WebView: NSViewRepresentable {
                     }
                 case .write:
                     if let boundary = extractBoundary(from: navigationAction) {
-                        parent.viewModel.preprocessWrite(url: url,
-                                                         httpBody: navigationAction.request.httpBody,
-                                                         httpBodyStream: navigationAction.request.httpBodyStream,
-                                                         boundary: boundary,
-                                                         boardTitle: self.boardTitle,
-                                                         coordinator: self)
+                        articleDTO = parent.viewModel.preprocessWrite(url: url,
+                                                                      httpBody: navigationAction.request.httpBody,
+                                                                      httpBodyStream: navigationAction.request.httpBodyStream,
+                                                                      boundary: boundary,
+                                                                      boardTitle: self.boardTitle)
                     }
                 case .edit:
                     if let boundary = extractBoundary(from: navigationAction) {
@@ -227,12 +226,11 @@ struct WebView: NSViewRepresentable {
                     }
                 case .write:
                     if let boundary = extractBoundary(from: navigationAction) {
-                        parent.viewModel.preprocessWrite(url: url,
-                                                         httpBody: navigationAction.request.httpBody,
-                                                         httpBodyStream: navigationAction.request.httpBodyStream,
-                                                         boundary: boundary,
-                                                         boardTitle: self.boardTitle,
-                                                         coordinator: self)
+                        articleDTO = parent.viewModel.preprocessWrite(url: url,
+                                                                      httpBody: navigationAction.request.httpBody,
+                                                                      httpBodyStream: navigationAction.request.httpBodyStream,
+                                                                      boundary: boundary,
+                                                                      boardTitle: self.boardTitle)
                     }
                 case .edit:
                     if let boundary = extractBoundary(from: navigationAction) {
@@ -310,7 +308,7 @@ struct WebView: NSViewRepresentable {
                     }
                 }
                 
-                parent.viewModel.articleDTO = articleDTO!
+                parent.viewModel.saveArticle(articleDTO!)
                 articleDTO = nil
             }
             
