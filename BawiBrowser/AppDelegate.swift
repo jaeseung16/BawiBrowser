@@ -171,12 +171,12 @@ extension AppDelegate: NSApplicationDelegate {
     
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+extension AppDelegate: @preconcurrency UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         return [.banner, .sound]
     }
     
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         logger.info("userNotificationCenter: response=\(response, privacy: .public)")
         let title = response.notification.request.content.body
         
@@ -185,7 +185,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         let articleId = userInfo["articleId"] as! Int64
         let boardId = userInfo["boardId"] as! Int64
-        await viewModel.selectArticle(title: title, articleId: articleId, boradId: boardId)
+        viewModel.selectArticle(title: title, articleId: articleId, boradId: boardId)
     }
     
 }
