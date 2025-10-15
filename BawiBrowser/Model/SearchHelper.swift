@@ -116,17 +116,17 @@ actor SearchHelper {
     
     func index(notes: [Note]) -> Void {
         logger.log("Indexing \(notes.count, privacy: .public) notes")
-        index<Note>(notes)
+        index(notes)
     }
     
     func index(comments: [Comment]) -> Void {
         logger.log("Indexing \(comments.count, privacy: .public) comments")
-        index<Comment>(comments)
+        index(comments)
     }
     
     func index(articles: [Article]) -> Void {
         logger.log("Indexing \(articles.count, privacy: .public) articles")
-        index<Article>(articles)
+        index(articles)
     }
     
     public func index(_ attributeSet: SearchAttributeSet) {
@@ -237,3 +237,4 @@ actor SearchHelper {
         self.searchQueryForNote?.cancel()
     }
 }
+
