@@ -165,12 +165,12 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private func fetchUpdates(_ notification: Notification) -> Void {
         Task {
             do {
-                let objectIDs = try await persistence.fetchUpdates(notification)
+                let objectIDs = try await persistence.fetchUpdates()
                 for objectId in objectIDs {
                     await addToIndex(objectId)
                 }
             } catch {
-                self.logger.log("Error while persistence.fetchUpdates: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Error while persistence.fetchUpdates for notification=\(notification): \(error.localizedDescription, privacy: .public)")
             }
         }
     }
