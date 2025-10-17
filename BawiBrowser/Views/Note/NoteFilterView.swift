@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NoteFilterView: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     @Binding var to: String?
     @State var selectedTo: String = "N/A"
@@ -57,7 +57,7 @@ struct NoteFilterView: View {
             
             Button(action: {
                 to = isSelected ? selectedTo : nil
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             }, label: {
                 Text("Done")
             })

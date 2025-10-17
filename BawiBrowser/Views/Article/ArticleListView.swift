@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ArticleListView: View {
-    @Environment(\.presentationMode) private var presentationMode
-    
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     
     @State private var presentFilterItemsView = false
