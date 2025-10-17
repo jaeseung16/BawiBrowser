@@ -65,10 +65,8 @@ struct ArticleListView: View {
                 .frame(width: geometry.size.width * 0.25)
                 .toolbar {
                     ToolbarItemGroup {
-                        Button {
+                        FilterButton {
                             presentFilterItemsView = true
-                        } label: {
-                            Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
                         }
                     }
                 }
