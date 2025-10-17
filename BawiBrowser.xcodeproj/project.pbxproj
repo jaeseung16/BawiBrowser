@@ -1191,7 +1191,7 @@
 			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.2.13;
+				version = 0.2.15;
 			};
 		};
 		9037CF0D2857F19900B5C7C9 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
