@@ -48,16 +48,20 @@ struct ContentView: View {
                 Text("Notes")
             }
         }
-        .tabViewStyle(TabBarOnlyTabViewStyle())
+        .tabViewStyle(.tabBarOnly)
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         .alert(isPresented: $viewModel.showAlert) {
             Alert(title: Text("Unable to Save Data"),
                   message: Text(viewModel.message),
                   dismissButton: .default(Text("Dismiss")))
         }
-        .searchable(text: $searchString)
+        .searchable(text: $searchString, placement: .toolbar)
         .onChange(of: searchString) { oldValue, newValue in
-            viewModel.search(newValue)
+            if viewModel.selectedTab == .browser {
+                viewModel.searchString = newValue
+            } else {
+                viewModel.search(newValue)
+            }
         }
         .onChange(of: viewModel.selectedTab) {
             searchString = ""
