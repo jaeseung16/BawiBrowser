@@ -16,16 +16,11 @@ struct NoteListView: View {
     @State private var recipient: String?
     
     private var recipients: Array<String> {
-        var toSet = Set<String>()
-        
-        viewModel.notes.compactMap { note in
-            note.to
-        }
-        .forEach { to in
-            toSet.insert(to)
-        }
-        
-        return Array(toSet)
+        return Array(
+            Set(
+                viewModel.notes.compactMap { $0.to }
+            )
+        )
     }
   
     private var filteredNotes: Array<Note> {
