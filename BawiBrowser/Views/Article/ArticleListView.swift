@@ -115,19 +115,12 @@ struct ArticleListView: View {
             HStack {
                 Spacer()
                 
-                Text(dateFormatter.string(from: article.created ?? Date()))
+                Text(article.created ?? Date(), format: .dateTime)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
         }
     }
     
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
-    }
 }
 

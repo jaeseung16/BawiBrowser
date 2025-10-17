@@ -34,7 +34,7 @@ struct ArticleDetailView: View {
                         .font(.headline)
                         .frame(width: geometry.size.width * 0.16)
                     
-                    Text(dateFormatter.string(from: article.created ?? Date()))
+                    Text(article.created ?? Date(), format: .dateTime)
                         .font(.body)
                         .frame(width: geometry.size.width * 0.3)
                 }
@@ -46,7 +46,7 @@ struct ArticleDetailView: View {
                             .font(.headline)
                             .frame(width: geometry.size.width * 0.16)
                         
-                        Text(dateFormatter.string(from: article.lastupd!))
+                        Text(article.lastupd!, format: .dateTime)
                             .font(.body)
                             .frame(width: geometry.size.width * 0.3)
                     }
@@ -85,14 +85,6 @@ struct ArticleDetailView: View {
         } else {
             return [Attachment]()
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
     }
     
 }
