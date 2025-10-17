@@ -29,7 +29,7 @@ struct CommentDetailView: View {
                 HStack {
                     Spacer()
                     
-                    Text(dateFormatter.string(from: comment.created ?? Date()))
+                    Text(comment.created ?? Date(), format: .dateTime)
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }
@@ -57,11 +57,4 @@ struct CommentDetailView: View {
         }
     }
     
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
-    }
 }
