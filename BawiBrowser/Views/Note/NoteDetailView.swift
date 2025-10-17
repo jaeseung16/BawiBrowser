@@ -21,7 +21,7 @@ struct NoteDetailView: View {
                 HStack {
                     Spacer()
                     
-                    Text(dateFormatter.string(from: note.created ?? Date()))
+                    Text(note.created ?? Date(), format: .dateTime)
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }
@@ -47,14 +47,6 @@ struct NoteDetailView: View {
                 Image(systemName: "trash")
             }
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
     }
     
     private func convertToLocalizedStringKey(_ msg: String?) -> LocalizedStringKey {
