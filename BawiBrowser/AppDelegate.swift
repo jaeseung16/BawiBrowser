@@ -10,10 +10,11 @@ import os
 import CloudKit
 import CoreData
 import Persistence
-import UserNotifications
+@preconcurrency import UserNotifications
 import AppKit
 import CoreSpotlight
 
+@MainActor
 class AppDelegate: NSObject {
     private let logger = Logger()
     
@@ -39,26 +40,26 @@ class AppDelegate: NSObject {
     }
     
     private func registerForPushNotifications() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                guard granted else {
-                    return
-                }
-                self?.getNotificationSettings()
+        Task {
+            do {
+                try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+                getNotificationSettings()
+            } catch {
+                logger.log("Error whie requesting notification authorization: \(error.localizedDescription)")
             }
+        }
     }
 
     private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .authorized else {
-                return
-            }
-            DispatchQueue.main.async {
-                #if os(macOS)
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            
+            if settings.authorizationStatus == .authorized {
+#if os(macOS)
                 NSApplication.shared.registerForRemoteNotifications()
-                #else
+#else
                 UIApplication.shared.registerForRemoteNotifications()
-                #endif
+#endif
             }
         }
     }
@@ -170,21 +171,21 @@ extension AppDelegate: NSApplicationDelegate {
     
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        logger.info("userNotificationCenter: notification=\(notification)")
-        completionHandler([.banner, .sound])
+extension AppDelegate: @preconcurrency UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return [.banner, .sound]
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         logger.info("userNotificationCenter: response=\(response, privacy: .public)")
-        viewModel.searchArticleTitle = response.notification.request.content.body
+        let title = response.notification.request.content.body
         
         let userInfo = response.notification.request.content.userInfo
         logger.info("userNotificationCenter: response=\(userInfo, privacy: .public)")
         
-        viewModel.selectedArticle = ["articleId": userInfo["articleId"] as! Int64,
-                                     "boardId": userInfo["boardId"] as! Int64]
-        completionHandler()
+        let articleId = userInfo["articleId"] as! Int64
+        let boardId = userInfo["boardId"] as! Int64
+        viewModel.selectArticle(title: title, articleId: articleId, boradId: boardId)
     }
+    
 }

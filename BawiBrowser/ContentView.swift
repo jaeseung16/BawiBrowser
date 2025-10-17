@@ -20,41 +20,50 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
-            BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
-                .tabItem {
-                    Text("Bawi")
-                }
-                .tag(BawiBrowserTab.browser)
+            Tab(value: BawiBrowserTab.browser) {
+                BrowserView(url: URL(string: "https://www.bawi.org/main/login.cgi")!)
+                    .environmentObject(viewModel)
+            } label: {
+                Text("Bawi")
+            }
             
-            ArticleListView()
-                .tabItem {
-                    Text("Articles")
-                }
-                .tag(BawiBrowserTab.articles)
+            Tab(value: BawiBrowserTab.articles) {
+                ArticleListView()
+                    .environmentObject(viewModel)
+            } label: {
+                Text("Articles")
+            }
             
-            CommentListView()
-                .tabItem {
-                    Text("Comments")
-                }
-                .tag(BawiBrowserTab.comments)
+            Tab(value: BawiBrowserTab.comments) {
+                CommentListView()
+                    .environmentObject(viewModel)
+            } label: {
+                Text("Comments")
+            }
             
-            NoteListView()
-                .tabItem {
-                    Text("Notes")
-                }
-                .tag(BawiBrowserTab.notes)
+            Tab(value: BawiBrowserTab.notes) {
+                NoteListView()
+                    .environmentObject(viewModel)
+            } label: {
+                Text("Notes")
+            }
         }
+        .tabViewStyle(.tabBarOnly)
         .frame(minWidth: 800, idealWidth: 1000, maxWidth: 1280, minHeight: 600, idealHeight: 1200, maxHeight: 1440, alignment: .center)
         .alert(isPresented: $viewModel.showAlert) {
             Alert(title: Text("Unable to Save Data"),
                   message: Text(viewModel.message),
                   dismissButton: .default(Text("Dismiss")))
         }
-        .searchable(text: $searchString)
-        .onChange(of: searchString) { newValue in
-            viewModel.search(newValue)
+        .searchable(text: $searchString, placement: .toolbar)
+        .onChange(of: searchString) { oldValue, newValue in
+            if viewModel.selectedTab == .browser {
+                viewModel.searchString = newValue
+            } else {
+                viewModel.search(newValue)
+            }
         }
-        .onChange(of: viewModel.selectedTab) { _ in
+        .onChange(of: viewModel.selectedTab) {
             searchString = ""
             viewModel.cancelSearch()
         }

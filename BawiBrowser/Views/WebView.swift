@@ -123,6 +123,7 @@ struct WebView: NSViewRepresentable {
         return Coordinator(self)
     }
     
+    @MainActor
     class Coordinator: NSObject, WKUIDelegate, WKNavigationDelegate {
         var parent: WebView
         
@@ -136,6 +137,65 @@ struct WebView: NSViewRepresentable {
         
         init(_ parent: WebView) {
             self.parent = parent
+        }
+        
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences) async -> (WKNavigationActionPolicy, WKWebpagePreferences) {
+            
+            guard let url = navigationAction.request.url, needProcessing(navigationAction) else {
+                return (.allow, preferences)
+            }
+            
+            if navigationAction.navigationType == .linkActivated {
+                if let host = url.host, !host.contains("bawi.org"), NSWorkspace.shared.open(url) {
+                    return (.cancel, preferences)
+                } else {
+                    return (.allow, preferences)
+                }
+            }
+            
+            if navigationAction.request.httpMethod == "POST", let action = getBawiAction(url: url) {
+                switch action {
+                case .note:
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processNote(url: url, httpBody: httpBody)
+                    }
+                case .comment:
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processComment(url: url, httpBody: httpBody, articleTitle: self.articleTitle, boardTitle: self.boardTitle)
+                    }
+                case .write:
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        articleDTO = parent.viewModel.preprocessWrite(url: url,
+                                                                      httpBody: navigationAction.request.httpBody,
+                                                                      httpBodyStream: navigationAction.request.httpBodyStream,
+                                                                      boundary: boundary,
+                                                                      boardTitle: self.boardTitle)
+                    }
+                case .edit:
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        parent.viewModel.processEdit(url: url,
+                                                     httpBody: navigationAction.request.httpBody,
+                                                     httpBodyStream: navigationAction.request.httpBodyStream,
+                                                     boundary: boundary,
+                                                     boardTitle: self.boardTitle)
+                    }
+                case .login:
+                    if let httpBody = navigationAction.request.httpBody {
+                        parent.viewModel.processCredentials(httpBody)
+                    }
+                default:
+                    WebView.logger.log("url=\(url), navigationAction=\(navigationAction)")
+                    if let httpBody = navigationAction.request.httpBody {
+                        WebView.logger.log("httpBody=\(String(describing: String(data: httpBody, encoding: .utf8)), privacy: .public)")
+                    }
+                    if let boundary = extractBoundary(from: navigationAction) {
+                        WebView.logger.log("boundary=\(boundary, privacy: .public)")
+                    }
+                }
+            }
+                
+            return (.allow, preferences)
+            
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
@@ -166,12 +226,11 @@ struct WebView: NSViewRepresentable {
                     }
                 case .write:
                     if let boundary = extractBoundary(from: navigationAction) {
-                        parent.viewModel.preprocessWrite(url: url,
-                                                         httpBody: navigationAction.request.httpBody,
-                                                         httpBodyStream: navigationAction.request.httpBodyStream,
-                                                         boundary: boundary,
-                                                         boardTitle: self.boardTitle,
-                                                         coordinator: self)
+                        articleDTO = parent.viewModel.preprocessWrite(url: url,
+                                                                      httpBody: navigationAction.request.httpBody,
+                                                                      httpBodyStream: navigationAction.request.httpBodyStream,
+                                                                      boundary: boundary,
+                                                                      boardTitle: self.boardTitle)
                     }
                 case .edit:
                     if let boundary = extractBoundary(from: navigationAction) {
@@ -249,7 +308,7 @@ struct WebView: NSViewRepresentable {
                     }
                 }
                 
-                parent.viewModel.articleDTO = articleDTO!
+                parent.viewModel.saveArticle(articleDTO!)
                 articleDTO = nil
             }
             
@@ -304,7 +363,7 @@ struct WebView: NSViewRepresentable {
             return nil
         }
         
-        func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async {
             let alert = NSAlert()
             alert.messageText = message
             alert.informativeText = "Please confirm"
@@ -314,11 +373,10 @@ struct WebView: NSViewRepresentable {
             deleteButton.tag = NSApplication.ModalResponse.OK.rawValue
             
             _ = alert.runModal()
-            
-            completionHandler()
         }
         
-        func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo) async -> Bool {
+            
             let alert = NSAlert()
             alert.messageText = message
             alert.informativeText = "Please confirm"
@@ -332,26 +390,44 @@ struct WebView: NSViewRepresentable {
             
             let response = alert.runModal()
             
-            completionHandler(response == .OK)
+            return response == .OK
+        }
+        
+        func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo) async -> String? {
+            WebView.logger.log("runJavaScriptTextInputPanelWithPrompt: \(prompt)")
+            return nil
         }
         
         func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
                         WebView.logger.log("runJavaScriptTextInputPanelWithPrompt: \(prompt)")
         }
         
-        func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
+        func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo) async -> [URL]? {
+            var url: URL?
             let openPanel = NSOpenPanel()
             openPanel.canChooseFiles = true
-            openPanel.begin { result in
-                if result == NSApplication.ModalResponse.OK {
-                    if let url = openPanel.url {
-                        self.url = url
-                        completionHandler([url])
-                    }
-                } else if result == NSApplication.ModalResponse.cancel {
-                    completionHandler(nil)
+            
+            let response = await openPanel.begin()
+            
+            if response == NSApplication.ModalResponse.OK {
+                url = openPanel.url
+                if let url = url {
+                    self.url = url
                 }
+            } else if response == NSApplication.ModalResponse.cancel {
+                url = nil
             }
+            
+            return url != nil ? [url!] : nil
+        }
+        
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: any Error) {
+            
+            print("didFailProvisionalNavigation:: \(error.localizedDescription)")
+            
+            webView.reload()
         }
     }
 }
+
+

@@ -14,6 +14,7 @@ import Persistence
 import os
 import CoreSpotlight
 
+@MainActor
 class BawiBrowserViewModel: NSObject, ObservableObject {
     private let logger = Logger()
     
@@ -21,6 +22,8 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
     @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
+    @AppStorage("BawiBrowser.oldIndexDeleted") private var oldIndexDeleted: Bool = false
+    @AppStorage("BawiBrowser.articleAsHtml") var articleAsHtml: Bool = false
     
     var subscriptions: Set<AnyCancellable> = []
     
@@ -41,51 +44,6 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     @Published var navigation = BawiBrowserNavigation.none
     
-    @Published var noteDTO = BawiNoteDTO(action: "", to: "", msg: "") {
-        didSet {
-            persistenceHelper.save(note: noteDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
-                    self.message = "Cannot save a note to \(self.noteDTO.to) with msg = \(self.noteDTO.msg)"
-                    self.logger.log("While saving \(self.noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
-    @Published var commentDTO = BawiCommentDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
-        didSet {
-            persistenceHelper.save(comment: commentDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
-                    self.message = "Cannot save a comment: \"\(self.commentDTO.body)\""
-                    self.logger.log("While saving \(self.commentDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
-    @Published var articleDTO = BawiArticleDTO(articleId: -1, articleTitle: "", boardId: -1, boardTitle: "", body: "") {
-        didSet {
-            persistenceHelper.save(article: articleDTO) { result in
-                switch result {
-                case .success(_):
-                    return
-                case .failure(let error):
-                    self.message = "Cannot save an article with title = \(self.articleDTO.articleTitle)"
-                    self.logger.log("Cannot save articleDTO=\(self.articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                }
-            }
-        }
-    }
-    
     @Published var isDarkMode = false
     
     @Published var enableSearch = false
@@ -105,73 +63,96 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     var urlToCopy: String = ""
     
     private let persistence: Persistence
-    private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.cloudContainer!
-    }
-    private var viewContext: NSManagedObjectContext {
-        persistenceContainer.viewContext
-    }
+    
     private let persistenceHelper: PersistenceHelper
     
     private let keyChainHelper = KeyChainHelper()
     @Published var bawiCredentials = BawiCredentials(username: "", password: "")
     
-    private(set) var articleIndexer: ArticleSpotlightDelegate?
-    private(set) var commentIndexer: CommentSpotlightDelegate?
-    private(set) var noteIndexer: NoteSpotlightDelegate?
-    
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
+        
+        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+        
+        self.searchHelper = SearchHelper(persistence: persistence)
         
         super.init()
         
         NotificationCenter.default
           .publisher(for: .NSPersistentStoreRemoteChange)
-          .sink { self.fetchUpdates($0) }
+          .receive(on: DispatchQueue.main)
+          .sink { [weak self] notification in
+              self?.fetchUpdates(notification)
+          }
           .store(in: &subscriptions)
         
-        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        
-        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
-            self.articleIndexer = ArticleSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            self.commentIndexer = CommentSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            self.noteIndexer = NoteSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            
-            self.toggleIndexing(self.articleIndexer, enabled: true)
-            self.toggleIndexing(self.commentIndexer, enabled: true)
-            self.toggleIndexing(self.noteIndexer, enabled: true)
-            
-            NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
-        }
+        NotificationCenter.default
+            .publisher(for: UserDefaults.didChangeNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.defaultsChanged()
+            }
+            .store(in: &subscriptions)
         
         fetchAll()
-        
-        if !spotlightIndexing {
-            DispatchQueue.main.async {
-                self.indexArticles()
-                self.indexComments()
-                self.indexNotes()
-                self.spotlightIndexing.toggle()
-            }
-        }
         
         if useKeychain {
             keyChainHelper.initialize()
             bawiCredentials = keyChainHelper.credentials
         }
+        
+        Task {
+            if await self.searchHelper.isReady() {
+                logger.log("init: oldIndexDeleted=\(self.oldIndexDeleted, privacy: .public)")
+                if !self.oldIndexDeleted {
+                    await self.searchHelper.deleteOldIndicies()
+                    self.spotlightIndexing = false
+                    self.oldIndexDeleted = true
+                }
+                
+                await self.searchHelper.startIndexing()
+                
+                logger.log("init: spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
+                if !spotlightIndexing {
+                    await self.indexAll()
+                    self.spotlightIndexing.toggle()
+                }
+                
+                $searchString
+                    .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+                    .sink { _ in
+                        self.search()
+                    }
+                    .store(in: &subscriptions)
+            }
+        }
     }
     
     @objc private func defaultsChanged() -> Void {
-        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
-        if !spotlightIndexing {
-            toggleIndexing(articleIndexer, enabled: false)
-            toggleIndexing(commentIndexer, enabled: false)
-            toggleIndexing(noteIndexer, enabled: false)
-            toggleIndexing(articleIndexer, enabled: true)
-            toggleIndexing(commentIndexer, enabled: true)
-            toggleIndexing(noteIndexer, enabled: true)
-            spotlightIndexing.toggle()
+        Task {
+            logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
+            if !spotlightIndexing {
+                await self.searchHelper.refresh()
+                await self.indexAll()
+                self.spotlightIndexing = true
+            }
+        }
+    }
+    
+    private func indexAll() async {
+        Task {
+            logger.log("indexing all")
+            for note in notes {
+                await addToIndex(note.objectID)
+            }
+            for comment in comments {
+                await addToIndex(comment.objectID)
+            }
+            for article in articles {
+                await addToIndex(article.objectID)
+            }
+            logger.log("indexed all")
         }
     }
     
@@ -181,37 +162,72 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         fetchArticles()
     }
     
-    private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
-        persistence.fetchUpdates(notification) { _ in
-            DispatchQueue.main.async {
-                self.toggle.toggle()
+        Task {
+            do {
+                let objectIDs = try await persistence.fetchUpdates()
+                for objectId in objectIDs {
+                    await addToIndex(objectId)
+                }
+            } catch {
+                self.logger.log("Error while persistence.fetchUpdates for notification=\(notification): \(error.localizedDescription, privacy: .public)")
             }
         }
     }
     
-    private func saveContext(completionHandler: @escaping (Error) -> Void) -> Void {
-        persistenceContainer.viewContext.transactionAuthor = "App"
-        persistence.save { result in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
-                    self.toggle.toggle()
-                }
-            case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                print("Error while saving data: \(Thread.callStackSymbols)")
-                DispatchQueue.main.async {
-                    self.showAlert.toggle()
-                    completionHandler(error)
-                }
-            }
+    private func addToIndex(_ objectID: NSManagedObjectID) async -> Void {
+        guard let object = persistenceHelper.find(with: objectID) else {
+            await searchHelper.remove(with: objectID.uriRepresentation().absoluteString)
+            logger.log("Removed from index: \(objectID)")
+            return
         }
-        persistenceContainer.viewContext.transactionAuthor = nil
+        
+        if let article = object as? Article {
+            let articleAttributeSet = SearchAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
+                                                         title: article.boardTitle,
+                                                         subject: article.articleTitle,
+                                                         textContent: article.body?.removingPercentEncoding,
+                                                         comment: nil,
+                                                         displayName: article.boardTitle,
+                                                         contentDescription: article.articleTitle,
+                                                         kind: BawiBrowserTab.articles.rawValue)
+            
+            await searchHelper.index(articleAttributeSet)
+        }
+        
+        if let comment = object as? Comment {
+            let commentAttributeSet = SearchAttributeSet(uid: comment.objectID.uriRepresentation().absoluteString,
+                                                         title: nil,
+                                                         subject: nil,
+                                                         textContent: comment.body?.removingPercentEncoding,
+                                                         comment: nil,
+                                                         displayName: comment.boardTitle,
+                                                         contentDescription: comment.body?.removingPercentEncoding,
+                                                         kind: BawiBrowserTab.comments.rawValue)
+            
+            await searchHelper.index(commentAttributeSet)
+        }
+        
+        if let note = object as? Note {
+            let noteAttributeSet = SearchAttributeSet(uid: note.objectID.uriRepresentation().absoluteString,
+                                                         title: nil,
+                                                         subject: nil,
+                                                         textContent: nil,
+                                                         comment: note.msg?.removingPercentEncoding,
+                                                         displayName: note.to,
+                                                         contentDescription: note.msg?.removingPercentEncoding,
+                                                         kind: BawiBrowserTab.notes.rawValue)
+            
+            await searchHelper.index(noteAttributeSet)
+        }
+        
     }
     
     func processComment(url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> Void {
+        saveComment(populateCommment(from: url, httpBody: httpBody, articleTitle: articleTitle, boardTitle: boardTitle))
+    }
+    
+    private func populateCommment(from url: URL, httpBody: Data, articleTitle: String?, boardTitle: String?) -> BawiCommentDTO {
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         urlComponents?.query = String(data: httpBody, encoding: .utf8)
         
@@ -239,14 +255,32 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             }
         }
         
-        self.commentDTO = BawiCommentDTO(articleId: articleId,
-                                                     articleTitle: articleTitle ?? "",
-                                                     boardId: boardId,
-                                                     boardTitle: boardTitle ?? "",
-                                                     body: body)
+        return BawiCommentDTO(articleId: articleId,
+                              articleTitle: articleTitle ?? "",
+                              boardId: boardId,
+                              boardTitle: boardTitle ?? "",
+                              body: body)
+    }
+    
+    private func saveComment(_ commentDTO: BawiCommentDTO) {
+        Task {
+            do {
+                try await persistenceHelper.save(comment: commentDTO)
+            } catch let error {
+                message = "Cannot save a comment: \"\(commentDTO.body)\""
+                logger.log("While saving \(commentDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+            }
+        }
     }
     
     func processNote(url: URL, httpBody: Data) -> Void {
+        if let note = populateNote(from: url, httpBody: httpBody) {
+            saveNote(note)
+        }
+    }
+    
+    private func populateNote(from url: URL, httpBody: Data) -> BawiNoteDTO? {
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         urlComponents?.query = String(data: httpBody, encoding: .utf8)
         
@@ -274,8 +308,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             }
         }
         
-        if let message = msg, !message.isEmpty {
-            noteDTO = BawiNoteDTO(action: action ?? "", to: to ?? "", msg: message)
+        guard let message = msg, !message.isEmpty else {
+            return nil
+        }
+        return BawiNoteDTO(action: action ?? "", to: to ?? "", msg: message)
+    }
+    
+    private func saveNote(_ noteDTO: BawiNoteDTO) {
+        Task {
+            do {
+                try await persistenceHelper.save(note: noteDTO)
+            } catch let error {
+                message = "Cannot save a note to \(noteDTO.to) with msg = \(noteDTO.msg)"
+                logger.log("While saving \(noteDTO, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+            }
         }
     }
     
@@ -290,24 +337,41 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func processEdit(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?) -> Void {
+        var articleDTO: BawiArticleDTO?
         if let httpBody = httpBody {
-             populate(from: httpBody, with: boundary) { bawiWriteForm in
-                let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
-                self.articleDTO = BawiArticleDTO(articleId: articleId,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body)
-            }
+            let bawiWriteForm = populate(from: httpBody, with: boundary)
+            let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
+            articleDTO = BawiArticleDTO(articleId: articleId,
+                                        articleTitle: articleTitle,
+                                        boardId: boardId,
+                                        boardTitle: boardTitle ?? "",
+                                        body: body)
         } else if let httpBodyStream = httpBodyStream {
-            populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
-                self.articleDTO = BawiArticleDTO(articleId: articleId,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body,
-                                                 attachments: attachments)
+            let (bawiWriteForm, attachments) = populate(from: httpBodyStream, with: boundary)
+            let (articleId, articleTitle, boardId, body) = extractPropertiesForEdit(from: bawiWriteForm)
+            articleDTO = BawiArticleDTO(articleId: articleId,
+                                        articleTitle: articleTitle,
+                                        boardId: boardId,
+                                        boardTitle: boardTitle ?? "",
+                                        body: body,
+                                        attachments: attachments)
+        }
+        
+        guard let articleDTO = articleDTO else {
+            return
+        }
+        
+        saveArticle(articleDTO)
+    }
+    
+    func saveArticle(_ articleDTO: BawiArticleDTO) -> Void {
+        Task {
+            do {
+                try await persistenceHelper.save(article: articleDTO)
+            } catch {
+                message = "Cannot save an article with title = \(articleDTO.articleTitle)"
+                logger.log("Cannot save articleDTO=\(articleDTO, privacy: .public): \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
             }
         }
     }
@@ -326,20 +390,21 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         return (articleId, articleTitle, boardId, body)
     }
     
-    private func populate(from httpBody: Data, with boundary: String, completionHandler: (BawiWriteForm?) -> Void) -> Void {
-        if let stringToParse = String(data: httpBody, encoding: .utf8) {
-            var bawiWriteForm: BawiWriteForm?
-            do {
-                bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
-            } catch {
-                print("error: \(error).")
-            }
-            
-            completionHandler(bawiWriteForm)
+    private func populate(from httpBody: Data, with boundary: String) -> BawiWriteForm? {
+        guard let stringToParse = String(data: httpBody, encoding: .utf8) else {
+            return nil
         }
+        
+        var bawiWriteForm: BawiWriteForm?
+        do {
+            bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: stringToParse, boundary: String(boundary))
+        } catch {
+            logger.log("Cannot decode \(stringToParse, privacy: .public): \(error.localizedDescription, privacy: .public)")
+        }
+        return bawiWriteForm
     }
     
-    private func populate(from httpBodyStream: InputStream, with boundary: String, completionHandler: (BawiWriteForm?, [Data]) -> Void) -> Void {
+    private func populate(from httpBodyStream: InputStream, with boundary: String) -> (BawiWriteForm?, [Data]) {
         httpBodyStream.open()
 
         var data = Data()
@@ -358,64 +423,70 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         
         do {
             let bawiWriteForm = try FormDataDecoder().decode(BawiWriteForm.self, from: [UInt8](data), boundary: boundary)
-            print("bawiWriteForm = \(bawiWriteForm)")
+            logger.log("bawiWriteForm = \(String(describing: bawiWriteForm), privacy: .public)")
             
-            var attachements = [Data]()
+            var attachments = [Data]()
             if bawiWriteForm.attach1 != nil {
-                attachements.append(bawiWriteForm.attach1!)
+                attachments.append(bawiWriteForm.attach1!)
             }
             if bawiWriteForm.attach2 != nil {
-                attachements.append(bawiWriteForm.attach2!)
+                attachments.append(bawiWriteForm.attach2!)
             }
             if bawiWriteForm.attach3 != nil {
-                attachements.append(bawiWriteForm.attach3!)
+                attachments.append(bawiWriteForm.attach3!)
             }
             if bawiWriteForm.attach4 != nil {
-                attachements.append(bawiWriteForm.attach4!)
+                attachments.append(bawiWriteForm.attach4!)
             }
             if bawiWriteForm.attach5 != nil {
-                attachements.append(bawiWriteForm.attach5!)
+                attachments.append(bawiWriteForm.attach5!)
             }
             if bawiWriteForm.attach6 != nil {
-                attachements.append(bawiWriteForm.attach6!)
+                attachments.append(bawiWriteForm.attach6!)
             }
             if bawiWriteForm.attach7 != nil {
-                attachements.append(bawiWriteForm.attach7!)
+                attachments.append(bawiWriteForm.attach7!)
             }
             if bawiWriteForm.attach8 != nil {
-                attachements.append(bawiWriteForm.attach8!)
+                attachments.append(bawiWriteForm.attach8!)
             }
             if bawiWriteForm.attach9 != nil {
-                attachements.append(bawiWriteForm.attach9!)
+                attachments.append(bawiWriteForm.attach9!)
             }
             if bawiWriteForm.attach10 != nil {
-                attachements.append(bawiWriteForm.attach10!)
+                attachments.append(bawiWriteForm.attach10!)
             }
             
-            completionHandler(bawiWriteForm, attachements)
+            return (bawiWriteForm, attachments)
         } catch {
-            print("error: \(error).")
+            logger.log("Cannot populate bawiWriteForm and attachments: \(error.localizedDescription, privacy: .public)")
+            return (nil, [])
         }
     }
     
-    func preprocessWrite(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?, coordinator: WebView.Coordinator) -> Void {
+    func preprocessWrite(url: URL, httpBody: Data?, httpBodyStream: InputStream?, boundary: String, boardTitle: String?) -> BawiArticleDTO? {
+        var bawiArticleDTO: BawiArticleDTO?
         if let httpBody = httpBody {
-            populate(from: httpBody, with: boundary) { bawiWriteForm in
-                let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
-                coordinator.articleDTO = BawiArticleDTO(articleId: -1, articleTitle: articleTitle, boardId: boardId, boardTitle: boardTitle ?? "", body: body, parentArticleId: parentArticleId)
-           }
+            let bawiWriteForm = populate(from: httpBody, with: boundary)
+            let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
+            bawiArticleDTO = BawiArticleDTO(articleId: -1,
+                                            articleTitle: articleTitle,
+                                            boardId: boardId,
+                                            boardTitle: boardTitle ?? "",
+                                            body: body,
+                                            parentArticleId: parentArticleId)
         } else if let httpBodyStream = httpBodyStream {
-            populate(from: httpBodyStream, with: boundary) { bawiWriteForm, attachments in
-                let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
-                coordinator.articleDTO = BawiArticleDTO(articleId: -1,
-                                                 articleTitle: articleTitle,
-                                                 boardId: boardId,
-                                                 boardTitle: boardTitle ?? "",
-                                                 body: body,
-                                                 parentArticleId: parentArticleId,
-                                                 attachments: attachments)
-            }
+            let (bawiWriteForm, attachments) = populate(from: httpBodyStream, with: boundary)
+            let (parentArticleId, articleTitle, boardId, body) = extractPropertiesForWrite(from: bawiWriteForm)
+            bawiArticleDTO = BawiArticleDTO(articleId: -1,
+                                            articleTitle: articleTitle,
+                                            boardId: boardId,
+                                            boardTitle: boardTitle ?? "",
+                                            body: body,
+                                            parentArticleId: parentArticleId,
+                                            attachments: attachments)
         }
+        return bawiArticleDTO
     }
     
     private func extractPropertiesForWrite(from bawiWriteForm: BawiWriteForm?) -> (Int, String, Int, String) {
@@ -440,19 +511,19 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     private func fetchArticles() {
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.lastupd, ascending: false)]
-        articles = persistenceHelper.perform(fetchRequest)
+        self.articles = persistenceHelper.perform(fetchRequest)
     }
     
     private func fetchComments() {
         let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Comment.created, ascending: false)]
-        comments = persistenceHelper.perform(fetchRequest)
+        self.comments = persistenceHelper.perform(fetchRequest)
     }
     
     private func fetchNotes() {
         let fetchRequest = NSFetchRequest<Note>(entityName: "Note")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.created, ascending: false)]
-        notes = persistenceHelper.perform(fetchRequest)
+        self.notes = persistenceHelper.perform(fetchRequest)
     }
     
     func delete(_ object: NSManagedObject) {
@@ -460,30 +531,26 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     func save() {
-        persistenceHelper.save() { result in
-            switch result {
-            case .success(_):
-                self.logger.log("Data saved successfully")
-                self.fetchAll()
-            case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+        Task {
+            persistence.container.viewContext.transactionAuthor = "App"
+            
+            do {
+                try await persistenceHelper.save()
+                logger.log("Data saved successfully")
+                fetchAll()
+            } catch {
+                logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
             }
+            
+            persistence.container.viewContext.transactionAuthor = nil
         }
     }
     
     // MARK: - Search
-    private let searchHelper = SearchHelper.shared
+    private let searchHelper: SearchHelper
     
-    func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
-        guard let indexer = indexer else { return }
-        if enabled {
-            indexer.startSpotlightIndexing()
-        } else {
-            indexer.stopSpotlightIndexing()
-        }
-    }
-    
-    var spotlightFoundArticles: [CSSearchableItem] = []
+
     var spotlightFoundComments: Set<CSSearchableItem> = []
     var spotlightFoundNotes: [CSSearchableItem] = []
     
@@ -491,68 +558,17 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     var commentSearchQuery: CSSearchQuery?
     var noteSearchQuery: CSSearchQuery?
     
-    private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
-        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
-            guard let attributeSet = attributeSet(for: entity) else {
-                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
-                return nil
-            }
-            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: BawiBrowserConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
+    private func search() {
+        switch selectedTab {
+        case .browser:
+            return
+        case .articles:
+            searchArticle(searchString)
+        case .comments:
+            searchComment(searchString)
+        case .notes:
+            searchNote(searchString)
         }
-        
-        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
-        
-        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
-            guard let error = error else {
-                return
-            }
-            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
-        }
-    }
-    
-    private func indexNotes() -> Void {
-        logger.log("Indexing \(self.notes.count, privacy: .public) notes")
-        index<Note>(notes, indexName: BawiBrowserConstants.noteIndexName.rawValue)
-    }
-    
-    private func indexComments() -> Void {
-        logger.log("Indexing \(self.comments.count, privacy: .public) comments")
-        index<Comment>(comments, indexName: BawiBrowserConstants.commentIndexName.rawValue)
-    }
-    
-    private func indexArticles() -> Void {
-        logger.log("Indexing \(self.articles.count, privacy: .public) articles")
-        index<Article>(articles, indexName: BawiBrowserConstants.articleIndexName.rawValue)
-    }
-    
-    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
-        if let note = object as? Note {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.comment = note.msg?.removingPercentEncoding
-            attributeSet.displayName = note.to
-            attributeSet.contentDescription = note.msg?.removingPercentEncoding
-            return attributeSet
-        }
-        
-        if let comment = object as? Comment {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.textContent = comment.body?.removingPercentEncoding
-            attributeSet.displayName = comment.boardTitle
-            attributeSet.contentDescription = comment.body?.removingPercentEncoding
-            return attributeSet
-        }
-        
-        if let article = object as? Article {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = article.boardTitle
-            attributeSet.subject = article.articleTitle
-            attributeSet.textContent = article.body?.removingPercentEncoding
-            attributeSet.displayName = article.boardTitle
-            attributeSet.contentDescription = article.articleTitle
-            return attributeSet
-        }
-
-        return nil
     }
     
     func searchNote(_ text: String) -> Void {
@@ -583,74 +599,24 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     }
     
     private func searchNotes(_ text: String) {
-        noteSearchQuery = searchHelper.prepareNoteQuery(text)
-        
-        noteSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundNotes += items
-            }
+        Task {
+            let items = await searchHelper.searchNotes(text)
+            self.fetchNotes(items)
         }
-        
-        noteSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchNotes(self.spotlightFoundNotes)
-                    self.spotlightFoundNotes.removeAll()
-                }
-            }
-        }
-        
-        noteSearchQuery?.start()
     }
     
     private func searchComments(_ text: String) {
-        commentSearchQuery = searchHelper.prepareCommentQuery(text)
-        
-        commentSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                items.forEach { item in
-                    self.spotlightFoundComments.insert(item)
-                }
-            }
+        Task {
+            let items = await searchHelper.searchComments(text)
+            self.fetchComments(items)
         }
-        
-        commentSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchComments(self.spotlightFoundComments)
-                    self.spotlightFoundComments.removeAll()
-                }
-            }
-        }
-        
-        commentSearchQuery?.start()
     }
     
     private func searchArticles(_ text: String) {
-        articleSearchQuery = searchHelper.prepareArticleQuery(text)
-        
-        articleSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundArticles += items
-            }
+        Task {
+            let items = await searchHelper.searchArticles(text)
+            self.fetchArticles(items)
         }
-        
-        articleSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchArticles(self.spotlightFoundArticles)
-                    self.spotlightFoundArticles.removeAll()
-                }
-            }
-        }
-        
-        articleSearchQuery?.start()
     }
     
     private func fetchNotes(_ items: [CSSearchableItem]) {
@@ -667,9 +633,37 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         logger.log("Found \(self.notes.count) notes")
     }
     
+    private func fetchNotes(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) notes")
+        notes = fetch(uniqueIdentifiers).sorted(by: { note1, note2 in
+            guard let created1 = note1.created else {
+                return false
+            }
+            guard let created2 = note2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.notes.count) notes")
+    }
+    
     private func fetchComments(_ items: Set<CSSearchableItem>) {
         logger.log("Fetching \(items.count) comments")
         comments = fetch(Array(items)).sorted(by: { comment1, comment2 in
+            guard let created1 = comment1.created else {
+                return false
+            }
+            guard let created2 = comment2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.comments.count) comments")
+    }
+    
+    private func fetchComments(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) comments")
+        comments = fetch(uniqueIdentifiers).sorted(by: { comment1, comment2 in
             guard let created1 = comment1.created else {
                 return false
             }
@@ -707,12 +701,38 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
         }
     }
     
+    private func fetchArticles(_ uniqueIdentifiers: [String]) {
+        logger.log("Fetching \(uniqueIdentifiers.count) articles")
+        let fetched: [Article] = fetch(uniqueIdentifiers)
+        logger.log("fetched.count=\(fetched.count)")
+        articles = fetched.sorted(by: { article1, article2 in
+            guard let created1 = article1.created else {
+                return false
+            }
+            guard let created2 = article2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.articles.count) articles")
+    }
+    
+    private func fetch<T: NSManagedObject>(_ uniqueIdentifiers: [String]) -> [T] {
+        return uniqueIdentifiers.compactMap { (uniqueIdentifier: String) -> T? in
+            guard let url = URL(string: uniqueIdentifier) else {
+                self.logger.log("url is nil for uniqueIdentifier=\(uniqueIdentifier)")
+                return nil
+            }
+            return find(for: url) as? T
+        }
+    }
+    
     func find(for url: URL) -> NSManagedObject? {
-        guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+        guard let objectID = persistence.container.viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
             self.logger.log("objectID is nil for url=\(url)")
             return nil
         }
-        return viewContext.object(with: objectID)
+        return persistence.container.viewContext.object(with: objectID)
     }
     
     func continueActivity(_ activity: NSUserActivity) {
@@ -755,9 +775,7 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     
     // MARK: - credentials
     func searchCredentials(completionHandler: @escaping (Result<BawiCredentials, Error>) -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.keyChainHelper.search(completionHandler: completionHandler)
-        }
+        self.keyChainHelper.search(completionHandler: completionHandler)
     }
     
     func processCredentials(_ httpBody: Data) -> Void {
@@ -820,12 +838,10 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
     func deleteCredentials() -> Void {
         setCredentials(BawiCredentials(username: "", password: ""))
         navigation = .reload
-        DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try self.keyChainHelper.delete()
-            } catch {
-                self.logger.log("Failed to delete credentials in keychain: \(error.localizedDescription, privacy: .public)")
-            }
+        do {
+            try self.keyChainHelper.delete()
+        } catch {
+            self.logger.log("Failed to delete credentials in keychain: \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -834,29 +850,24 @@ class BawiBrowserViewModel: NSObject, ObservableObject {
             self.bawiCredentials = credentials
         }
     }
+    
+    func selectArticle(title: String, articleId: Int64, boradId: Int64) -> Void {
+        searchArticleTitle = title
+        selectedArticle = ["articleId": articleId, "boardId": boradId]
+    }
 }
 
 extension BawiBrowserViewModel: BawiBrowserSearchDelegate {
-    func search(_ text: String) {
-        switch selectedTab {
-        case .browser:
-            return
-        case .articles:
-            searchArticle(text)
-        case .comments:
-            searchComment(text)
-        case .notes:
-            searchNote(text)
+    nonisolated func search(_ text: String) {
+        Task { @MainActor in
+            searchString = text
         }
     }
     
-    func cancelSearch() {
-        DispatchQueue.main.async {
-            self.articleSearchQuery?.cancel()
-            self.commentSearchQuery?.cancel()
-            self.noteSearchQuery?.cancel()
-            
-            self.fetchAll()
+    nonisolated func cancelSearch() {
+        Task { @MainActor in
+            await searchHelper.cancelSearch()
+            fetchAll()
         }
     }
 }

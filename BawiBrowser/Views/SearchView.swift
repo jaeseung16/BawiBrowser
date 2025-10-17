@@ -41,7 +41,9 @@ struct SearchView: NSViewRepresentable {
                 print("Unexpected control in update notification: \(notification)")
                 return
             }
-            self.parent.searchString = searchField.stringValue
+            DispatchQueue.main.async {
+                self.parent.searchString = searchField.stringValue
+            }
         }
     }
 }

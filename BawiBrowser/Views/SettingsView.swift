@@ -11,6 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     @AppStorage("BawiBrowser.useKeychain") private var useKeychain: Bool = false
     @AppStorage("BawiBrowser.spotlightIndexing") private var spotlightIndexing: Bool = false
+    @AppStorage("BawiBrowser.articleAsHtml") private var articleAsHtml: Bool = false
     
     var body: some View {
         VStack {
@@ -23,8 +24,13 @@ struct SettingsView: View {
                         Text("No").tag(false)
                     }
                     .pickerStyle(.inline)
+                    Picker("Display Articles as HTML:", selection: $articleAsHtml) {
+                        Text("Yes").tag(true)
+                        Text("No").tag(false)
+                    }
+                    .pickerStyle(.inline)
                     Button("Refresh Spotlight Indices") {
-                        UserDefaults.standard.set(false, forKey: "BawiBrowser.spotlightIndexing")
+                        spotlightIndexing = false
                     }
                 }
                 Spacer()
@@ -34,7 +40,7 @@ struct SettingsView: View {
         .frame(width: 300)
         .navigationTitle("Bawi Browser Settings")
         .padding(80)
-        .onChange(of: useKeychain) { newValue in
+        .onChange(of: useKeychain) {
             if !useKeychain {
                 viewModel.deleteCredentials()
             }

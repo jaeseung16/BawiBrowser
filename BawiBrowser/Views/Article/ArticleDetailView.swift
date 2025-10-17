@@ -34,7 +34,7 @@ struct ArticleDetailView: View {
                         .font(.headline)
                         .frame(width: geometry.size.width * 0.16)
                     
-                    Text(dateFormatter.string(from: article.created ?? Date()))
+                    Text(article.created ?? Date(), format: .dateTime)
                         .font(.body)
                         .frame(width: geometry.size.width * 0.3)
                 }
@@ -46,22 +46,27 @@ struct ArticleDetailView: View {
                             .font(.headline)
                             .frame(width: geometry.size.width * 0.16)
                         
-                        Text(dateFormatter.string(from: article.lastupd!))
+                        Text(article.lastupd!, format: .dateTime)
                             .font(.body)
                             .frame(width: geometry.size.width * 0.3)
-                        
                     }
                     .frame(alignment: .center)
                 }
                 
                 Divider()
                 
-                ScrollView {
-                    Text(article.body?.removingPercentEncoding ?? "")
-                        .font(.body)
-                        .multilineTextAlignment(.leading)
-                        .frame(alignment: .center)
-                        .fixedSize(horizontal: false, vertical: true)
+                if viewModel.articleAsHtml {
+                    ArticleWebView(htmlBody: article.body ?? "")
+                        .frame(maxHeight: 0.75 * geometry.size.height, alignment: .center)
+                } else {
+                    ScrollView {
+                        Text(LocalizedStringKey(article.body?.removingPercentEncoding ?? ""))
+                            .font(.body)
+                            .multilineTextAlignment(.leading)
+                            .textSelection(.enabled)
+                            .frame(alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 
                 if !attachments.isEmpty {
@@ -80,14 +85,6 @@ struct ArticleDetailView: View {
         } else {
             return [Attachment]()
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
     }
     
 }
