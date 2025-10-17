@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BoardFilterView: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     @Binding var board: String?
     @State var selectedBoard: String = "N/A"
@@ -47,20 +47,20 @@ struct BoardFilterView: View {
         HStack {
             Spacer()
             
-            Button(action: {
+            Button {
                 reset()
-            }, label: {
+            } label: {
                 Text("Reset")
-            })
-            
+            }
+
             Spacer()
             
-            Button(action: {
+            Button {
                 board = isSelected ? selectedBoard : nil
-                presentationMode.wrappedValue.dismiss()
-            }, label: {
+                dismiss.callAsFunction()
+            } label: {
                 Text("Done")
-            })
+            }
             
             Spacer()
         }
