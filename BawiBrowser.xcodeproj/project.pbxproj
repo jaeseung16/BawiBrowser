@@ -1199,7 +1199,7 @@
 			repositoryURL = "https://github.com/apple/swift-nio.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.40.0;
+				version = 2.87.0;
 			};
 		};
 		90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */ = {
@@ -1207,7 +1207,7 @@
 			repositoryURL = "https://github.com/vapor/multipart.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.4.0;
+				minimumVersion = 4.7.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
