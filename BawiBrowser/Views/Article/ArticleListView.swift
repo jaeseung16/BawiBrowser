@@ -98,21 +98,11 @@ struct ArticleListView: View {
     
     private func header() -> some View {
         HStack {
-            Button(action: {
+            FilterButton {
                 presentFilterItemsView = true
-            }) {
-                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
             }
             
             Spacer()
-            
-            /*
-            Button(action: {
-                presentSortItemsView = true
-            }) {
-                Label("Sort", systemImage: "arrow.up.arrow.down")
-            }
-            */
         }
         .padding(.horizontal)
     }

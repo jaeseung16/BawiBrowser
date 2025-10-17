@@ -60,6 +60,7 @@
 		90A85BD82AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A85BD72AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift */; };
 		90AD18482A68A09400744D21 /* BawiBrowserSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */; };
 		90B789A52D2AE8740031F0A3 /* SearchAttributeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B789A42D2AE8740031F0A3 /* SearchAttributeSet.swift */; };
+		90C358122EA2995200CE0462 /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C358112EA2994D00CE0462 /* FilterButton.swift */; };
 		90CDB73E26A7800900568700 /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73D26A7800900568700 /* NoteListView.swift */; };
 		90CDB74026A7857400568700 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CDB73F26A7857400568700 /* ArticleDetailView.swift */; };
 		90D0A98326B48CEC00581D33 /* BawiBrowser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9061766E268A781200871FB2 /* BawiBrowser.xcdatamodeld */; };
@@ -178,6 +179,7 @@
 		90A85BD72AEF104E00857175 /* BawiBrowserUIPerformanceTestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserUIPerformanceTestsLaunchTests.swift; sourceTree = "<group>"; };
 		90AD18472A68A09400744D21 /* BawiBrowserSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiBrowserSearchDelegate.swift; sourceTree = "<group>"; };
 		90B789A42D2AE8740031F0A3 /* SearchAttributeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAttributeSet.swift; sourceTree = "<group>"; };
+		90C358112EA2994D00CE0462 /* FilterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
 		90CDB73D26A7800900568700 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		90CDB73F26A7857400568700 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90DB6C0526B0D13800BEF1C9 /* Toolbar.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Toolbar.pdf; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 		90617694268A784800871FB2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				90C358112EA2994D00CE0462 /* FilterButton.swift */,
 				90E8F6742D342200001EB946 /* Article */,
 				90E8F6712D342143001EB946 /* Comment */,
 				90E8F66E2D341FB5001EB946 /* Note */,
@@ -648,6 +651,7 @@
 				90617696268A785C00871FB2 /* WebView.swift in Sources */,
 				906F364426A23585002F0915 /* CommentListView.swift in Sources */,
 				90E8F6702D341FCC001EB946 /* NoteDetailView.swift in Sources */,
+				90C358122EA2995200CE0462 /* FilterButton.swift in Sources */,
 				90AD18482A68A09400744D21 /* BawiBrowserSearchDelegate.swift in Sources */,
 				90A42F822A74769200FC8795 /* SearchHelper.swift in Sources */,
 				90E8F6762D344910001EB946 /* ArticleWebView.swift in Sources */,

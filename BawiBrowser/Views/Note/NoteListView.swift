@@ -64,10 +64,8 @@ struct NoteListView: View {
     
     private func header(geometry: GeometryProxy) -> some View {
         HStack {
-            Button(action: {
+            FilterButton {
                 presentFilterNoteView = true
-            }) {
-                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
             }
             
             Spacer()

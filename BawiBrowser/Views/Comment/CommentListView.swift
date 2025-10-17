@@ -69,21 +69,11 @@ struct CommentListView: View {
     
     private func header(geometry: GeometryProxy) -> some View {
         HStack {
-            Button(action: {
+            FilterButton {
                 presentFilterItemsView = true
-            }) {
-                Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
             }
             
             Spacer()
-            
-            /*
-            Button(action: {
-                presentSortItemsView = true
-            }) {
-                Label("Sort", systemImage: "arrow.up.arrow.down")
-            }
-            */
         }
     }
 
