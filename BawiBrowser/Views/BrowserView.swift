@@ -10,6 +10,10 @@ import SwiftUI
 struct BrowserView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     @Environment(\.colorScheme) var colorScheme
+    @Namespace var namespace
+    
+    private let navigation = "navigation"
+    private let tools = "tools"
     
     var url: URL
     @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
@@ -28,92 +32,127 @@ struct BrowserView: View {
                 Spacer()
                 
                 HStack {
-                    Button {
-                        viewModel.navigation = .back
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                    }
-                    .glassEffect()
-                    
                     Spacer()
-                    
-                    Button {
-                        viewModel.navigation = .home
-                    } label: {
-                        Image(systemName: "house")
+                    if viewModel.searchResultTotalCount > 0 {
+                        searchResultCounterStepper
                     }
-                    .keyboardShortcut("h", modifiers: [.command])
-                    .glassEffect()
-                    
-                    Button {
-                        viewModel.navigation = .logout
-                    } label: {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                    }
-                    .keyboardShortcut("h", modifiers: [.command])
-                    .glassEffect()
-                    
-                    Spacer()
-                    
-                    Toggle(viewModel.isDarkMode ? "dark" : "light", isOn: $darkMode)
-                        .toggleStyle(SwitchToggleStyle())
-                        .onChange(of: darkMode) {
-                            viewModel.isDarkMode = darkMode
-                            viewModel.navigation = .reload
-                        }
-                        .glassEffect()
-                    
-                    Button {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(viewModel.didFinishURLString, forType: .string)
-                        linkCopied.toggle()
-                    } label: {
-                        Label("Copy Link", systemImage: "link")
-                    }
-                    .keyboardShortcut("l", modifiers: [.command])
-                    .glassEffect()
-                    
-                    HStack {
-                        SearchView(searchString: $viewModel.searchString)
-                        
-                        if viewModel.searchResultTotalCount > 0 {
-                            Stepper {
-                                Text("\(viewModel.searchResultCounter) of \(viewModel.searchResultTotalCount)")
-                            } onIncrement: {
-                                viewModel.searchResultCounter += 1
-                                if viewModel.searchResultCounter >= viewModel.searchResultTotalCount {
-                                    viewModel.searchResultCounter = viewModel.searchResultTotalCount
-                                }
-                            } onDecrement: {
-                                viewModel.searchResultCounter -= 1
-                                if viewModel.searchResultCounter <= 1 {
-                                    viewModel.searchResultCounter = 1
-                                }
-                            }
-                            .glassEffect()
-                        }
-                    }
-                    .frame(width: 250)
-                    
-                    Button {
-                        viewModel.navigation = .forward
-                    } label: {
-                        Image(systemName: "chevron.forward")
-                    }
-                    .glassEffect()
                 }
-                .alert("Link Copied", isPresented: $linkCopied) {
-                    Button("OK") {
-                        
-                    }
-                } message: {
-                    Text("\(viewModel.didFinishURLString)")
+                
+                HStack {
+                    toolContainer
+                    Spacer()
+                    navigationContainer
                 }
             }
-            
-            
         }
         .padding()
+        .alert("Link Copied", isPresented: $linkCopied) {
+            Button("OK") {
+                
+            }
+        } message: {
+            Text("\(viewModel.didFinishURLString)")
+        }
+    }
+    
+    private var toolContainer: some View {
+        GlassEffectContainer {
+            HStack {
+                Toggle(isOn: $darkMode) {
+                    Text(viewModel.isDarkMode ? "dark" : "light")
+                }
+                .toggleStyle(.switch)
+                .padding(5.0)
+                .glassEffect()
+                .onChange(of: darkMode) {
+                    viewModel.isDarkMode = darkMode
+                    viewModel.navigation = .reload
+                }
+                .glassEffectUnion(id: tools, namespace: namespace)
+                
+                Button {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(viewModel.didFinishURLString, forType: .string)
+                    linkCopied.toggle()
+                } label: {
+                    Label("Copy Link", systemImage: "link")
+                }
+                .keyboardShortcut("l", modifiers: [.command])
+                .padding(5.0)
+                .glassEffect()
+                .glassEffectUnion(id: tools, namespace: namespace)
+            }
+        }
+    }
+    
+    private var navigationContainer: some View {
+        GlassEffectContainer {
+            HStack {
+                Button {
+                    viewModel.navigation = .back
+                } label: {
+                    Image(systemName: "chevron.backward")
+                }
+                .padding(5.0)
+                .glassEffect()
+                .glassEffectUnion(id: navigation, namespace: namespace)
+                
+                Button {
+                    viewModel.navigation = .home
+                } label: {
+                    Image(systemName: "house")
+                }
+                .keyboardShortcut("h", modifiers: [.command])
+                .padding(5.0)
+                .glassEffect()
+                .glassEffectUnion(id: navigation, namespace: namespace)
+                
+                Button {
+                    viewModel.navigation = .logout
+                } label: {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                }
+                .keyboardShortcut("h", modifiers: [.command])
+                .padding(5.0)
+                .glassEffect()
+                .glassEffectUnion(id: navigation, namespace: namespace)
+                
+                Button {
+                    viewModel.navigation = .forward
+                } label: {
+                    Image(systemName: "chevron.forward")
+                }
+                .padding(5.0)
+                .glassEffect()
+                .glassEffectUnion(id: navigation, namespace: namespace)
+            }
+        }
+    }
+    
+    private var searchResultCounterStepper: some View {
+        Stepper {
+            Text("\(viewModel.searchResultCounter) of \(viewModel.searchResultTotalCount)")
+        } onIncrement: {
+            incrementSearchResultCounter()
+        } onDecrement: {
+            decrementSearchResultCounter()
+        }
+        .padding(5.0)
+        .glassEffect()
+    }
+    
+    private func incrementSearchResultCounter() {
+        viewModel.searchResultCounter += 1
+        if viewModel.searchResultCounter >= viewModel.searchResultTotalCount {
+            viewModel.searchResultCounter = viewModel.searchResultTotalCount
+        }
+    }
+    
+    private func decrementSearchResultCounter() {
+        viewModel.searchResultCounter -= 1
+        if viewModel.searchResultCounter <= 1 {
+            viewModel.searchResultCounter = 1
+        }
     }
 }
 
