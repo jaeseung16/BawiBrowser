@@ -16,7 +16,7 @@ struct AttachmentListView: View {
             List {
                 ForEach(attachments) { attachment in
                     VStack {
-                        Text(dateFormatter.string(from: attachment.created!))
+                        Text(attachment.created!, format: .dateTime)
                             .font(.caption)
                             .frame(width: geometry.size.width * 0.9, alignment: .leading)
                         
@@ -41,12 +41,5 @@ struct AttachmentListView: View {
             }
         }
     }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .long
-        dateFormatter.locale = Locale(identifier: "en_US")
-        return dateFormatter
-    }
+
 }
