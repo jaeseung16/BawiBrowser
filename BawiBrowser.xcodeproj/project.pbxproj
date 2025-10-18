@@ -46,6 +46,12 @@
 		90914EFB26A7742900E124B6 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		90914EFD26A774B200E124B6 /* BawiNoteConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */; };
 		9092AC4A28A470BA00FADF2E /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9092AC4928A470BA00FADF2E /* AuthenticationServices.framework */; };
+		9096B1462EA420FD00FEA07E /* MessageHandlerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B1452EA420FD00FEA07E /* MessageHandlerFactory.swift */; };
+		9096B1482EA4215900FEA07E /* MessageHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B1472EA4214A00FEA07E /* MessageHandling.swift */; };
+		9096B14A2EA421B500FEA07E /* NoteFormHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B1492EA421B500FEA07E /* NoteFormHandler.swift */; };
+		9096B14C2EA423EC00FEA07E /* CommentFormHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B14B2EA423EC00FEA07E /* CommentFormHandler.swift */; };
+		9096B14E2EA4250900FEA07E /* AttachmentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B14D2EA4250400FEA07E /* AttachmentHandler.swift */; };
+		9096B1502EA4268400FEA07E /* WriteFormHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B14F2EA4268000FEA07E /* WriteFormHandler.swift */; };
 		90A0D9AE289880860057D328 /* BawiAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0D9AD289880860057D328 /* BawiAction.swift */; };
 		90A103862A64398F0017EEB8 /* PersistenceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A103852A64398F0017EEB8 /* PersistenceHelper.swift */; };
 		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
@@ -163,6 +169,12 @@
 		90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteDTO.swift; sourceTree = "<group>"; };
 		90914EFC26A774B200E124B6 /* BawiNoteConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiNoteConstant.swift; sourceTree = "<group>"; };
 		9092AC4928A470BA00FADF2E /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
+		9096B1452EA420FD00FEA07E /* MessageHandlerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandlerFactory.swift; sourceTree = "<group>"; };
+		9096B1472EA4214A00FEA07E /* MessageHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHandling.swift; sourceTree = "<group>"; };
+		9096B1492EA421B500FEA07E /* NoteFormHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFormHandler.swift; sourceTree = "<group>"; };
+		9096B14B2EA423EC00FEA07E /* CommentFormHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentFormHandler.swift; sourceTree = "<group>"; };
+		9096B14D2EA4250400FEA07E /* AttachmentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentHandler.swift; sourceTree = "<group>"; };
+		9096B14F2EA4268000FEA07E /* WriteFormHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteFormHandler.swift; sourceTree = "<group>"; };
 		90A0D9AD289880860057D328 /* BawiAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BawiAction.swift; sourceTree = "<group>"; };
 		90A103852A64398F0017EEB8 /* PersistenceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceHelper.swift; sourceTree = "<group>"; };
 		90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BawiBrowserSafariExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -357,6 +369,19 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		9096B1442EA420D600FEA07E /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				9096B14F2EA4268000FEA07E /* WriteFormHandler.swift */,
+				9096B14D2EA4250400FEA07E /* AttachmentHandler.swift */,
+				9096B1472EA4214A00FEA07E /* MessageHandling.swift */,
+				9096B1452EA420FD00FEA07E /* MessageHandlerFactory.swift */,
+				9096B1492EA421B500FEA07E /* NoteFormHandler.swift */,
+				9096B14B2EA423EC00FEA07E /* CommentFormHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
 		90A2777826AE3C26000A3080 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,6 +395,7 @@
 		90A2777B26AE3C26000A3080 /* BawiBrowserSafariExtension */ = {
 			isa = PBXGroup;
 			children = (
+				9096B1442EA420D600FEA07E /* Handlers */,
 				90E683172D3EB5D20092FC35 /* SafariExtensionPersister.swift */,
 				90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */,
 				90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */,
@@ -709,12 +735,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9096B1502EA4268400FEA07E /* WriteFormHandler.swift in Sources */,
+				9096B14C2EA423EC00FEA07E /* CommentFormHandler.swift in Sources */,
+				9096B14E2EA4250900FEA07E /* AttachmentHandler.swift in Sources */,
+				9096B1462EA420FD00FEA07E /* MessageHandlerFactory.swift in Sources */,
 				9037CF342857F43B00B5C7C9 /* BawiBrowserConstants.swift in Sources */,
+				9096B1482EA4215900FEA07E /* MessageHandling.swift in Sources */,
 				9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */,
 				90D0A98526B4A0F900581D33 /* BawiCommentDTO.swift in Sources */,
 				90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */,
 				9039535B26B6308B004CB410 /* BawiArticleDTO.swift in Sources */,
 				90E683182D3EB5DD0092FC35 /* SafariExtensionPersister.swift in Sources */,
+				9096B14A2EA421B500FEA07E /* NoteFormHandler.swift in Sources */,
 				90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */,
 				90D0A98326B48CEC00581D33 /* BawiBrowser.xcdatamodeld in Sources */,
 			);
@@ -898,7 +930,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -929,7 +961,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -1039,7 +1071,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1051,12 +1083,12 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.6;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -1066,7 +1098,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1078,12 +1110,12 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.6;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};

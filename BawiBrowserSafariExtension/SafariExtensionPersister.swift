@@ -10,6 +10,9 @@ import Persistence
 import os
 
 actor SafariExtensionPersister {
+    
+    public static let shared = SafariExtensionPersister()
+    
     private let logger = Logger()
     
     private let viewContext = Persistence(name: BawiBrowserConstants.appName.rawValue, identifier: BawiBrowserConstants.iCloudIdentifier.rawValue).container.viewContext
@@ -31,7 +34,7 @@ actor SafariExtensionPersister {
         logger.log("articleDTO = \(String(describing: self.articleDTO), privacy: .public)")
     }
     
-    func addAttachments(_ data: Data) -> Void {
+    func addAttachment(_ data: Data) -> Void {
         if attachedData == nil {
             attachedData = [Data]()
         }
@@ -55,34 +58,6 @@ actor SafariExtensionPersister {
         
         articleDTO = nil
         attachedData = nil
-    }
-    
-    func saveArticle(_ properties: SFSafariPageProperties) {
-        if let url = properties.url, url.absoluteString.contains("read.cgi") {
-            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            
-            if let queryItems = urlComponents?.queryItems {
-                for queryItem in queryItems {
-                    if queryItem.name == "aid", let aid = queryItem.value {
-                        logger.log("aid = \(aid, privacy: .public)")
-                        self.articleDTO!.articleId = Int(aid)!
-                    }
-                }
-            }
-            
-            if self.attachedData != nil && self.articleDTO!.attachCount != self.attachedData!.count {
-                logger.log("WARNING: \(String(describing: self.articleDTO!.attachCount), privacy: .public) files are expected. But \(self.attachedData!.count, privacy: .public) files have been downloaded")
-            }
-            
-            self.articleDTO!.attachments = self.attachedData
-            
-            logger.log("articleDTO = \(String(describing: self.articleDTO))")
-            
-            self.save(article: self.articleDTO!)
-            
-            self.articleDTO = nil
-            self.attachedData = nil
-        }
     }
     
     func save(article dto: BawiArticleDTO) -> Void {
