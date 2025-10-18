@@ -10,6 +10,9 @@ import Persistence
 import os
 
 actor SafariExtensionPersister {
+    
+    public static let shared = SafariExtensionPersister()
+    
     private let logger = Logger()
     
     private let viewContext = Persistence(name: BawiBrowserConstants.appName.rawValue, identifier: BawiBrowserConstants.iCloudIdentifier.rawValue).container.viewContext
