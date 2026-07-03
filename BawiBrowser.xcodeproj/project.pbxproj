@@ -572,7 +572,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					9061765F268A781000871FB2 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -1227,7 +1227,7 @@
 			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.2.15;
+				version = 0.2.17;
 			};
 		};
 		9037CF0D2857F19900B5C7C9 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
