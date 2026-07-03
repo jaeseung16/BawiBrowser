@@ -10,7 +10,8 @@ import CoreData
 import os
 @preconcurrency import Persistence
 
-final class PersistenceHelper: Sendable {
+@MainActor
+final class PersistenceHelper {
     private static let logger = Logger()
     
     private let persistence: Persistence
