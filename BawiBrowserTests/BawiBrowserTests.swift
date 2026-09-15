@@ -6,8 +6,10 @@
 //
 
 import XCTest
+import CoreData
 @testable import BawiBrowser
 @testable import MultipartKit
+@testable import Persistence
 
 class BawiBrowserTests: XCTestCase {
 
@@ -45,6 +47,32 @@ class BawiBrowserTests: XCTestCase {
         XCTAssertEqual("0", bawiWriteForm!.img)
         XCTAssertEqual("디테일", bawiWriteForm!.title)
         
+    }
+
+    // Regression test for the SIGABRT in -[NSManagedObjectContext save:] when posting
+    // comments: Persistence.save() used to touch the main-queue viewContext from the
+    // actor executor. The scheme enables -com.apple.CoreData.ConcurrencyDebug 1, so a
+    // confinement violation anywhere in this path traps immediately.
+    @MainActor
+    func testSaveCommentRespectsContextConfinement() async throws {
+        let persistence = Persistence(name: BawiBrowserConstants.appName.rawValue,
+                                      identifier: BawiBrowserConstants.iCloudIdentifier.rawValue,
+                                      inMemory: true,
+                                      isCloud: false)
+        let persistenceHelper = PersistenceHelper(persistence: persistence)
+
+        for id in 0..<10 {
+            let dto = BawiCommentDTO(articleId: id,
+                                     articleTitle: "title \(id)",
+                                     boardId: id,
+                                     boardTitle: "board",
+                                     body: "comment body \(id)")
+            try await persistenceHelper.save(comment: dto)
+        }
+
+        let fetchRequest = NSFetchRequest<Comment>(entityName: "Comment")
+        let comments = persistenceHelper.perform(fetchRequest)
+        XCTAssertEqual(comments.count, 10)
     }
 
     func testPerformanceExample() throws {

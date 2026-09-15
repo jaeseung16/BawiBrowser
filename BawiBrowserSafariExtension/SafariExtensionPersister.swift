@@ -61,55 +61,66 @@ actor SafariExtensionPersister {
     }
     
     func save(article dto: BawiArticleDTO) -> Void {
-        if dto.articleId > 0, let existingArticle = getExistingArticle(boardId: dto.boardId, articleId: dto.articleId) {
-            existingArticle.articleId = Int64(dto.articleId)
-            existingArticle.articleTitle = dto.articleTitle
-            existingArticle.boardId = Int64(dto.boardId)
-            existingArticle.boardTitle = dto.boardTitle
-            existingArticle.body = dto.body
-            existingArticle.lastupd = Date()
-            
-            addAttachmens(to: existingArticle, from: dto)
-        } else {
-            let article = Article(context: viewContext)
-            article.articleId = Int64(dto.articleId)
-            article.articleTitle = dto.articleTitle
-            article.boardId = Int64(dto.boardId)
-            article.boardTitle = dto.boardTitle
-            article.body = dto.body
-            article.created = Date()
-            article.lastupd = Date()
-            
-            addAttachmens(to: article, from: dto)
-        }
-        
-        do {
-            try saveContext()
-        } catch {
-            logger.log("While saving \(dto, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+        // viewContext is main-queue confined; the actor executor is not the main
+        // queue, so all context work has to go through performAndWait.
+        // Only the Sendable NSManagedObjectID crosses into the @Sendable
+        // closure; the managed object itself is resolved inside the closure.
+        let existingArticleID = dto.articleId > 0 ? getExistingArticleID(boardId: dto.boardId, articleId: dto.articleId) : nil
+        viewContext.performAndWait {
+            if let existingArticleID, let existingArticle = try? viewContext.existingObject(with: existingArticleID) as? Article {
+                existingArticle.articleId = Int64(dto.articleId)
+                existingArticle.articleTitle = dto.articleTitle
+                existingArticle.boardId = Int64(dto.boardId)
+                existingArticle.boardTitle = dto.boardTitle
+                existingArticle.body = dto.body
+                existingArticle.lastupd = Date()
+
+                addAttachmens(to: existingArticle, from: dto, in: viewContext)
+            } else {
+                let article = Article(context: viewContext)
+                article.articleId = Int64(dto.articleId)
+                article.articleTitle = dto.articleTitle
+                article.boardId = Int64(dto.boardId)
+                article.boardTitle = dto.boardTitle
+                article.body = dto.body
+                article.created = Date()
+                article.lastupd = Date()
+
+                addAttachmens(to: article, from: dto, in: viewContext)
+            }
+
+            do {
+                try saveContext(viewContext)
+            } catch {
+                logger.log("While saving \(dto, privacy: .public) occured an unresolved error \(error.localizedDescription, privacy: .public)")
+            }
         }
     }
     
-    private func getExistingArticle(boardId: Int, articleId: Int) -> Article? {
-        let predicate = NSPredicate(format: "boardId == %@ AND articleId == %@", argumentArray: [boardId, articleId])
-        
-        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-        fetchRequest.predicate = predicate
-        
-        var fetchedArticles = [Article]()
+    private func getExistingArticleID(boardId: Int, articleId: Int) -> NSManagedObjectID? {
         do {
-            fetchedArticles = try viewContext.fetch(fetchRequest)
+            return try viewContext.performAndWait {
+                // Built inside the closure because NSFetchRequest is not
+                // Sendable and must not be captured by the @Sendable closure.
+                // Only the Sendable objectID is returned out of the closure.
+                let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+                fetchRequest.predicate = NSPredicate(format: "boardId == %@ AND articleId == %@", argumentArray: [boardId, articleId])
+                return try viewContext.fetch(fetchRequest).first?.objectID
+            }
         } catch {
             logger.log("Failed to fetch article with boardId = \(boardId, privacy: .public) and articleId = \(articleId, privacy: .public): \(error.localizedDescription)")
+            return nil
         }
-        
-        return fetchedArticles.isEmpty ? nil : fetchedArticles[0]
     }
     
-    private func addAttachmens(to article: Article, from dto: BawiArticleDTO) -> Void {
+    // nonisolated because it's invoked from within viewContext.performAndWait
+    // closures, which run on the context's queue rather than the actor's
+    // executor. The context is passed in explicitly so no actor-isolated state
+    // is touched.
+    private nonisolated func addAttachmens(to article: Article, from dto: BawiArticleDTO, in context: NSManagedObjectContext) -> Void {
         if let attachments = dto.attachments, !attachments.isEmpty {
             attachments.forEach { attachment in
-                let attachmentEntity = Attachment(context: viewContext)
+                let attachmentEntity = Attachment(context: context)
                 attachmentEntity.article = article
                 attachmentEntity.content = attachment
                 attachmentEntity.created = Date()
@@ -120,41 +131,55 @@ actor SafariExtensionPersister {
     
     func save(comment dto: BawiCommentDTO) -> Void {
         logger.log("commentDTO = \(dto, privacy: .public)")
-        
-        let comment = Comment(context: self.viewContext)
-        comment.articleId = Int64(dto.articleId)
-        comment.articleTitle = dto.articleTitle
-        comment.boardId = Int64(dto.boardId)
-        comment.boardTitle = dto.boardTitle
-        comment.body = dto.body
-        comment.created = Date()
-        
-        do {
-            try saveContext()
-        } catch {
-            logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
+
+        viewContext.performAndWait {
+            let comment = Comment(context: self.viewContext)
+            comment.articleId = Int64(dto.articleId)
+            comment.articleTitle = dto.articleTitle
+            comment.boardId = Int64(dto.boardId)
+            comment.boardTitle = dto.boardTitle
+            comment.body = dto.body
+            comment.created = Date()
+
+            do {
+                try saveContext(viewContext)
+            } catch {
+                logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            }
         }
     }
-    
+
     func save(note dto: BawiNoteDTO) -> Void {
         logger.log("noteDTO = \(dto)")
-        
-        let note = Note(context: self.viewContext)
-        note.action = dto.action
-        note.to = dto.to
-        note.msg = dto.msg
-        note.created = Date()
-        
-        do {
-            try saveContext()
-        } catch {
-            logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
+
+        viewContext.performAndWait {
+            let note = Note(context: self.viewContext)
+            note.action = dto.action
+            note.to = dto.to
+            note.msg = dto.msg
+            note.created = Date()
+
+            do {
+                try saveContext(viewContext)
+            } catch {
+                logger.log("Error occured while saving \(dto, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            }
         }
     }
-    
-    private func saveContext() throws -> Void {
-        viewContext.transactionAuthor = "Safari Extension"
-        try viewContext.save()
-        viewContext.transactionAuthor = nil
+
+    // nonisolated because it's invoked from within viewContext.performAndWait
+    // closures, which run on the context's queue rather than the actor's
+    // executor. The context is passed in explicitly so no actor-isolated state
+    // is touched.
+    private nonisolated func saveContext(_ context: NSManagedObjectContext) throws -> Void {
+        // performAndWait is reentrancy-safe, so this may be called from within
+        // another performAndWait block.
+        try context.performAndWait {
+            context.transactionAuthor = "Safari Extension"
+            defer {
+                context.transactionAuthor = nil
+            }
+            try context.save()
+        }
     }
 }

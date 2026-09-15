@@ -11,9 +11,6 @@ import CoreData
 struct ContentView: View {
     @EnvironmentObject private var viewModel: BawiBrowserViewModel
     @Environment(\.managedObjectContext) private var viewContext
-
-    @AppStorage("BawiBrowser.appearance")
-    var appearance: BawiBrowserAppearance = .light
     
     @State private var selectedTab: String?
     @State private var searchString = ""

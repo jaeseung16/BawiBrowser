@@ -15,12 +15,10 @@
 		9014974126AB732E0025FE0E /* BawiBrwoserNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014974026AB732E0025FE0E /* BawiBrwoserNavigation.swift */; };
 		9024005326928DF800F7FE6A /* BawiCommentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005226928DF800F7FE6A /* BawiCommentDTO.swift */; };
 		9024005526928F7F00F7FE6A /* BawiCommentConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9024005426928F7F00F7FE6A /* BawiCommentConstant.swift */; };
-		9037CF082857EC9700B5C7C9 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 9037CF072857EC9700B5C7C9 /* Persistence */; };
 		9037CF0A2857ECD000B5C7C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9037CF092857ECD000B5C7C9 /* AppDelegate.swift */; };
 		9037CF0C2857ED0C00B5C7C9 /* BawiBrowserConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9037CF0B2857ED0C00B5C7C9 /* BawiBrowserConstants.swift */; };
 		9037CF0F2857F19900B5C7C9 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = 9037CF0E2857F19900B5C7C9 /* NIO */; };
 		9037CF342857F43B00B5C7C9 /* BawiBrowserConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9037CF0B2857ED0C00B5C7C9 /* BawiBrowserConstants.swift */; };
-		9037CF362857F47C00B5C7C9 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 9037CF352857F47C00B5C7C9 /* Persistence */; };
 		9039535A26B61E2E004CB410 /* BawiNoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90914EFA26A7742900E124B6 /* BawiNoteDTO.swift */; };
 		9039535B26B6308B004CB410 /* BawiArticleDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900630FF2697B990006B6340 /* BawiArticleDTO.swift */; };
 		90492BBF26A4A567005F337C /* AttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90492BBE26A4A567005F337C /* AttachmentListView.swift */; };
@@ -54,6 +52,8 @@
 		9096B1502EA4268400FEA07E /* WriteFormHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9096B14F2EA4268000FEA07E /* WriteFormHandler.swift */; };
 		90A0D9AE289880860057D328 /* BawiAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0D9AD289880860057D328 /* BawiAction.swift */; };
 		90A103862A64398F0017EEB8 /* PersistenceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A103852A64398F0017EEB8 /* PersistenceHelper.swift */; };
+		90A1F12D2FF80BB6005FF391 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 90A1F12C2FF80BB6005FF391 /* Persistence */; };
+		90A1F12F2FF80D85005FF391 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 90A1F12E2FF80D85005FF391 /* Persistence */; };
 		90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90A2777926AE3C26000A3080 /* Cocoa.framework */; };
 		90A2777D26AE3C26000A3080 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777C26AE3C26000A3080 /* SafariExtensionHandler.swift */; };
 		90A2777F26AE3C26000A3080 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A2777E26AE3C26000A3080 /* SafariExtensionViewController.swift */; };
@@ -212,8 +212,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9037CF082857EC9700B5C7C9 /* Persistence in Frameworks */,
 				9092AC4A28A470BA00FADF2E /* AuthenticationServices.framework in Frameworks */,
+				90A1F12D2FF80BB6005FF391 /* Persistence in Frameworks */,
 				9037CF0F2857F19900B5C7C9 /* NIO in Frameworks */,
 				90FC22422698DB730095848C /* MultipartKit in Frameworks */,
 				900215CD26B9FB8800A82706 /* CloudKit.framework in Frameworks */,
@@ -238,7 +238,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9037CF362857F47C00B5C7C9 /* Persistence in Frameworks */,
+				90A1F12F2FF80D85005FF391 /* Persistence in Frameworks */,
 				90A2777A26AE3C26000A3080 /* Cocoa.framework in Frameworks */,
 				9000362526BC9A88007F4AF5 /* CloudKit.framework in Frameworks */,
 			);
@@ -483,8 +483,8 @@
 			name = BawiBrowser;
 			packageProductDependencies = (
 				90FC22412698DB730095848C /* MultipartKit */,
-				9037CF072857EC9700B5C7C9 /* Persistence */,
 				9037CF0E2857F19900B5C7C9 /* NIO */,
+				90A1F12C2FF80BB6005FF391 /* Persistence */,
 			);
 			productName = BawiBrowser;
 			productReference = 90617660268A781000871FB2 /* BawiBrowser.app */;
@@ -540,7 +540,7 @@
 			);
 			name = BawiBrowserSafariExtension;
 			packageProductDependencies = (
-				9037CF352857F47C00B5C7C9 /* Persistence */,
+				90A1F12E2FF80D85005FF391 /* Persistence */,
 			);
 			productName = BawiBrowserSafariExtension;
 			productReference = 90A2777726AE3C26000A3080 /* BawiBrowserSafariExtension.appex */;
@@ -572,7 +572,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 2610;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					9061765F268A781000871FB2 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -605,8 +605,8 @@
 			mainGroup = 90617657268A781000871FB2;
 			packageReferences = (
 				90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */,
-				9037CF062857EC9700B5C7C9 /* XCRemoteSwiftPackageReference "PersistenceSwift" */,
 				9037CF0D2857F19900B5C7C9 /* XCRemoteSwiftPackageReference "swift-nio" */,
+				90A1F12B2FF80BB6005FF391 /* XCRemoteSwiftPackageReference "PersistenceSwift" */,
 			);
 			productRefGroup = 90617661268A781000871FB2 /* Products */;
 			projectDirPath = "";
@@ -802,6 +802,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -867,6 +868,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -930,7 +932,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -944,7 +946,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -961,7 +963,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"BawiBrowser/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -975,7 +977,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -996,7 +998,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1017,7 +1019,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1037,7 +1039,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1057,7 +1059,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1071,7 +1073,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1084,7 +1086,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1098,7 +1100,7 @@
 				CODE_SIGN_ENTITLEMENTS = BawiBrowserSafariExtension/BawiBrowserSafariExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1111,7 +1113,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowser.BawiBrowserSafariExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1130,7 +1132,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUIPerformanceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1152,7 +1154,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.BawiBrowserUIPerformanceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1222,20 +1224,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9037CF062857EC9700B5C7C9 /* XCRemoteSwiftPackageReference "PersistenceSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
-			requirement = {
-				kind = exactVersion;
-				version = 0.2.17;
-			};
-		};
 		9037CF0D2857F19900B5C7C9 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio.git";
 			requirement = {
 				kind = exactVersion;
 				version = 2.87.0;
+			};
+		};
+		90A1F12B2FF80BB6005FF391 /* XCRemoteSwiftPackageReference "PersistenceSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.20;
 			};
 		};
 		90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */ = {
@@ -1249,19 +1251,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9037CF072857EC9700B5C7C9 /* Persistence */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9037CF062857EC9700B5C7C9 /* XCRemoteSwiftPackageReference "PersistenceSwift" */;
-			productName = Persistence;
-		};
 		9037CF0E2857F19900B5C7C9 /* NIO */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9037CF0D2857F19900B5C7C9 /* XCRemoteSwiftPackageReference "swift-nio" */;
 			productName = NIO;
 		};
-		9037CF352857F47C00B5C7C9 /* Persistence */ = {
+		90A1F12C2FF80BB6005FF391 /* Persistence */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9037CF062857EC9700B5C7C9 /* XCRemoteSwiftPackageReference "PersistenceSwift" */;
+			package = 90A1F12B2FF80BB6005FF391 /* XCRemoteSwiftPackageReference "PersistenceSwift" */;
+			productName = Persistence;
+		};
+		90A1F12E2FF80D85005FF391 /* Persistence */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 90A1F12B2FF80BB6005FF391 /* XCRemoteSwiftPackageReference "PersistenceSwift" */;
 			productName = Persistence;
 		};
 		90FC22412698DB730095848C /* MultipartKit */ = {
