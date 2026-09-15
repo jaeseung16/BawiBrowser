@@ -1,5 +1,5 @@
 {
-  "originHash" : "c290b2e2d05b66d9d46fc32ac7f31c3f1dfeb59ec537f840b7e8adef8dde8594",
+  "originHash" : "3d626e48dcedae8e57e18c2833cf9eaa2d17a0bb1fb5cce9cd824e9391f2a4a0",
   "pins" : [
     {
       "identity" : "multipart",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jaeseung16/PersistenceSwift",
       "state" : {
-        "revision" : "097fbf921b47f63dc2960f1f2ad807372e5b34d9",
-        "version" : "0.2.18"
+        "revision" : "aff9b5f62483e61e87523c16f5585daf003705a5",
+        "version" : "0.2.20"
       }
     },
     {

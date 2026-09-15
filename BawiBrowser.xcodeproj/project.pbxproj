@@ -1237,7 +1237,7 @@
 			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.18;
+				minimumVersion = 0.2.20;
 			};
 		};
 		90FC22402698DB730095848C /* XCRemoteSwiftPackageReference "multipart" */ = {
