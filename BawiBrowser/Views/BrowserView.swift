@@ -10,10 +10,6 @@ import SwiftUI
 struct BrowserView: View {
     @EnvironmentObject var viewModel: BawiBrowserViewModel
     @Environment(\.colorScheme) var colorScheme
-    @Namespace var namespace
-    
-    private let navigation = "navigation"
-    private let tools = "tools"
     
     var url: URL
     @AppStorage("BawiBrowser.appearance") var darkMode: Bool = false
@@ -56,7 +52,7 @@ struct BrowserView: View {
     }
     
     private var toolContainer: some View {
-        GlassEffectContainer {
+        GlassEffectContainer(spacing: 20.0) {
             HStack {
                 Toggle(isOn: $darkMode) {
                     Text(viewModel.isDarkMode ? "dark" : "light")
@@ -68,7 +64,6 @@ struct BrowserView: View {
                     viewModel.isDarkMode = darkMode
                     viewModel.navigation = .reload
                 }
-                .glassEffectUnion(id: tools, namespace: namespace)
                 
                 Button {
                     NSPasteboard.general.clearContents()
@@ -80,13 +75,12 @@ struct BrowserView: View {
                 .keyboardShortcut("l", modifiers: [.command])
                 .padding(5.0)
                 .glassEffect()
-                .glassEffectUnion(id: tools, namespace: namespace)
             }
         }
     }
     
     private var navigationContainer: some View {
-        GlassEffectContainer {
+        GlassEffectContainer(spacing: 20.0) {
             HStack {
                 Button {
                     viewModel.navigation = .back
@@ -95,7 +89,6 @@ struct BrowserView: View {
                 }
                 .padding(5.0)
                 .glassEffect()
-                .glassEffectUnion(id: navigation, namespace: namespace)
                 
                 Button {
                     viewModel.navigation = .home
@@ -105,7 +98,6 @@ struct BrowserView: View {
                 .keyboardShortcut("h", modifiers: [.command])
                 .padding(5.0)
                 .glassEffect()
-                .glassEffectUnion(id: navigation, namespace: namespace)
                 
                 Button {
                     viewModel.navigation = .logout
@@ -115,7 +107,6 @@ struct BrowserView: View {
                 .keyboardShortcut("h", modifiers: [.command])
                 .padding(5.0)
                 .glassEffect()
-                .glassEffectUnion(id: navigation, namespace: namespace)
                 
                 Button {
                     viewModel.navigation = .forward
@@ -124,7 +115,6 @@ struct BrowserView: View {
                 }
                 .padding(5.0)
                 .glassEffect()
-                .glassEffectUnion(id: navigation, namespace: namespace)
             }
         }
     }
