@@ -63,3 +63,7 @@ The Coordinator also scrapes page context (board title, article title) with `eva
 
 - Mermaid architecture diagrams live in `docs/diagrams/` (views, view model, sequence flows).
 - Korean text in fixtures, UI, and site content is expected — the target site is Korean.
+
+### Work log
+
+After completing each step or major task, append a summary of it to docs/worklog/YYYY-MM-DD-<topic>.md in this repo (create the file if it does not exist), in addition to reporting the summary in the conversation.
