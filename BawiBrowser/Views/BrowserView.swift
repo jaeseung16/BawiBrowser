@@ -95,7 +95,6 @@ struct BrowserView: View {
                 } label: {
                     Image(systemName: "house")
                 }
-                .keyboardShortcut("h", modifiers: [.command])
                 .padding(5.0)
                 .glassEffect()
                 
@@ -104,7 +103,6 @@ struct BrowserView: View {
                 } label: {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
                 }
-                .keyboardShortcut("h", modifiers: [.command])
                 .padding(5.0)
                 .glassEffect()
                 
